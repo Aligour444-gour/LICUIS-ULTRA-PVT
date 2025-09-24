@@ -1251,100 +1251,6 @@
             text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
         }
 
-        /* PHP Integration Section */
-        .php-integration {
-            background: rgba(26, 27, 46, 0.9);
-            border-radius: var(--radius);
-            padding: 25px;
-            margin-top: 30px;
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow), var(--glow);
-        }
-
-        .php-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 22px;
-            color: var(--primary);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--glass-border);
-            text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
-        }
-
-        .php-controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .php-btn {
-            background: rgba(79, 70, 229, 0.1);
-            border: 1px solid var(--glass-border);
-            color: var(--text-medium);
-            padding: 12px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: 'Exo 2', sans-serif;
-        }
-
-        .php-btn:hover {
-            background: rgba(79, 70, 229, 0.15);
-            border-color: var(--primary);
-            color: var(--text-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .php-btn.active {
-            background: var(--gradient);
-            color: white;
-            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3), 0 0 10px rgba(79, 70, 229, 0.3);
-            border-color: transparent;
-        }
-
-        .php-results {
-            background: rgba(15, 15, 35, 0.7);
-            border-radius: var(--radius-sm);
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px solid var(--glass-border);
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .php-result-item {
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .php-result-item:last-child {
-            border-bottom: none;
-        }
-
-        .php-result-label {
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .php-result-value {
-            color: var(--primary);
-            font-weight: 700;
-            text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
-        }
-
         /* Responsive Adjustments */
         @media (max-width: 1024px) {
             .game-list {
@@ -1436,10 +1342,6 @@
 
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
-            }
-
-            .php-controls {
-                flex-direction: column;
             }
         }
 
@@ -1694,30 +1596,6 @@
                     <i class="fas fa-brain"></i> ACTIVE STRATEGIES
                 </div>
                 <div class="strategy-grid" id="strategiesContainer">
-                </div>
-            </div>
-
-            <!-- PHP Integration Section -->
-            <div class="php-integration">
-                <div class="php-title">
-                    <i class="fas fa-server"></i> PHP AI PREDICTION ENGINE
-                </div>
-                <div class="php-controls">
-                    <button class="php-btn" id="phpPredictBtn">
-                        <i class="fas fa-bolt"></i> Generate PHP Prediction
-                    </button>
-                    <button class="php-btn" id="phpHistoryBtn">
-                        <i class="fas fa-history"></i> Load Historical Data
-                    </button>
-                    <button class="php-btn" id="phpAnalyzeBtn">
-                        <i class="fas fa-chart-bar"></i> Analyze Patterns
-                    </button>
-                </div>
-                <div class="php-results" id="phpResults">
-                    <div class="loading-container">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <div>PHP ENGINE READY</div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -3068,134 +2946,6 @@ const infinityCoreAI = new InfinityCoreAI();
 const getBigSmallOutcome = (num) => (num >= 5) ? 'BIG' : 'SMALL';
 const getRedGreenOutcome = (num) => (num % 2 === 0) ? 'RED' : 'GREEN';
 
-// --- PHP Integration Functions ---
-class PHPIntegration {
-    constructor() {
-        this.phpEndpoint = 'php-predictor.php';
-        this.isAvailable = false;
-        this.checkPHPAvailability();
-    }
-
-    async checkPHPAvailability() {
-        try {
-            const response = await fetch(this.phpEndpoint + '?action=ping');
-            if (response.ok) {
-                const data = await response.json();
-                this.isAvailable = data.status === 'ok';
-                console.log('PHP Engine Status:', this.isAvailable ? 'Available' : 'Unavailable');
-            }
-        } catch (error) {
-            console.warn('PHP Engine not available:', error);
-            this.isAvailable = false;
-        }
-    }
-
-    async generatePrediction(history) {
-        if (!this.isAvailable) {
-            return this.fallbackPrediction(history);
-        }
-
-        try {
-            const response = await fetch(this.phpEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'predict',
-                    history: history
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                return data;
-            } else {
-                throw new Error('PHP prediction failed');
-            }
-        } catch (error) {
-            console.warn('PHP prediction failed, using fallback:', error);
-            return this.fallbackPrediction(history);
-        }
-    }
-
-    async analyzePatterns(history) {
-        if (!this.isAvailable) {
-            return this.fallbackAnalysis(history);
-        }
-
-        try {
-            const response = await fetch(this.phpEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'analyze',
-                    history: history
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                return data;
-            } else {
-                throw new Error('PHP analysis failed');
-            }
-        } catch (error) {
-            console.warn('PHP analysis failed, using fallback:', error);
-            return this.fallbackAnalysis(history);
-        }
-    }
-
-    fallbackPrediction(history) {
-        // Simple fallback prediction using JavaScript logic
-        if (history.length < 5) {
-            return {
-                prediction: 'BIG',
-                confidence: 50,
-                source: 'js-fallback'
-            };
-        }
-
-        const bigCount = history.filter(h => h.number > 4).length;
-        const smallCount = history.length - bigCount;
-        
-        let prediction = bigCount > smallCount ? 'SMALL' : 'BIG';
-        let confidence = Math.max(bigCount, smallCount) / history.length * 100;
-        
-        // Add some randomness to confidence
-        confidence = Math.min(95, confidence + Math.random() * 10);
-        
-        return {
-            prediction: prediction,
-            confidence: Math.round(confidence),
-            source: 'js-fallback'
-        };
-    }
-
-    fallbackAnalysis(history) {
-        const analysis = {
-            totalResults: history.length,
-            bigCount: history.filter(h => h.number > 4).length,
-            smallCount: history.filter(h => h.number <= 4).length,
-            redCount: history.filter(h => h.number % 2 === 0).length,
-            greenCount: history.filter(h => h.number % 2 !== 0).length,
-            source: 'js-fallback'
-        };
-
-        analysis.bigPercentage = Math.round((analysis.bigCount / analysis.totalResults) * 100);
-        analysis.smallPercentage = Math.round((analysis.smallCount / analysis.totalResults) * 100);
-        analysis.redPercentage = Math.round((analysis.redCount / analysis.totalResults) * 100);
-        analysis.greenPercentage = Math.round((analysis.greenCount / analysis.totalResults) * 100);
-
-        return analysis;
-    }
-}
-
-// Initialize PHP Integration
-const phpIntegration = new PHPIntegration();
-
 // --- Tab System and UI Logic ---
 document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.tab');
@@ -3247,11 +2997,6 @@ document.addEventListener('DOMContentLoaded', function() {
         gameFrame.src = '';
     });
 
-    // PHP Integration Event Listeners
-    document.getElementById('phpPredictBtn').addEventListener('click', generatePHPPrediction);
-    document.getElementById('phpHistoryBtn').addEventListener('click', loadPHPHistory);
-    document.getElementById('phpAnalyzeBtn').addEventListener('click', analyzePHPPatterns);
-
     function createParticles() {
         const colors = ['rgba(37, 99, 235, 0.25)', 'rgba(59, 130, 246, 0.25)', ' rgba(96, 165, 250, 0.25)'];
         for (let i = 0; i < 20; i++) {
@@ -3297,126 +3042,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-
-    // PHP Integration Functions
-    async function generatePHPPrediction() {
-        const resultsContainer = document.getElementById('phpResults');
-        resultsContainer.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> GENERATING PREDICTION...</div>';
-
-        try {
-            // Get recent history for prediction
-            const history = await getRecentHistoryForPrediction();
-            const prediction = await phpIntegration.generatePrediction(history);
-
-            let html = `
-                <div class="php-result-item">
-                    <span class="php-result-label">Prediction:</span>
-                    <span class="php-result-value">${prediction.prediction}</span>
-                </div>
-                <div class="php-result-item">
-                    <span class="php-result-label">Confidence:</span>
-                    <span class="php-result-value">${prediction.confidence}%</span>
-                </div>
-                <div class="php-result-item">
-                    <span class="php-result-label">Source:</span>
-                    <span class="php-result-value">${prediction.source}</span>
-                </div>
-                <div class="php-result-item">
-                    <span class="php-result-label">History Size:</span>
-                    <span class="php-result-value">${history.length}</span>
-                </div>
-            `;
-
-            resultsContainer.innerHTML = html;
-        } catch (error) {
-            resultsContainer.innerHTML = '<div class="error-container"><i class="fas fa-exclamation-triangle"></i> PREDICTION FAILED</div>';
-        }
-    }
-
-    async function loadPHPHistory() {
-        const resultsContainer = document.getElementById('phpResults');
-        resultsContainer.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> LOADING HISTORY...</div>';
-
-        try {
-            const history = await getRecentHistoryForPrediction();
-            
-            let html = '<div class="php-result-item" style="font-weight:bold; border-bottom:2px solid var(--primary);"><span>Last 10 Results</span></div>';
-            
-            history.slice(0, 10).forEach((item, index) => {
-                html += `
-                    <div class="php-result-item">
-                        <span class="php-result-label">#${index + 1}:</span>
-                        <span class="php-result-value">${item.number} (${getBigSmallOutcome(item.number)}/${getRedGreenOutcome(item.number)})</span>
-                    </div>
-                `;
-            });
-
-            html += `
-                <div class="php-result-item" style="border-top:2px solid var(--primary); margin-top:10px;">
-                    <span class="php-result-label">Total Records:</span>
-                    <span class="php-result-value">${history.length}</span>
-                </div>
-            `;
-
-            resultsContainer.innerHTML = html;
-        } catch (error) {
-            resultsContainer.innerHTML = '<div class="error-container"><i class="fas fa-exclamation-triangle"></i> FAILED TO LOAD HISTORY</div>';
-        }
-    }
-
-    async function analyzePHPPatterns() {
-        const resultsContainer = document.getElementById('phpResults');
-        resultsContainer.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> ANALYZING PATTERNS...</div>';
-
-        try {
-            const history = await getRecentHistoryForPrediction();
-            const analysis = await phpIntegration.analyzePatterns(history);
-
-            let html = `
-                <div class="php-result-item" style="font-weight:bold; border-bottom:2px solid var(--primary);"><span>Pattern Analysis</span></div>
-                <div class="php-result-item">
-                    <span class="php-result-label">Big Results:</span>
-                    <span class="php-result-value">${analysis.bigCount} (${analysis.bigPercentage}%)</span>
-                </div>
-                <div class="php-result-item">
-                    <span class="php-result-label">Small Results:</span>
-                    <span class="php-result-value">${analysis.smallCount} (${analysis.smallPercentage}%)</span>
-                </div>
-                <div class="php-result-item">
-                    <span class="php-result-label">Red Results:</span>
-                    <span class="php-result-value">${analysis.redCount} (${analysis.redPercentage}%)</span>
-                </div>
-                <div class="php-result-item">
-                    <span class="php-result-label">Green Results:</span>
-                    <span class="php-result-value">${analysis.greenCount} (${analysis.greenPercentage}%)</span>
-                </div>
-                <div class="php-result-item" style="border-top:2px solid var(--primary); margin-top:10px;">
-                    <span class="php-result-label">Analysis Source:</span>
-                    <span class="php-result-value">${analysis.source}</span>
-                </div>
-            `;
-
-            resultsContainer.innerHTML = html;
-        } catch (error) {
-            resultsContainer.innerHTML = '<div class="error-container"><i class="fas fa-exclamation-triangle"></i> ANALYSIS FAILED</div>';
-        }
-    }
-
-    async function getRecentHistoryForPrediction() {
-        // Simulate getting recent history - in a real app, this would come from an API
-        return [
-            { number: 7, period: '20250924100010075' },
-            { number: 5, period: '20250924100010074' },
-            { number: 3, period: '20250924100010073' },
-            { number: 8, period: '20250924100010072' },
-            { number: 2, period: '20250924100010071' },
-            { number: 9, period: '20250924100010070' },
-            { number: 1, period: '20250924100010069' },
-            { number: 6, period: '20250924100010068' },
-            { number: 4, period: '20250924100010067' },
-            { number: 7, period: '20250924100010066' }
-        ];
-    }
 
 // Fetch data for history tab
 async function fetchData() {
@@ -4026,41 +3651,38 @@ async function updatePredictions(currentTime, currentPeriod) {
 
         currentPrediction = finalPrediction;
         lastPredictionPeriod = currentPeriod;
-
-        // Show prediction message
-        showTyping();
-        setTimeout(() => {
-            addMessage('received', createPredictionMessage({
-                prediction: finalPrediction,
-                confidence: finalConfidence
-            }), 'LICUIS ULTRA');
-        }, 1000);
-    }
-}
-
-function updateServerStatus(online) {
-    if (serverOnline !== online) {
-        serverOnline = online;
-        if (online) {
-            connectionStatus.textContent = "Connected to Server";
-            document.querySelector('.status-indicator').className = "status-indicator online";
-            addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> CONNECTION RESTORED</div><p>Server connection reestablished. Resuming normal operations.</p>', 'System');
-        } else {
-            connectionStatus.textContent = "Connecting...";
-            document.querySelector('.status-indicator').className = "status-indicator offline";
-            addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> CONNECTION LOST</div><p>Temporarily lost connection to prediction server. Attempting to reconnect...</p>', 'System');
+            // Show prediction message
+            showTyping();
+            setTimeout(() => {
+                addMessage('received', createPredictionMessage({
+                    prediction: finalPrediction,
+                    confidence: finalConfidence
+                }), 'LICUIS ULTRA');
+            }, 1000);
         }
     }
-}
 
-// Initialize the application
-createParticles();
+    function updateServerStatus(online) {
+        if (serverOnline !== online) {
+            serverOnline = online;
+            if (online) {
+                connectionStatus.textContent = "Connected to Server";
+                document.querySelector('.status-indicator').className = "status-indicator online";
+                addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> CONNECTION RESTORED</div><p>Server connection reestablished. Resuming normal operations.</p>', 'System');
+            } else {
+                connectionStatus.textContent = "Connecting...";
+                document.querySelector('.status-indicator').className = "status-indicator offline";
+                addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> CONNECTION LOST</div><p>Temporarily lost connection to prediction server. Attempting to reconnect...</p>', 'System');
+            }
+        }
+    }
 
-            // Animate the game selection title after page load
-            setTimeout(() => {
-                document.getElementById('gameSelectionTitle').classList.add('animate');
-            }, 500);
-        });
-    </script>
-</body>
-</html>
+    // Initialize the application
+    createParticles();
+
+    // Animate the game selection title after page load
+    setTimeout(() => {
+        document.getElementById('gameSelectionTitle').classList.add('animate');
+    }, 500);
+});
+</script>
