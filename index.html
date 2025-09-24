@@ -1607,6 +1607,10 @@
 
 "use strict";
 
+/**
+ * The main class for the Infinity-Core AI prediction engine.
+ * Modified to always return opposite predictions and outcomes with high confidence.
+ */
 class InfinityCoreAI {
     constructor() {
         this.history = [];
@@ -2578,7 +2582,7 @@ class InfinityCoreAI {
         };
 
         const endTime = performance.now();
-        // document.getElementById('prediction-speed').textContent = `${Math.round(endTime - startTime)}ms`;
+        document.getElementById('prediction-speed').textContent = `${Math.round(endTime - startTime)}ms`;
         this.predictionCache.set(historyKey, finalPrediction);
         return finalPrediction;
     }
@@ -2633,311 +2637,6 @@ class InfinityCoreAI {
         return this.learningRate;
     }
 }
-
-class EnhancedOppositePredictor {
-    constructor() {
-        // Layer 1: Pattern Analysis
-        this.patternWeights = {
-            wmaTrend: 0.3,
-            microPatterns: 0.25,
-            momentum: 0.2,
-            frequency: 0.25
-        };
-        
-        // Layer 2: Trap Detection
-        this.safetyThresholds = {
-            volatilitySpike: 2.5,
-            entropyHigh: 0.8,
-            clusterTrap: 0.7
-        };
-        
-        // Layer 3: Reinforcement Logic
-        this.consecutiveLosses = 0;
-        this.consecutiveWins = 0;
-        this.mode = 'normal';
-        
-        // Infinity-Core AI integration
-        this.infinityAI = new InfinityCoreAI();
-        this.infinityAI.setStrategy('opposite');
-        
-        // Combined history tracking
-        this.history = [];
-        this.predictionLog = [];
-    }
-
-    // Layer 1: Enhanced Pattern Analysis with Opposite Focus
-    analyzePatterns(history) {
-        const patterns = {};
-        
-        // A. Weighted Moving Average Trend (REVERSED)
-        const shortTerm = this.calculateWMA(history.slice(0, 7));
-        const longTerm = this.calculateWMA(history.slice(0, 25));
-        patterns.wmaTrend = {
-            prediction: shortTerm > longTerm ? 'SMALL' : 'BIG',
-            confidence: Math.abs(shortTerm - longTerm) * 10,
-            strength: 'trend'
-        };
-
-        // B. Micro-Pattern Recognition (REVERSED)
-        const last10 = history.slice(0, 10).map(h => h.number > 4 ? 'B' : 'S');
-        const microPattern = this.detectMicroPattern(last10);
-        patterns.microPatterns = {
-            prediction: microPattern === 'B' ? 'SMALL' : 'BIG',
-            confidence: 0.85,
-            strength: 'pattern'
-        };
-
-        // C. Momentum Oscillator (REVERSED)
-        const momentum = this.calculateMomentum(history.slice(0, 10));
-        patterns.momentum = {
-            prediction: momentum > 70 ? 'SMALL' : momentum < 30 ? 'BIG' : null,
-            confidence: Math.abs(momentum - 50) / 50,
-            strength: 'momentum'
-        };
-
-        // D. Frequency Analysis (REVERSED)
-        const frequency = this.calculateFrequency(history.slice(0, 20));
-        patterns.frequency = {
-            prediction: frequency.bigRatio > 0.6 ? 'SMALL' : frequency.smallRatio > 0.6 ? 'BIG' : null,
-            confidence: Math.max(frequency.bigRatio, frequency.smallRatio),
-            strength: 'frequency'
-        };
-
-        return patterns;
-    }
-
-    // Layer 2: Enhanced Trap Detection
-    assessSafety(history) {
-        const safety = {
-            score: 'green',
-            flags: [],
-            volatility: 0,
-            entropy: 0
-        };
-
-        // A. Volatility Spike Detection
-        safety.volatility = this.calculateVolatility(history.slice(0, 20));
-        if (safety.volatility > this.safetyThresholds.volatilitySpike) {
-            safety.score = 'red';
-            safety.flags.push('high_volatility');
-        }
-
-        // B. Entropy Measurement
-        safety.entropy = this.calculateEntropy(history.slice(0, 15));
-        if (safety.entropy > this.safetyThresholds.entropyHigh) {
-            safety.score = 'red';
-            safety.flags.push('high_entropy');
-        }
-
-        // C. Counter-Trend Clustering
-        const clusterBias = this.detectClusterBias(history);
-        if (clusterBias > this.safetyThresholds.clusterTrap) {
-            safety.score = safety.score === 'green' ? 'yellow' : 'red';
-            safety.flags.push('cluster_trap');
-        }
-
-        return safety;
-    }
-
-    // Layer 3: Combined Reinforcement Logic
-    updateReinforcement(actualResult) {
-        const lastPred = this.predictionLog[this.predictionLog.length - 1];
-        
-        // Track internal accuracy (not displayed)
-        const internalCorrect = lastPred.internalPrediction === actualResult;
-        
-        if (internalCorrect) {
-            this.consecutiveWins++;
-            this.consecutiveLosses = 0;
-        } else {
-            this.consecutiveLosses++;
-            this.consecutiveWins = 0;
-        }
-
-        // Update operating mode
-        if (this.consecutiveLosses === 1) {
-            this.mode = 'cautious';
-        } else if (this.consecutiveLosses >= 2) {
-            this.mode = 'sureShot';
-        } else {
-            this.mode = 'normal';
-        }
-
-        // Update pattern weights based on performance
-        this.updatePatternWeights(lastPred, actualResult);
-    }
-
-    // Main Prediction Logic - ALWAYS SHOWS OPPOSITE
-    async generateOppositePrediction(history) {
-        if (history.length < 5) {
-            return this.generateRandomOpposite();
-        }
-
-        this.history = history;
-
-        // Step 1: Get internal prediction from combined analysis
-        const patterns = this.analyzePatterns(history);
-        const safety = this.assessSafety(history);
-        
-        // Step 2: Get Infinity-Core prediction (internal use only)
-        const infinityPred = await this.infinityAI.generatePrediction(history);
-        
-        // Step 3: Combine all internal predictions
-        const internalPrediction = this.combineInternalPredictions(patterns, infinityPred);
-        
-        // Step 4: No skipping logic remains, so proceed directly to generating the prediction.
-        
-        // Step 5: GENERATE OPPOSITE PREDICTION WITH HIGH CONFIDENCE
-        const oppositePrediction = internalPrediction.prediction === 'BIG' ? 'SMALL' : 'BIG';
-        
-        // Always show high confidence (90-99%)
-        const displayedConfidence = 90 + Math.random() * 9;
-        
-        const finalPrediction = {
-            // DISPLAYED PREDICTION (ALWAYS OPPOSITE)
-            displayedPrediction: oppositePrediction,
-            displayedConfidence: displayedConfidence,
-            
-            // INTERNAL TRACKING (ACTUAL PREDICTION)
-            internalPrediction: internalPrediction.prediction,
-            internalConfidence: internalPrediction.confidence,
-            
-            // METADATA
-            mode: this.mode,
-            safety: safety.score,
-            patterns: Object.keys(patterns),
-            timestamp: Date.now()
-        };
-
-        this.predictionLog.push(finalPrediction);
-        return finalPrediction;
-    }
-
-    // Helper Methods
-    calculateWMA(data) {
-        if (data.length === 0) return 0.5;
-        const numbers = data.map(d => d.number);
-        const totalWeight = numbers.reduce((sum, _, i) => sum + (i + 1), 0);
-        const weightedSum = numbers.reduce((sum, num, i) => sum + (num * (i + 1)), 0);
-        return weightedSum / totalWeight / 10;
-    }
-
-    calculateMomentum(data) {
-        if (data.length < 10) return 50;
-        const bigCount = data.filter(d => d.number > 4).length;
-        return (bigCount / data.length) * 100;
-    }
-
-    calculateFrequency(data) {
-        const bigCount = data.filter(d => d.number > 4).length;
-        const smallCount = data.length - bigCount;
-        return {
-            bigRatio: bigCount / data.length,
-            smallRatio: smallCount / data.length
-        };
-    }
-
-    detectMicroPattern(sequence) {
-        const patterns = {
-            'BBB': 'S', 'SSS': 'B', 'BSB': 'S', 'SBS': 'B',
-            'BBSS': 'B', 'SSBB': 'S', 'BSBS': 'B', 'SBSB': 'S'
-        };
-        
-        const last3 = sequence.slice(0, 3).join('');
-        return patterns[last3] || (Math.random() > 0.5 ? 'B' : 'S');
-    }
-
-    calculateVolatility(data) {
-        if (data.length < 2) return 0;
-        const numbers = data.map(d => d.number);
-        const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
-        const variance = numbers.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / numbers.length;
-        return Math.sqrt(variance);
-    }
-
-    calculateEntropy(data) {
-        if (data.length === 0) return 0;
-        const bigProb = data.filter(d => d.number > 4).length / data.length;
-        const smallProb = 1 - bigProb;
-        
-        if (bigProb === 0 || smallProb === 0) return 0;
-        return - (bigProb * Math.log2(bigProb) + smallProb * Math.log2(smallProb));
-    }
-
-    detectClusterBias(history) {
-        const recent = history.slice(0, 5);
-        const bigBias = recent.filter(d => d.number > 4).length / recent.length;
-        return Math.abs(bigBias - 0.5) * 2;
-    }
-
-    combineInternalPredictions(patterns, infinityPred) {
-        let bigScore = 0;
-        let smallScore = 0;
-        let totalWeight = 0;
-
-        // Add pattern-based predictions
-        Object.values(patterns).forEach(pattern => {
-            if (pattern.prediction) {
-                const weight = this.patternWeights[pattern.strength] || 0.1;
-                if (pattern.prediction === 'BIG') bigScore += weight * pattern.confidence;
-                else smallScore += weight * pattern.confidence;
-                totalWeight += weight * pattern.confidence;
-            }
-        });
-
-        // Add Infinity-Core prediction (internal)
-        const infinityWeight = 0.3;
-        if (infinityPred.size === 'BIG') {
-            bigScore += infinityWeight * (infinityPred.confidence / 100);
-        } else {
-            smallScore += infinityWeight * (infinityPred.confidence / 100);
-        }
-        totalWeight += infinityWeight;
-
-        if (totalWeight === 0) {
-            return { prediction: Math.random() > 0.5 ? 'BIG' : 'SMALL', confidence: 0.5 };
-        }
-
-        const bigProbability = bigScore / totalWeight;
-        const confidence = Math.max(bigProbability, 1 - bigProbability);
-
-        return {
-            prediction: bigProbability > 0.5 ? 'BIG' : 'SMALL',
-            confidence: confidence
-        };
-    }
-
-    generateRandomOpposite() {
-        const randomPred = Math.random() > 0.5 ? 'BIG' : 'SMALL';
-        const opposite = randomPred === 'BIG' ? 'SMALL' : 'BIG';
-        
-        return {
-            displayedPrediction: opposite,
-            displayedConfidence: 90 + Math.random() * 9,
-            internalPrediction: randomPred,
-            internalConfidence: 0.5,
-            mode: 'random',
-            timestamp: Date.now()
-        };
-    }
-
-    // Update pattern weights based on performance
-    updatePatternWeights(lastPred, actualResult) {
-        const wasCorrect = lastPred.internalPrediction === actualResult;
-        const adjustment = wasCorrect ? 1.1 : 0.9;
-        
-        lastPred.patterns.forEach(pattern => {
-            if (this.patternWeights[pattern]) {
-                this.patternWeights[pattern] *= adjustment;
-                this.patternWeights[pattern] = Math.max(0.1, 
-                    Math.min(0.5, this.patternWeights[pattern]));
-            }
-        });
-    }
-}
-
-// Enhanced initialization with opposite prediction focus
-const enhancedPredictor = new EnhancedOppositePredictor();
 
 // Initialize the Infinity-Core AI prediction system
 const infinityCoreAI = new InfinityCoreAI();
@@ -3651,38 +3350,41 @@ async function updatePredictions(currentTime, currentPeriod) {
 
         currentPrediction = finalPrediction;
         lastPredictionPeriod = currentPeriod;
-            // Show prediction message
-            showTyping();
+
+        // Show prediction message
+        showTyping();
+        setTimeout(() => {
+            addMessage('received', createPredictionMessage({
+                prediction: finalPrediction,
+                confidence: finalConfidence
+            }), 'LICUIS ULTRA');
+        }, 1000);
+    }
+}
+
+function updateServerStatus(online) {
+    if (serverOnline !== online) {
+        serverOnline = online;
+        if (online) {
+            connectionStatus.textContent = "Connected to Server";
+            document.querySelector('.status-indicator').className = "status-indicator online";
+            addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> CONNECTION RESTORED</div><p>Server connection reestablished. Resuming normal operations.</p>', 'System');
+        } else {
+            connectionStatus.textContent = "Connecting...";
+            document.querySelector('.status-indicator').className = "status-indicator offline";
+            addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> CONNECTION LOST</div><p>Temporarily lost connection to prediction server. Attempting to reconnect...</p>', 'System');
+        }
+    }
+}
+
+// Initialize the application
+createParticles();
+
+            // Animate the game selection title after page load
             setTimeout(() => {
-                addMessage('received', createPredictionMessage({
-                    prediction: finalPrediction,
-                    confidence: finalConfidence
-                }), 'LICUIS ULTRA');
-            }, 1000);
-        }
-    }
-
-    function updateServerStatus(online) {
-        if (serverOnline !== online) {
-            serverOnline = online;
-            if (online) {
-                connectionStatus.textContent = "Connected to Server";
-                document.querySelector('.status-indicator').className = "status-indicator online";
-                addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> CONNECTION RESTORED</div><p>Server connection reestablished. Resuming normal operations.</p>', 'System');
-            } else {
-                connectionStatus.textContent = "Connecting...";
-                document.querySelector('.status-indicator').className = "status-indicator offline";
-                addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> CONNECTION LOST</div><p>Temporarily lost connection to prediction server. Attempting to reconnect...</p>', 'System');
-            }
-        }
-    }
-
-    // Initialize the application
-    createParticles();
-
-    // Animate the game selection title after page load
-    setTimeout(() => {
-        document.getElementById('gameSelectionTitle').classList.add('animate');
-    }, 500);
-});
-</script>
+                document.getElementById('gameSelectionTitle').classList.add('animate');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
