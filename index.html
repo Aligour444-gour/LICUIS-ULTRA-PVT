@@ -1251,6 +1251,47 @@
             text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
         }
 
+        /* Pattern Analysis Styles */
+        .pattern-analysis {
+            margin-top: 25px;
+        }
+
+        .pattern-count {
+            color: var(--primary);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Model Performance Styles */
+        .model-card {
+            background: rgba(26, 27, 46, 0.9);
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .model-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .model-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .model-accuracy {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
         /* Responsive Adjustments */
         @media (max-width: 1024px) {
             .game-list {
@@ -1418,7 +1459,7 @@
     <div class="logo">
         <div class="logo-icon">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 16.5c0 .83-.67 1.5-1.5 1.5H4.5c-.83 0-1.5-.67-1.5-1.5v-9c0-.83.67-1.5 1.5-1.5h15c.83 0 1.5.67 1.5 1.5v9zM4.5 20h15c.83 0 1.5-.67 1.5-1.5v-9c0-.83-.67-1.5-1.5-1.5h-15c-.83 0-1.5.67-1.5 1.5v9c0 .83.67 1.5 1.5 1.5zm2.5-6h2v2H7v-2zm4 0h2v2h-2v-2zm-4 4h2v2H7v-2zm4 0h2v2h-2v-2zm4-4h2v2h-2v-2zm-8-4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" />
+                <path d="M21 16.5c0 .83-.67 1.5-1.5 1.5H4.5c-.83 0-1.5-.67-1.5-1.5v-9c0-.83.67-1.5 1.5-1.5h15c.83 0 1.5.67 1.5 1.5v9zM4.5 20h15c.83 0 1.5-.67 1.5-1.5v-9c0-.83.67-1.5-1.5-1.5h-15c-.83 0-1.5.67-1.5 1.5v9c0 .83.67 1.5 1.5 1.5zm2.5-6h2v2H7v-2zm4 0h2v2h-2v-2zm-4 4h2v2H7v-2zm4 0h2v2h-2v-2zm4-4h2v2h-2v-2zm-8-4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" />
             </svg>
         </div>
         <div class="logo-text">LICUIS ULTRA V3</div>
@@ -1601,1790 +1642,2267 @@
         </div>
     </div>
 
-    <script>
-// 🔮 LICUIS ULTRA V2: INFINITY-CORE PREDICTION ENGINE 10.0 (Enhanced & Accurate)
-// MODIFIED: ALWAYS SHOW OPPOSITE PREDICTION & OPPOSITE OUTCOME WITH HIGH CONFIDENCE
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // 🌌 INFINITY-CORE PREDICTION ENGINE 9.0 (Wingo / Color Game)
+    // Author: Gemini Pro + Aswath Kumaran + Grok Enhancements + Advanced AI
+    // Features: Self-learning, hyper-aggressive, dynamically weighted AI ensemble with reinforcement
 
-"use strict";
+    class InfinityCoreAI {
+        constructor() {
+            this.history = [];
+            this.modelWeights = {
+                quantumEntanglement: 10,
+                temporalFusion: 9.5,
+                gan: 9.0,
+                neuralNet: 8.5,
+                patternRec: 7.0,
+                aiFusion: 6.5,
+                markov: 6.0,
+                svm: 5.5,
+                frequency: 5.0,
+                sequence: 4.5,
+                momentum: 4.0,
+                zigzag: 3.5,
+                fibonacci: 3.0,
+                parabolicSAR: 2.5,
+                kmeans: 2.0,
+                probabilistic: 1.5,
+                rsi: 1.0,
+                martingale: 0.5,
+                antiMartingale: 0.5,
+                localCluster: 8.0,
+                trendStrength: 7.5,
+                cycleDetection: 9.0,
+                patternMatrix: 9.5,
+                anomalyDetection: 10.0,
+                lstmSim: 10.5,
+                bayesian: 9.8,
+                reinforcement: 10.2,
+                deepLearning: 11.0,
+                transformer: 10.8,
+                attentionNetwork: 11.2,
+                evolutionary: 9.7,
+                swarmIntelligence: 10.3
+            };
+            this.modelPerformance = {};
+            this.predictionCache = new Map();
+            this.initializeModels();
+            this.aggressiveness = 10;
+            this.strategy = 'balanced';
+            this.deepLearningEnabled = true;
+            this.adaptiveModelsEnabled = true;
+            this.learningRate = 0.87;
+            this.consecutiveWins = 0;
+            this.consecutiveLosses = 0;
+            this.lastPrediction = null;
+        }
 
-/**
- * The main class for the Infinity-Core AI prediction engine.
- * Modified to always return opposite predictions and outcomes with high confidence.
- */
-class InfinityCoreAI {
-    constructor() {
-        this.history = [];
-        this.modelWeights = {
-            quantumEntanglement: 10,
-            temporalFusion: 9.5,
-            gan: 9.0,
-            neuralNet: 8.5,
-            patternRec: 7.0,
-            aiFusion: 6.5,
-            markov: 6.0,
-            svm: 5.5,
-            frequency: 5.0,
-            sequence: 4.5,
-            momentum: 4.0,
-            zigzag: 3.5,
-            fibonacci: 3.0,
-            parabolicSAR: 2.5,
-            kmeans: 2.0,
-            probabilistic: 1.5,
-            rsi: 1.0,
-            martingale: 0.5,
-            antiMartingale: 0.5,
-            localCluster: 8.0,
-            trendStrength: 7.5,
-            cycleDetection: 9.0,
-            patternMatrix: 9.5,
-            anomalyDetection: 10.0,
-            lstmSim: 10.5,
-            bayesian: 9.8,
-            reinforcement: 10.2,
-            deepLearning: 11.0,
-            transformer: 10.8,
-            attentionNetwork: 11.2,
-            evolutionary: 9.7,
-            swarmIntelligence: 10.3,
-            geneticAlgorithm: 10.5,
-            bayesianNetwork: 11.0,
-        };
+        initializeModels() {
+            this.models = {
+                momentum: this.MomentumModel(),
+                zigzag: this.ZigZagModel(),
+                frequency: this.FrequencyModel(),
+                sequence: this.SequencePatternModel(),
+                aiFusion: this.AIFusionModel(),
+                markov: this.MarkovChainModel(),
+                fibonacci: this.FibonacciModel(),
+                martingale: this.MartingaleModel(),
+                antiMartingale: this.AntiMartingaleModel(),
+                parabolicSAR: this.ParabolicSARModel(),
+                svm: this.SVMModel(),
+                kmeans: this.KMeansModel(),
+                patternRec: this.PatternRecognitionModel(),
+                neuralNet: this.SimpleNeuralNetModel(),
+                probabilistic: this.ProbabilisticModel(),
+                rsi: this.RSIModel(),
+                quantumEntanglement: this.QuantumEntanglementModel(),
+                gan: this.GANModel(),
+                temporalFusion: this.TemporalFusionModel(),
+                localCluster: this.LocalClusterModel(),
+                trendStrength: this.TrendStrengthModel(),
+                cycleDetection: this.CycleDetectionModel(),
+                patternMatrix: this.PatternMatrixModel(),
+                anomalyDetection: this.AnomalyDetectionModel(),
+                lstmSim: this.LSTMSimModel(),
+                bayesian: this.BayesianModel(),
+                reinforcement: this.ReinforcementModel(),
+                deepLearning: this.DeepLearningModel(),
+                transformer: this.TransformerModel(),
+                attentionNetwork: this.AttentionNetworkModel(),
+                evolutionary: this.EvolutionaryModel(),
+                swarmIntelligence: this.SwarmIntelligenceModel()
+            };
 
-        this.modelPerformance = {};
-        this.predictionCache = new Map();
-        this.consecutiveWins = 0;
-        this.consecutiveLosses = 0;
-        this.lastPrediction = null;
-        this.lastActual = null;
-        this.initializeModels();
-        this.aggressiveness = 10;
-        this.strategy = 'balanced';
-        this.deepLearningEnabled = true;
-        this.adaptiveModelsEnabled = true;
-        this.learningRate = 0.87;
-        this.minHistoryRequired = 5;
-    }
+            for (const modelName in this.models) {
+                this.modelPerformance[modelName] = {
+                    correct: 0,
+                    total: 0,
+                    accuracy: 0,
+                    weight: this.modelWeights[modelName] || 5.0
+                };
+            }
+        }
 
-    initializeModels() {
-        this.models = {
-            momentum: this.MomentumModel(),
-            zigzag: this.ZigZagModel(),
-            frequency: this.FrequencyModel(),
-            sequence: this.SequencePatternModel(),
-            aiFusion: this.AIFusionModel(),
-            markov: this.MarkovChainModel(),
-            fibonacci: this.FibonacciModel(),
-            martingale: this.MartingaleModel(),
-            antiMartingale: this.AntiMartingaleModel(),
-            parabolicSAR: this.ParabolicSARModel(),
-            svm: this.SVMModel(),
-            kmeans: this.KMeansModel(),
-            patternRec: this.PatternRecognitionModel(),
-            neuralNet: this.SimpleNeuralNetModel(),
-            probabilistic: this.ProbabilisticModel(),
-            rsi: this.RSIModel(),
-            quantumEntanglement: this.QuantumEntanglementModel(),
-            gan: this.GANModel(),
-            temporalFusion: this.TemporalFusionModel(),
-            localCluster: this.LocalClusterModel(),
-            trendStrength: this.TrendStrengthModel(),
-            cycleDetection: this.CycleDetectionModel(),
-            patternMatrix: this.PatternMatrixModel(),
-            anomalyDetection: this.AnomalyDetectionModel(),
-            lstmSim: this.LSTMSimModel(),
-            bayesian: this.BayesianModel(),
-            reinforcement: this.ReinforcementModel(),
-            deepLearning: this.DeepLearningModel(),
-            transformer: this.TransformerModel(),
-            attentionNetwork: this.AttentionNetworkModel(),
-            evolutionary: this.EvolutionaryModel(),
-            swarmIntelligence: this.SwarmIntelligenceModel(),
-            geneticAlgorithm: this.GeneticAlgorithmModel(),
-            bayesianNetwork: this.BayesianNetworkModel(),
-        };
+        updateDynamicWeights() {
+            const totalAccuracy = Object.values(this.modelPerformance).reduce((sum, p) => sum + p.accuracy, 0);
+            if (totalAccuracy === 0) return;
 
-        for (const modelName in this.models) {
-            this.modelPerformance[modelName] = {
-                correct: 0,
-                total: 0,
-                accuracy: 0,
-                weight: this.modelWeights[modelName] || 5.0
+            for (const modelName in this.modelWeights) {
+                const performance = this.modelPerformance[modelName];
+                if (performance.total > 0) {
+                    const normalizedAccuracy = performance.accuracy / totalAccuracy;
+                    const baseWeight = Math.pow(normalizedAccuracy * 10, this.aggressiveness / 5);
+
+                    // Apply strategy modifiers
+                    let strategyMultiplier = 1.0;
+                    switch (this.strategy) {
+                        case 'conservative':
+                            strategyMultiplier = 0.8;
+                            break;
+                        case 'aggressive':
+                            strategyMultiplier = 1.2;
+                            break;
+                        case 'trendFollowing':
+                            if (modelName.includes('trend') || modelName.includes('momentum')) {
+                                strategyMultiplier = 1.5;
+                            }
+                            break;
+                        case 'patternRecognition':
+                            if (modelName.includes('pattern') || modelName.includes('sequence')) {
+                                strategyMultiplier = 1.5;
+                            }
+                            break;
+                        case 'quantum':
+                            if (modelName.includes('quantum')) {
+                                strategyMultiplier = 2.0;
+                            }
+                            break;
+                    }
+
+                    this.modelWeights[modelName] = Math.max(0.5, baseWeight * strategyMultiplier);
+
+                    // Apply adaptive learning if enabled
+                    if (this.adaptiveModelsEnabled) {
+                        const adaptation = performance.accuracy > 0.7 ? 1.2 : 0.8;
+                        this.modelWeights[modelName] *= adaptation;
+                    }
+                }
+            }
+        }
+
+        updateModelPerformance(actualSize) {
+            for (const modelName in this.models) {
+                const prediction = this.models[modelName].predict(this.history);
+                if (prediction.size === actualSize) {
+                    this.modelPerformance[modelName].correct++;
+                }
+                this.modelPerformance[modelName].total++;
+                this.modelPerformance[modelName].accuracy =
+                    this.modelPerformance[modelName].correct / this.modelPerformance[modelName].total;
+
+                // Update learning rate based on performance
+                if (this.deepLearningEnabled) {
+                    this.learningRate = 0.7 + (this.modelPerformance[modelName].accuracy * 0.3);
+                }
+            }
+            this.updateDynamicWeights();
+            this.predictionCache.clear();
+        }
+
+        // --- Enhanced AI Models with Aggressive Logic ---
+        MomentumModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 5) return {
+                        size: "BIG",
+                        confidence: 0.5
+                    };
+                    const last = history.slice(0, 5).map(h => h.number > 4 ? 'BIG' : 'SMALL');
+                    const bigs = last.filter(x => x === "BIG").length;
+                    const smalls = last.filter(x => x === "SMALL").length;
+                    if (bigs >= 4) return {
+                        size: "BIG",
+                        confidence: 0.95
+                    };
+                    if (smalls >= 4) return {
+                        size: "SMALL",
+                        confidence: 0.95
+                    };
+                    if (bigs > smalls) return {
+                        size: "BIG",
+                        confidence: 0.8
+                    };
+                    if (smalls > bigs) return {
+                        size: "SMALL",
+                        confidence: 0.8
+                    };
+                    return {
+                        size: last[0],
+                        confidence: 0.6
+                    };
+                }
             };
         }
-    }
 
-    updateDynamicWeights() {
-        const totalAccuracy = Object.values(this.modelPerformance).reduce((sum, p) => sum + p.accuracy, 0);
-        if (totalAccuracy === 0) return;
-
-        for (const modelName in this.modelWeights) {
-            const performance = this.modelPerformance[modelName];
-            if (performance.total > 0) {
-                const normalizedAccuracy = performance.accuracy / totalAccuracy;
-                const baseWeight = Math.pow(normalizedAccuracy * 10, this.aggressiveness / 5);
-
-                let strategyMultiplier = 1.0;
-                switch (this.strategy) {
-                    case 'conservative':
-                        strategyMultiplier = 0.8;
-                        break;
-                    case 'aggressive':
-                        strategyMultiplier = 1.2;
-                        break;
-                    case 'trendFollowing':
-                        if (modelName.includes('trend') || modelName.includes('momentum')) {
-                            strategyMultiplier = 1.5;
-                        }
-                        break;
-                    case 'patternRecognition':
-                        if (modelName.includes('pattern') || modelName.includes('sequence')) {
-                            strategyMultiplier = 1.5;
-                        }
-                        break;
-                    case 'quantum':
-                        if (modelName.includes('quantum')) {
-                            strategyMultiplier = 2.0;
-                        }
-                        break;
+        ZigZagModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 4) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const last = history.slice(0, 4).map(h => h.number > 4 ? 'BIG' : 'SMALL');
+                    const isZigzag = last.every((v, i, arr) => i === 0 || v !== arr[i - 1]);
+                    if (isZigzag) return {
+                        size: last[0] === "BIG" ? "SMALL" : "BIG",
+                        confidence: 0.9
+                    };
+                    const patternBreak = last[0] === last[1] && last[1] !== last[2];
+                    if (patternBreak) return {
+                        size: last[2],
+                        confidence: 0.85
+                    };
+                    return {
+                        size: last[0],
+                        confidence: 0.6
+                    };
                 }
-
-                this.modelWeights[modelName] = Math.max(0.5, baseWeight * strategyMultiplier);
-
-                if (this.adaptiveModelsEnabled) {
-                    const adaptation = performance.accuracy > 0.7 ? 1.2 : 0.8;
-                    this.modelWeights[modelName] *= adaptation;
-                }
-            }
+            };
         }
-    }
 
-    updateModelPerformance(actualSize) {
-        for (const modelName in this.models) {
-            const prediction = this.models[modelName].predict(this.history);
-            if (prediction.size === actualSize) {
-                this.modelPerformance[modelName].correct++;
-            }
-            this.modelPerformance[modelName].total++;
-            this.modelPerformance[modelName].accuracy =
-                this.modelPerformance[modelName].correct / this.modelPerformance[modelName].total;
-
-            if (this.deepLearningEnabled) {
-                this.learningRate = 0.7 + (this.modelPerformance[modelName].accuracy * 0.3);
-            }
+        FrequencyModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const last20 = history.slice(0, 20).map(h => h.number > 4 ? 'BIG' : 'SMALL');
+                    const bigs = last20.filter(x => x === "BIG").length;
+                    const smalls = last20.length - bigs;
+                    if (bigs > smalls * 1.8) return {
+                        size: "SMALL",
+                        confidence: 0.9
+                    };
+                    if (smalls > bigs * 1.8) return {
+                        size: "BIG",
+                        confidence: 0.9
+                    };
+                    if (bigs > smalls) return {
+                        size: "BIG",
+                        confidence: bigs / 20
+                    };
+                    if (smalls > bigs) return {
+                        size: "SMALL",
+                        confidence: smalls / 20
+                    };
+                    return {
+                        size: last20[0],
+                        confidence: 0.5
+                    };
+                }
+            };
         }
-        this.updateDynamicWeights();
-        this.predictionCache.clear();
-    }
 
-    // --- Enhanced AI Models with Accurate Logic ---
-
-    MomentumModel() {
-        const HISTORY_SIZE = 5;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: "BIG", confidence: 0.5 };
-                const last = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 'BIG' : 'SMALL');
-                const bigs = last.filter(x => x === "BIG").length;
-                const smalls = HISTORY_SIZE - bigs;
-                if (bigs >= 4) return { size: "BIG", confidence: 0.95 };
-                if (smalls >= 4) return { size: "SMALL", confidence: 0.95 };
-                if (bigs > smalls) return { size: "BIG", confidence: 0.8 };
-                if (smalls > bigs) return { size: "SMALL", confidence: 0.8 };
-                return { size: last[0], confidence: 0.6 };
-            }
-        };
-    }
-
-    ZigZagModel() {
-        const HISTORY_SIZE = 4;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const last = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 'BIG' : 'SMALL');
-                const isZigzag = last.every((v, i, arr) => i === 0 || v !== arr[i - 1]);
-                if (isZigzag) return { size: last[0] === "BIG" ? "SMALL" : "BIG", confidence: 0.9 };
-                const patternBreak = last[0] === last[1] && last[1] !== last[2];
-                if (patternBreak) return { size: last[2], confidence: 0.85 };
-                return { size: last[0], confidence: 0.6 };
-            }
-        };
-    }
-
-    FrequencyModel() {
-        const HISTORY_SIZE = 20;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const last20 = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 'BIG' : 'SMALL');
-                const bigs = last20.filter(x => x === "BIG").length;
-                const smalls = last20.length - bigs;
-                if (bigs > smalls * 1.8) return { size: "SMALL", confidence: 0.9 };
-                if (smalls > bigs * 1.8) return { size: "BIG", confidence: 0.9 };
-                if (bigs > smalls) return { size: "BIG", confidence: bigs / 20 };
-                if (smalls > bigs) return { size: "SMALL", confidence: smalls / 20 };
-                return { size: last20[0], confidence: 0.5 };
-            }
-        };
-    }
-
-    SequencePatternModel() {
-        const HISTORY_SIZE = 10;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const last = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 'BIG' : 'SMALL').join('');
-                const patterns = {
-                    'BIGBIGBIG': 'SMALL',
-                    'SMALLSMALLSMALL': 'BIG',
-                    'BIGBIGSMALL': 'SMALL',
-                    'SMALLSMALLBIG': 'BIG',
-                    'BIGSMALLBIG': 'SMALL',
-                    'SMALLBIGSMALL': 'BIG'
-                };
-                for (const pattern in patterns) {
-                    if (last.startsWith(pattern)) {
-                        return { size: patterns[pattern], confidence: 0.95 };
-                    }
-                }
-                if (/^(BIGSMALL){2,}BIG$/.test(last)) return { size: "SMALL", confidence: 0.9 };
-                if (/^(SMALLBIG){2,}SMALL$/.test(last)) return { size: "BIG", confidence: 0.9 };
-                return { size: last[0], confidence: 0.6 };
-            }
-        };
-    }
-
-    AIFusionModel() {
-        const HISTORY_SIZE = 10;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const last10 = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 1 : -1);
-                let bias = 0;
-                last10.forEach((val, i) => {
-                    bias += val * (10 - i);
-                });
-                if (bias > 20) return { size: "BIG", confidence: Math.min(0.99, 0.5 + (bias / 50)) };
-                if (bias < -20) return { size: "SMALL", confidence: Math.min(0.99, 0.5 + (Math.abs(bias) / 50)) };
-                if (bias > 0) return { size: "BIG", confidence: 0.5 + (bias / 30) };
-                if (bias < 0) return { size: "SMALL", confidence: 0.5 + (Math.abs(bias) / 30) };
-                return { size: last10[0] > 0 ? 'BIG' : 'SMALL', confidence: 0.6 };
-            }
-        };
-    }
-
-    MarkovChainModel() {
-        const HISTORY_SIZE = 50;
-        const MIN_HISTORY = 10;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                const historySlice = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 'BIG' : 'SMALL');
-                const last = historySlice[0];
-                const transitions = {};
-                for (let i = 1; i < historySlice.length; i++) {
-                    const from = historySlice[i];
-                    const to = historySlice[i - 1];
-                    if (!transitions[from]) transitions[from] = { BIG: 0, SMALL: 0 };
-                    transitions[from][to]++;
-                }
-                if (!transitions[last]) return { size: 'BIG', confidence: 0.5 };
-                const bigProb = transitions[last].BIG / (transitions[last].BIG + transitions[last].SMALL);
-                const smallProb = transitions[last].SMALL / (transitions[last].BIG + transitions[last].SMALL);
-                if (bigProb > smallProb + 0.2) return { size: 'BIG', confidence: Math.min(0.98, bigProb) };
-                if (smallProb > bigProb + 0.2) return { size: 'SMALL', confidence: Math.min(0.98, smallProb) };
-                return { size: last === 'BIG' ? 'SMALL' : 'BIG', confidence: 0.65 };
-            }
-        };
-    }
-
-    FibonacciModel() {
-        const HISTORY_SIZE = 5;
-        const fibSequence = [1, 2, 3, 5, 8];
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const results = [];
-                for (let i = 0; i < Math.min(HISTORY_SIZE, history.length); i++) {
-                    const idx = fibSequence[i] - 1;
-                    if (idx < history.length) {
-                        results.push(history[idx].number > 4 ? 'BIG' : 'SMALL');
-                    }
-                }
-                const bigs = results.filter(x => x === "BIG").length;
-                const smalls = results.length - bigs;
-                if (bigs > smalls) return { size: "BIG", confidence: 0.8 + (bigs / results.length) * 0.15 };
-                if (smalls > bigs) return { size: "SMALL", confidence: 0.8 + (smalls / results.length) * 0.15 };
-                return { size: results[0], confidence: 0.5 };
-            }
-        };
-    }
-
-    MartingaleModel() {
-        const HISTORY_SIZE = 3;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const last = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 'BIG' : 'SMALL');
-                const consecutiveSame = last[0] === last[1] && last[1] === last[2];
-                if (consecutiveSame) return { size: last[0] === 'BIG' ? 'SMALL' : 'BIG', confidence: 0.95 };
-                return { size: last[0], confidence: 0.5 };
-            }
-        };
-    }
-
-    AntiMartingaleModel() {
-        const HISTORY_SIZE = 3;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const last = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 'BIG' : 'SMALL');
-                const isAlternating = last[0] !== last[1] && last[1] !== last[2];
-                if (isAlternating) return { size: last[0], confidence: 0.9 };
-                return { size: last[0] === 'BIG' ? 'SMALL' : 'BIG', confidence: 0.5 };
-            }
-        };
-    }
-
-    ParabolicSARModel() {
-        const HISTORY_SIZE = 20;
-        const MIN_HISTORY = 10;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                const historySlice = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 1 : 0);
-                let trend = 0;
-                let af = 0.02;
-                let ep = historySlice[0];
-                let sar = historySlice[0];
-
-                for (let i = 1; i < historySlice.length; i++) {
-                    if (trend === 1) {
-                        sar = sar + af * (ep - sar);
-                        if (historySlice[i] > ep) {
-                            ep = historySlice[i];
-                            af = Math.min(af + 0.02, 0.2);
-                        }
-                        if (historySlice[i] < sar) {
-                            trend = -1;
-                            sar = ep;
-                            af = 0.02;
-                            ep = historySlice[i];
-                        }
-                    } else {
-                        sar = sar + af * (ep - sar);
-                        if (historySlice[i] < ep) {
-                            ep = historySlice[i];
-                            af = Math.min(af + 0.02, 0.2);
-                        }
-                        if (historySlice[i] > sar) {
-                            trend = 1;
-                            sar = ep;
-                            af = 0.02;
-                            ep = historySlice[i];
+        SequencePatternModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const last = history.slice(0, 10).map(h => h.number > 4 ? 'BIG' : 'SMALL').join('');
+                    const patterns = {
+                        'BIGBIGBIG': 'SMALL',
+                        'SMALLSMALLSMALL': 'BIG',
+                        'BIGBIGSMALL': 'SMALL',
+                        'SMALLSMALLBIG': 'BIG',
+                        'BIGSMALLBIG': 'SMALL',
+                        'SMALLBIGSMALL': 'BIG'
+                    };
+                    for (const pattern in patterns) {
+                        if (last.startsWith(pattern)) {
+                            return {
+                                size: patterns[pattern],
+                                confidence: 0.95
+                            };
                         }
                     }
+                    if (/^(BIGSMALL){2,}BIG$/.test(last)) return {
+                        size: "SMALL",
+                        confidence: 0.9
+                    };
+                    if (/^(SMALLBIG){2,}SMALL$/.test(last)) return {
+                        size: "BIG",
+                        confidence: 0.9
+                    };
+                    return {
+                        size: last[0],
+                        confidence: 0.6
+                    };
                 }
-                return { size: trend === 1 ? 'BIG' : 'SMALL', confidence: 0.8 };
-            }
-        };
-    }
+            };
+        }
 
-    SVMModel() {
-        const HISTORY_SIZE = 10;
-        const MIN_HISTORY = 15;
-        const WEIGHTS = [0.3, 0.25, 0.2, 0.15, 0.1, 0.08, 0.06, 0.04, 0.02, 0.01];
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                const features = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 1 : -1);
-                let sum = features.reduce((acc, curr, i) => acc + curr * (WEIGHTS[i] || 0), 0);
-                return { size: sum > 0 ? 'BIG' : 'SMALL', confidence: Math.min(0.95, 0.5 + Math.abs(sum) * 0.5) };
-            }
-        };
-    }
-
-    KMeansModel() {
-        const HISTORY_SIZE = 20;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const numbers = history.slice(0, HISTORY_SIZE).map(h => h.number);
-                const avg = numbers.reduce((a, b) => a + b, 0) / numbers.length;
-                const cluster1 = numbers.filter(n => n <= avg);
-                const cluster2 = numbers.filter(n => n > avg);
-                if (cluster1.length > cluster2.length * 1.5) {
-                    return { size: 'BIG', confidence: 0.8 };
-                } else if (cluster2.length > cluster1.length * 1.5) {
-                    return { size: 'SMALL', confidence: 0.8 };
-                }
-                return { size: avg > 4.5 ? 'BIG' : 'SMALL', confidence: 0.7 };
-            }
-        };
-    }
-
-    PatternRecognitionModel() {
-        const HISTORY_SIZE = 8;
-        const patterns = {
-            'BBBS': 'BIG', 'SSSB': 'SMALL', 'BBSB': 'SMALL', 'SSBS': 'BIG', 'BSBS': 'BIG', 'SBSB': 'SMALL',
-            'BSSB': 'BIG', 'SBBS': 'SMALL', 'BBBBS': 'BIG', 'SSSSB': 'SMALL', 'BBSBB': 'SMALL', 'SSBSS': 'BIG',
-            'BBSBS': 'BIG', 'SSBSB': 'SMALL', 'BSBBS': 'SMALL', 'SBSSB': 'BIG', 'BBSSB': 'BIG', 'SSBBS': 'SMALL',
-            'BSSSB': 'SMALL', 'BSBSB': 'BIG', 'SBSBS': 'SMALL', 'BSSBS': 'BIG', 'SBSBB': 'SMALL', 'BBBBBS': 'BIG',
-            'SSSSSB': 'SMALL', 'BBBSSS': 'BIG', 'SSSBBB': 'SMALL', 'BBSBBS': 'SMALL', 'SSBSSB': 'BIG',
-            'BSSBSB': 'BIG', 'SBSSBS': 'SMALL', 'BSBSSB': 'SMALL', 'SBSBSS': 'SMALL'
-        };
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const last8 = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 'B' : 'S').join('');
-                for (const pattern in patterns) {
-                    if (last8.includes(pattern)) {
-                        return { size: patterns[pattern] === 'B' ? 'BIG' : 'SMALL', confidence: 0.9 };
-                    }
-                }
-                return { size: last8[0] === 'B' ? 'BIG' : 'SMALL', confidence: 0.6 };
-            }
-        };
-    }
-
-    SimpleNeuralNetModel() {
-        const HISTORY_SIZE = 5;
-        const MIN_HISTORY = 10;
-        const WEIGHTS = [0.4, 0.3, 0.2, 0.08, 0.02];
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                const inputs = history.slice(0, HISTORY_SIZE).map(h => h.number / 10);
-                const hidden = inputs.reduce((sum, input, i) => sum + input * (WEIGHTS[i] || 0), 0);
-                const output = 1 / (1 + Math.exp(-hidden));
-                return { size: output > 0.5 ? 'BIG' : 'SMALL', confidence: Math.abs(output - 0.5) * 2 };
-            }
-        };
-    }
-
-    ProbabilisticModel() {
-        return {
-            predict: (history) => {
-                if (history.length === 0) return { size: 'BIG', confidence: 0.5 };
-                const bigs = history.filter(h => h.number > 4).length;
-                const total = history.length;
-                const bigProb = bigs / total;
-                const smallProb = (total - bigs) / total;
-                const recent = history.slice(0, 10);
-                const recentBigs = recent.filter(h => h.number > 4).length;
-                const recentRatio = recentBigs / recent.length;
-                const adjustedBigProb = (bigProb * 0.7) + (recentRatio * 0.3);
-                const adjustedSmallProb = (smallProb * 0.7) + ((1 - recentRatio) * 0.3);
-                return { size: adjustedBigProb > adjustedSmallProb ? 'BIG' : 'SMALL', confidence: Math.max(adjustedBigProb, adjustedSmallProb) };
-            }
-        };
-    }
-
-    RSIModel() {
-        const HISTORY_SIZE = 14;
-        const MIN_HISTORY = 14;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                const changes = history.slice(0, HISTORY_SIZE).map((h, i) => i > 0 ? h.number - history[i - 1].number : 0);
-                const gains = changes.filter(c => c > 0).reduce((a, b) => a + b, 0);
-                const losses = Math.abs(changes.filter(c => c < 0).reduce((a, b) => a + b, 0));
-                if (losses === 0) return { size: 'SMALL', confidence: 0.95 };
-                const rs = gains / losses;
-                const rsi = 100 - (100 / (1 + rs));
-                if (rsi > 70) return { size: 'SMALL', confidence: 0.9 };
-                if (rsi < 30) return { size: 'BIG', confidence: 0.9 };
-                return { size: history[0].number > 4 ? 'BIG' : 'SMALL', confidence: 0.6 };
-            }
-        };
-    }
-
-    QuantumEntanglementModel() {
-        const MIN_HISTORY = 2;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.98 };
-                const last = history[0].number;
-                const prev = history[1].number;
-                const entanglement = (last * prev) % 10;
-                const probability = (entanglement / 10) * 0.9 + 0.5;
-                return { size: probability > 0.5 ? 'BIG' : 'SMALL', confidence: Math.abs(probability - 0.5) * 2 };
-            }
-        };
-    }
-
-    GANModel() {
-        const HISTORY_SIZE = 10;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.95 };
-                const pattern = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 1 : 0);
-                const ones = pattern.filter(x => x === 1).length;
-                const realPatternScore = 0.7;
-                const generatedPatternScore = ones / pattern.length;
-                const confidence = Math.abs(realPatternScore - generatedPatternScore) * 2;
-                return { size: generatedPatternScore > 0.5 ? 'BIG' : 'SMALL', confidence: Math.min(0.95, confidence) };
-            }
-        };
-    }
-
-    TemporalFusionModel() {
-        const HISTORY_SIZE = 20;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.92 };
-                const shortTerm = history.slice(0, 5);
-                const mediumTerm = history.slice(0, 10);
-                const longTerm = history.slice(0, 20);
-                const shortBig = shortTerm.filter(h => h.number > 4).length;
-                const mediumBig = mediumTerm.filter(h => h.number > 4).length;
-                const longBig = longTerm.filter(h => h.number > 4).length;
-                const shortRatio = shortBig / shortTerm.length;
-                const mediumRatio = mediumBig / mediumTerm.length;
-                const longRatio = longBig / longTerm.length;
-                const fused = (shortRatio * 0.5) + (mediumRatio * 0.3) + (longRatio * 0.2);
-                return { size: fused > 0.5 ? 'BIG' : 'SMALL', confidence: Math.abs(fused - 0.5) * 2 };
-            }
-        };
-    }
-
-    LocalClusterModel() {
-        const HISTORY_SIZE = 10;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const recentNumbers = history.slice(0, HISTORY_SIZE).map(h => h.number);
-                const mean = recentNumbers.reduce((a, b) => a + b, 0) / recentNumbers.length;
-                const stdDev = Math.sqrt(recentNumbers.map(n => Math.pow(n - mean, 2)).reduce((a, b) => a + b, 0) / recentNumbers.length);
-                const lastNum = recentNumbers[0];
-                if (lastNum > mean + stdDev) return { size: 'SMALL', confidence: 0.85 };
-                if (lastNum < mean - stdDev) return { size: 'BIG', confidence: 0.85 };
-                return { size: 'BIG', confidence: 0.5 };
-            }
-        };
-    }
-
-    TrendStrengthModel() {
-        const MIN_HISTORY = 10;
-        const STREAK_LENGTH = 5;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                let bigStreak = 0;
-                let smallStreak = 0;
-                for (const h of history) {
-                    if (h.number > 4) {
-                        bigStreak++;
-                        smallStreak = 0;
-                    } else {
-                        smallStreak++;
-                        bigStreak = 0;
-                    }
-                    if (bigStreak >= STREAK_LENGTH) return { size: 'BIG', confidence: 0.9 };
-                    if (smallStreak >= STREAK_LENGTH) return { size: 'SMALL', confidence: 0.9 };
-                }
-                return { size: 'BIG', confidence: 0.5 };
-            }
-        };
-    }
-
-    CycleDetectionModel() {
-        const HISTORY_SIZE = 20;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const sequence = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 'B' : 'S').join('');
-                const pattern = sequence.slice(0, 5);
-                if (sequence.substring(5, 10) === pattern) {
-                    const next = sequence.substring(10, 15);
-                    const nextPattern = next.split('').reverse().join('');
-                    return { size: nextPattern.includes('B') ? 'BIG' : 'SMALL', confidence: 0.95 };
-                }
-                return { size: 'BIG', confidence: 0.5 };
-            }
-        };
-    }
-
-    PatternMatrixModel() {
-        const HISTORY_SIZE = 30;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const last30 = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 1 : 0);
-                const matrix = [];
-                while (last30.length) matrix.push(last30.splice(0, 5));
-                const patterns = {};
-                matrix.forEach(row => {
-                    const p = row.join('');
-                    patterns[p] = (patterns[p] || 0) + 1;
-                });
-                const mostFrequentPattern = Object.keys(patterns).sort((a, b) => patterns[b] - patterns[a])[0];
-                if (mostFrequentPattern && patterns[mostFrequentPattern] > 2) {
-                    const predictedPattern = mostFrequentPattern.split('').reverse().join('');
-                    return { size: predictedPattern[0] === '1' ? 'BIG' : 'SMALL', confidence: 0.98 };
-                }
-                return { size: 'BIG', confidence: 0.5 };
-            }
-        };
-    }
-
-    AnomalyDetectionModel() {
-        const HISTORY_SIZE = 20;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const bigs = history.slice(0, HISTORY_SIZE).filter(h => h.number > 4).length;
-                const smalls = HISTORY_SIZE - bigs;
-                if (bigs >= 16) return { size: 'SMALL', confidence: 0.99 };
-                if (smalls >= 16) return { size: 'BIG', confidence: 0.99 };
-                return { size: 'BIG', confidence: 0.5 };
-            }
-        };
-    }
-
-    LSTMSimModel() {
-        const HISTORY_SIZE = 20;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.6 };
-                const weights = Array.from({ length: HISTORY_SIZE }, (_, i) => Math.exp(-i / HISTORY_SIZE));
-                const weightedSum = history.slice(0, HISTORY_SIZE).reduce((sum, h, i) => sum + (h.number > 4 ? 1 : -1) * weights[i], 0);
-                const normSum = weightedSum / weights.reduce((a, b) => a + b, 0);
-                return { size: normSum > 0 ? 'BIG' : 'SMALL', confidence: Math.min(0.98, 0.5 + Math.abs(normSum) * 0.5) };
-            }
-        };
-    }
-
-    BayesianModel() {
-        const MIN_HISTORY = 5;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                const priorBig = 0.5;
-                const bigs = history.filter(h => h.number > 4).length;
-                const total = history.length;
-                const likelihoodBig = bigs / total;
-                const posteriorBig = (likelihoodBig * priorBig) / ((likelihoodBig * priorBig) + ((1 - likelihoodBig) * (1 - priorBig)));
-                return { size: posteriorBig > 0.5 ? 'BIG' : 'SMALL', confidence: Math.max(posteriorBig, 1 - posteriorBig) };
-            }
-        };
-    }
-
-    ReinforcementModel() {
-        const MIN_HISTORY = 10;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                let reward = 0;
-                for (let i = 1; i < history.length; i++) {
-                    const prev = history[i].number > 4 ? 1 : -1;
-                    const curr = history[i - 1].number > 4 ? 1 : -1;
-                    reward += prev * curr;
-                }
-                return { size: reward > 0 ? 'BIG' : 'SMALL', confidence: Math.min(0.99, 0.5 + Math.abs(reward / history.length) * 0.5) };
-            }
-        };
-    }
-
-    DeepLearningModel() {
-        const MIN_HISTORY = 15;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                const layers = [
-                    history.slice(0, 15).map(h => h.number > 4 ? 1 : 0),
-                    Array(10).fill(0),
-                    Array(5).fill(0),
-                    Array(2).fill(0)
-                ];
-                for (let l = 1; l < layers.length; l++) {
-                    for (let n = 0; n < layers[l].length; n++) {
-                        let sum = 0;
-                        for (let p = 0; p < layers[l - 1].length; p++) {
-                            sum += layers[l - 1][p] * (Math.sin(p * n) * 0.5 + 0.5);
-                        }
-                        layers[l][n] = 1 / (1 + Math.exp(-sum));
-                    }
-                }
-                const output = layers[layers.length - 1];
-                const bigProbability = output[0];
-                const smallProbability = output[1];
-                return { size: bigProbability > smallProbability ? 'BIG' : 'SMALL', confidence: Math.max(bigProbability, smallProbability) * 100 };
-            }
-        };
-    }
-
-    TransformerModel() {
-        const HISTORY_SIZE = 10;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const sequence = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 1 : -1);
-                let attentionWeights = [];
-                for (let i = 0; i < sequence.length; i++) {
-                    attentionWeights[i] = Math.exp(sequence[i] * (i + 1) / 10);
-                }
-                const sum = attentionWeights.reduce((a, b) => a + b, 0);
-                attentionWeights = attentionWeights.map(w => w / sum);
-                let weightedSum = 0;
-                for (let i = 0; i < sequence.length; i++) {
-                    weightedSum += sequence[i] * attentionWeights[i];
-                }
-                return { size: weightedSum > 0 ? 'BIG' : 'SMALL', confidence: Math.min(0.99, 0.5 + Math.abs(weightedSum) * 0.5) };
-            }
-        };
-    }
-
-    AttentionNetworkModel() {
-        const HISTORY_SIZE = 12;
-        return {
-            predict: (history) => {
-                if (history.length < HISTORY_SIZE) return { size: 'BIG', confidence: 0.5 };
-                const keys = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 1 : 0);
-                const queries = history.slice(0, 6).map(h => h.number > 4 ? 1 : 0);
-                const values = history.slice(0, HISTORY_SIZE).map(h => h.number > 4 ? 1 : -1);
-                let attentionScores = [];
-                for (let i = 0; i < queries.length; i++) {
-                    for (let j = 0; j < keys.length; j++) {
-                        attentionScores.push(queries[i] * keys[j] / Math.sqrt(keys.length));
-                    }
-                }
-                const maxScore = Math.max(...attentionScores);
-                const expScores = attentionScores.map(s => Math.exp(s - maxScore));
-                const sumExp = expScores.reduce((a, b) => a + b, 0);
-                const attentionWeights = expScores.map(score => score / sumExp);
-                let output = values.reduce((sum, val, i) => sum + val * (attentionWeights[i] || 0), 0);
-                return { size: output > 0 ? 'BIG' : 'SMALL', confidence: Math.min(0.99, 0.5 + Math.abs(output) * 0.5) };
-            }
-        };
-    }
-
-    EvolutionaryModel() {
-        const MIN_HISTORY = 20;
-        const POPULATION_SIZE = 5;
-        const EVALUATION_HISTORY = 10;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                let population = [];
-                for (let i = 0; i < POPULATION_SIZE; i++) {
-                    population.push({
-                        strategy: Math.random() > 0.5 ? 'momentum' : 'reversal',
-                        threshold: 0.5 + Math.random() * 0.4,
-                        weight: Math.random()
+        AIFusionModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const last10 = history.slice(0, 10).map(h => h.number > 4 ? 1 : -1);
+                    let bias = 0;
+                    last10.forEach((val, i) => {
+                        bias += val * (10 - i);
                     });
+                    if (bias > 20) return {
+                        size: "BIG",
+                        confidence: Math.min(0.99, 0.5 + (bias / 50))
+                    };
+                    if (bias < -20) return {
+                        size: "SMALL",
+                        confidence: Math.min(0.99, 0.5 + (Math.abs(bias) / 50))
+                    };
+                    if (bias > 0) return {
+                        size: "BIG",
+                        confidence: 0.5 + (bias / 30)
+                    };
+                    if (bias < 0) return {
+                        size: "SMALL",
+                        confidence: 0.5 + (Math.abs(bias) / 30)
+                    };
+                    return {
+                        size: last10[0] > 0 ? 'BIG' : 'SMALL',
+                        confidence: 0.6
+                    };
                 }
-                for (let individual of population) {
-                    let correct = 0;
-                    let total = Math.min(EVALUATION_HISTORY, history.length - 1);
-                    for (let i = 0; i < total; i++) {
-                        const actual = history[i].number > 4 ? 'BIG' : 'SMALL';
-                        let predicted;
-                        const prev = history[i + 1].number > 4 ? 'BIG' : 'SMALL';
-                        predicted = individual.strategy === 'momentum' ? prev : (prev === 'BIG' ? 'SMALL' : 'BIG');
-                        if (predicted === actual) correct++;
+            };
+        }
+
+        MarkovChainModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const historySlice = history.slice(0, 50).map(h => h.number > 4 ? 'BIG' : 'SMALL');
+                    const last = historySlice[0];
+                    const transitions = {};
+                    for (let i = 1; i < historySlice.length; i++) {
+                        const from = historySlice[i];
+                        const to = historySlice[i - 1];
+                        if (!transitions[from]) transitions[from] = {
+                            BIG: 0,
+                            SMALL: 0
+                        };
+                        transitions[from][to]++;
                     }
-                    individual.fitness = correct / total;
+                    if (!transitions[last]) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const bigProb = transitions[last].BIG / (transitions[last].BIG + transitions[last].SMALL);
+                    const smallProb = transitions[last].SMALL / (transitions[last].BIG + transitions[last].SMALL);
+                    if (bigProb > smallProb + 0.2) return {
+                        size: 'BIG',
+                        confidence: Math.min(0.98, bigProb)
+                    };
+                    if (smallProb > bigProb + 0.2) return {
+                        size: 'SMALL',
+                        confidence: Math.min(0.98, smallProb)
+                    };
+                    return {
+                        size: last === 'BIG' ? 'SMALL' : 'BIG',
+                        confidence: 0.65
+                    };
                 }
-                population.sort((a, b) => b.fitness - a.fitness);
-                const best = population[0];
-                const prediction = history[0].number > 4 ? (best.strategy === 'momentum' ? 'BIG' : 'SMALL') : (best.strategy === 'momentum' ? 'SMALL' : 'BIG');
-                return { size: prediction, confidence: best.fitness * 100 };
-            }
-        };
-    }
+            };
+        }
 
-    SwarmIntelligenceModel() {
-        const MIN_HISTORY = 15;
-        const PARTICLES = 10;
-        const ITERATIONS = 5;
-        const HISTORY_SIZE = 10;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-                let positions = Array(PARTICLES).fill(0).map(() => Math.random() * 2 - 1);
-                let velocities = Array(PARTICLES).fill(0).map(() => Math.random() * 0.2 - 0.1);
-                let personalBests = [...positions];
-                let personalBestScores = Array(PARTICLES).fill(0);
-                let globalBest = 0;
-                let globalBestScore = -Infinity;
-                for (let iter = 0; iter < ITERATIONS; iter++) {
-                    for (let i = 0; i < PARTICLES; i++) {
-                        let score = 0;
-                        const threshold = 1 / (1 + Math.exp(-positions[i]));
-                        for (let j = 1; j < Math.min(HISTORY_SIZE, history.length); j++) {
-                            const actual = history[j - 1].number > 4 ? 'BIG' : 'SMALL';
-                            const predicted = history[j].number > 4 ? (Math.random() < threshold ? 'BIG' : 'SMALL') : (Math.random() < threshold ? 'SMALL' : 'BIG');
-                            if (predicted === actual) score++;
+        FibonacciModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 5) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const fibSequence = [1, 2, 3, 5, 8];
+                    const results = [];
+                    for (let i = 0; i < Math.min(5, history.length); i++) {
+                        const idx = fibSequence[i] - 1;
+                        if (idx < history.length) {
+                            results.push(history[idx].number > 4 ? 'BIG' : 'SMALL');
                         }
-                        if (score > personalBestScores[i]) {
-                            personalBestScores[i] = score;
-                            personalBests[i] = positions[i];
-                        }
-                        if (score > globalBestScore) {
-                            globalBestScore = score;
-                            globalBest = positions[i];
-                        }
-                        velocities[i] = 0.7 * velocities[i] + 0.2 * Math.random() * (personalBests[i] - positions[i]) + 0.1 * Math.random() * (globalBest - positions[i]);
-                        positions[i] += velocities[i];
-                        positions[i] = Math.min(5, Math.max(-5, positions[i]));
                     }
+                    const bigs = results.filter(x => x === "BIG").length;
+                    const smalls = results.length - bigs;
+                    if (bigs > smalls) return {
+                        size: "BIG",
+                        confidence: 0.8 + (bigs / results.length) * 0.15
+                    };
+                    if (smalls > bigs) return {
+                        size: "SMALL",
+                        confidence: 0.8 + (smalls / results.length) * 0.15
+                    };
+                    return {
+                        size: results[0],
+                        confidence: 0.5
+                    };
                 }
-                const threshold = 1 / (1 + Math.exp(-globalBest));
-                const lastNumber = history[0].number;
-                const prediction = lastNumber > 4 ? (Math.random() < threshold ? 'BIG' : 'SMALL') : (Math.random() < threshold ? 'SMALL' : 'BIG');
-                return { size: prediction, confidence: globalBestScore / HISTORY_SIZE * 100 };
-            }
-        };
-    }
+            };
+        }
 
-    GeneticAlgorithmModel() {
-        const MIN_HISTORY = 20;
-        const POPULATION_SIZE = 10;
-        const MUTATION_RATE = 0.1;
-        const generations = 5;
+        MartingaleModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 3) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const last = history.slice(0, 3).map(h => h.number > 4 ? 'BIG' : 'SMALL');
+                    const consecutiveSame = last[0] === last[1] && last[1] === last[2];
+                    if (consecutiveSame) return {
+                        size: last[0] === 'BIG' ? 'SMALL' : 'BIG',
+                        confidence: 0.95
+                    };
+                    return {
+                        size: last[0],
+                        confidence: 0.5
+                    };
+                }
+            };
+        }
 
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
+        AntiMartingaleModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 3) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const last = history.slice(0, 3).map(h => h.number > 4 ? 'BIG' : 'SMALL');
+                    const isAlternating = last[0] !== last[1] && last[1] !== last[2];
+                    if (isAlternating) return {
+                        size: last[0],
+                        confidence: 0.9
+                    };
+                    return {
+                        size: last[0] === 'BIG' ? 'SMALL' : 'BIG',
+                        confidence: 0.5
+                    };
+                }
+            };
+        }
 
-                const createIndividual = () => ({
-                    strategy: Math.random() > 0.5 ? 'trend' : 'reversal',
-                    weight: Math.random()
-                });
+        ParabolicSARModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const historySlice = history.slice(0, 20).map(h => h.number > 4 ? 1 : 0);
+                    let trend = 0;
+                    let af = 0.02;
+                    let ep = historySlice[0];
+                    let sar = historySlice[0];
 
-                let population = Array.from({ length: POPULATION_SIZE }, () => createIndividual());
-
-                for (let g = 0; g < generations; g++) {
-                    population = population.map(individual => {
-                        let score = 0;
-                        for (let i = 1; i < history.length; i++) {
-                            const prev = history[i].number > 4 ? 'BIG' : 'SMALL';
-                            const actual = history[i - 1].number > 4 ? 'BIG' : 'SMALL';
-                            const prediction = individual.strategy === 'trend' ? prev : (prev === 'BIG' ? 'SMALL' : 'BIG');
-                            if (prediction === actual) {
-                                score += 1;
+                    for (let i = 1; i < historySlice.length; i++) {
+                        if (trend === 1) {
+                            sar = sar + af * (ep - sar);
+                            if (historySlice[i] > ep) {
+                                ep = historySlice[i];
+                                af = Math.min(af + 0.02, 0.2);
+                            }
+                            if (historySlice[i] < sar) {
+                                trend = -1;
+                                sar = ep;
+                                af = 0.02;
+                                ep = historySlice[i];
+                            }
+                        } else {
+                            sar = sar + af * (ep - sar);
+                            if (historySlice[i] < ep) {
+                                ep = historySlice[i];
+                                af = Math.min(af + 0.02, 0.2);
+                            }
+                            if (historySlice[i] > sar) {
+                                trend = 1;
+                                sar = ep;
+                                af = 0.02;
+                                ep = historySlice[i];
                             }
                         }
-                        return { ...individual, fitness: score / history.length };
-                    });
-
-                    population.sort((a, b) => b.fitness - a.fitness);
-
-                    const newPopulation = [];
-                    newPopulation.push(population[0], population[1]);
-
-                    while (newPopulation.length < POPULATION_SIZE) {
-                        const parent1 = population[Math.floor(Math.random() * 2)];
-                        const parent2 = population[Math.floor(Math.random() * 2) + 1];
-
-                        const child = {
-                            strategy: Math.random() > 0.5 ? parent1.strategy : parent2.strategy,
-                            weight: (parent1.weight + parent2.weight) / 2
-                        };
-
-                        if (Math.random() < MUTATION_RATE) {
-                            child.strategy = child.strategy === 'trend' ? 'reversal' : 'trend';
-                        }
-                        newPopulation.push(child);
                     }
-                    population = newPopulation;
+
+                    return {
+                        size: trend === 1 ? 'BIG' : 'SMALL',
+                        confidence: 0.8
+                    };
                 }
-
-                const best = population[0];
-                const lastResult = history[0].number > 4 ? 'BIG' : 'SMALL';
-                const prediction = best.strategy === 'trend' ? lastResult : (lastResult === 'BIG' ? 'SMALL' : 'BIG');
-                return {
-                    size: prediction,
-                    confidence: best.fitness * 100
-                };
-            }
-        };
-    }
-
-    BayesianNetworkModel() {
-        const MIN_HISTORY = 10;
-        return {
-            predict: (history) => {
-                if (history.length < MIN_HISTORY) return { size: 'BIG', confidence: 0.5 };
-
-                const probabilities = {};
-                for (let i = 1; i < history.length; i++) {
-                    const prev = history[i].number > 4 ? 'BIG' : 'SMALL';
-                    const current = history[i - 1].number > 4 ? 'BIG' : 'SMALL';
-                    if (!probabilities[prev]) {
-                        probabilities[prev] = { BIG: 0, SMALL: 0 };
-                    }
-                    probabilities[prev][current]++;
-                }
-
-                for (const state in probabilities) {
-                    const total = probabilities[state].BIG + probabilities[state].SMALL;
-                    if (total > 0) {
-                        probabilities[state].BIG /= total;
-                        probabilities[state].SMALL /= total;
-                    }
-                }
-
-                const lastResult = history[0].number > 4 ? 'BIG' : 'SMALL';
-                const likelihoodGivenBig = probabilities['BIG'] ? probabilities['BIG'][lastResult] : 0.5;
-                const likelihoodGivenSmall = probabilities['SMALL'] ? probabilities['SMALL'][lastResult] : 0.5;
-                const priorBig = history.filter(h => h.number > 4).length / history.length;
-
-                const posteriorBig = (likelihoodGivenBig * priorBig) / ((likelihoodGivenBig * priorBig) + (likelihoodGivenSmall * (1 - priorBig)));
-                const posteriorSmall = 1 - posteriorBig;
-
-                return {
-                    size: posteriorBig > posteriorSmall ? 'BIG' : 'SMALL',
-                    confidence: Math.max(posteriorBig, posteriorSmall) * 100
-                };
-            }
-        };
-    }
-
-    /**
-     * Generates a prediction based on the current history - ALWAYS RETURNS OPPOSITE
-     */
-    async generatePrediction(history) {
-        if (history.length < this.minHistoryRequired) {
-            return {
-                size: "BIG",
-                confidence: 95, // HIGH CONFIDENCE
-                insufficientData: true
             };
         }
 
-        this.history = history;
-        const historyKey = history.map(h => h.number).join(',');
-        if (this.predictionCache.has(historyKey)) {
-            return this.predictionCache.get(historyKey);
+        SVMModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 15) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const features = [];
+                    for (let i = 0; i < Math.min(10, history.length); i++) {
+                        features.push(history[i].number > 4 ? 1 : -1);
+                    }
+                    const weights = [0.3, 0.25, 0.2, 0.15, 0.1, 0.08, 0.06, 0.04, 0.02, 0.01];
+                    let sum = 0;
+                    for (let i = 0; i < features.length; i++) {
+                        sum += features[i] * (weights[i] || 0);
+                    }
+                    return {
+                        size: sum > 0 ? 'BIG' : 'SMALL',
+                        confidence: Math.min(0.95, 0.5 + Math.abs(sum) * 0.5)
+                    };
+                }
+            };
         }
 
-        const startTime = performance.now();
-        const modelPredictions = {};
-
-        for (const modelName in this.models) {
-            if (!this.deepLearningEnabled && modelName.includes('deepLearning')) continue;
-            modelPredictions[modelName] = this.models[modelName].predict(history);
+        KMeansModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 20) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const numbers = history.slice(0, 20).map(h => h.number);
+                    const avg = numbers.reduce((a, b) => a + b, 0) / numbers.length;
+                    const cluster1 = numbers.filter(n => n <= avg);
+                    const cluster2 = numbers.filter(n => n > avg);
+                    if (cluster1.length > cluster2.length * 1.5) {
+                        return {
+                            size: 'BIG',
+                            confidence: 0.8
+                        };
+                    } else if (cluster2.length > cluster1.length * 1.5) {
+                        return {
+                            size: 'SMALL',
+                            confidence: 0.8
+                        };
+                    }
+                    return {
+                        size: avg > 4.5 ? 'BIG' : 'SMALL',
+                        confidence: 0.7
+                    };
+                }
+            };
         }
 
-        let prediction = this.ensemblePredict(modelPredictions);
+        PatternRecognitionModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 8) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const last8 = history.slice(0, 8).map(h => h.number > 4 ? 'B' : 'S').join('');
+                    const patterns = {
+                        'BBBS': 'BIG',
+                        'SSSB': 'SMALL',
+                        'BBSB': 'SMALL',
+                        'SSBS': 'BIG',
+                        'BSBS': 'BIG',
+                        'SBSB': 'SMALL',
+                        'BSSB': 'BIG',
+                        'SBBS': 'SMALL'
+                    };
+                    for (const pattern in patterns) {
+                        if (last8.includes(pattern)) {
+                            return {
+                                size: patterns[pattern],
+                                confidence: 0.9
+                            };
+                        }
+                    }
+                    return {
+                        size: last8[0] === 'B' ? 'BIG' : 'SMALL',
+                        confidence: 0.6
+                    };
+                }
+            };
+        }
 
-        // ALWAYS RETURN OPPOSITE WITH HIGH CONFIDENCE
-        const oppositePrediction = prediction.size === 'BIG' ? 'SMALL' : 'BIG';
-        const highConfidence = 95 + Math.random() * 4; // 95-99% confidence
+        SimpleNeuralNetModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const inputs = history.slice(0, 5).map(h => h.number / 10);
+                    let hidden = inputs.reduce((sum, input, i) => sum + input * [0.4, 0.3, 0.2, 0.08, 0.02][i], 0);
+                    const output = 1 / (1 + Math.exp(-hidden));
+                    return {
+                        size: output > 0.5 ? 'BIG' : 'SMALL',
+                        confidence: Math.abs(output - 0.5) * 2
+                    };
+                }
+            };
+        }
 
-        const finalPrediction = {
-            size: oppositePrediction,
-            confidence: highConfidence.toFixed(2),
-            originalPrediction: prediction.size, // Store original for internal use only
-            originalConfidence: prediction.confidence
-        };
+        ProbabilisticModel() {
+            return {
+                predict: (history) => {
+                    if (history.length === 0) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const bigs = history.filter(h => h.number > 4).length;
+                    const smalls = history.length - bigs;
+                    const bigProb = bigs / history.length;
+                    const smallProb = smalls / history.length;
+                    const recent = history.slice(0, 10);
+                    const recentBigs = recent.filter(h => h.number > 4).length;
+                    const recentRatio = recentBigs / recent.length;
+                    const adjustedBigProb = (bigProb * 0.7) + (recentRatio * 0.3);
+                    const adjustedSmallProb = (smallProb * 0.7) + ((1 - recentRatio) * 0.3);
+                    return {
+                        size: adjustedBigProb > adjustedSmallProb ? 'BIG' : 'SMALL',
+                        confidence: Math.max(adjustedBigProb, adjustedSmallProb)
+                    };
+                }
+            };
+        }
 
-        const endTime = performance.now();
-        document.getElementById('prediction-speed').textContent = `${Math.round(endTime - startTime)}ms`;
-        this.predictionCache.set(historyKey, finalPrediction);
-        return finalPrediction;
-    }
+        RSIModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 14) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const changes = history.slice(0, 15).map((h, i) => i > 0 ? h.number - history[i - 1].number : 0);
+                    const gains = changes.filter(c => c > 0).reduce((a, b) => a + b, 0);
+                    const losses = Math.abs(changes.filter(c => c < 0).reduce((a, b) => a + b, 0));
+                    if (losses === 0) return {
+                        size: 'SMALL',
+                        confidence: 0.95
+                    };
+                    const rs = gains / losses;
+                    const rsi = 100 - (100 / (1 + rs));
+                    if (rsi > 70) return {
+                        size: 'SMALL',
+                        confidence: 0.9
+                    };
+                    if (rsi < 30) return {
+                        size: 'BIG',
+                        confidence: 0.9
+                    };
+                    return {
+                        size: history[0].number > 4 ? 'BIG' : 'SMALL',
+                        confidence: 0.6
+                    };
+                }
+            };
+        }
 
-    /**
-     * Combines predictions from all models - INTERNALLY USED, NOT DISPLAYED
-     */
-    ensemblePredict(predictions) {
-        const votes = { BIG: 0, SMALL: 0 };
-        const aggressivenessFactor = this.aggressiveness / 10;
-        for (const modelName in predictions) {
-            const pred = predictions[modelName];
-            if (pred.size) {
-                const weight = this.modelWeights[modelName] * Math.pow(pred.confidence, aggressivenessFactor);
-                votes[pred.size] += weight;
+        QuantumEntanglementModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 2) return {
+                        size: 'BIG',
+                        confidence: 0.98
+                    };
+                    const last = history[0].number;
+                    const prev = history[1].number;
+                    const entanglement = (last * prev) % 10;
+                    const probability = (entanglement / 10) * 0.9 + 0.5;
+                    return {
+                        size: probability > 0.5 ? 'BIG' : 'SMALL',
+                        confidence: Math.abs(probability - 0.5) * 2
+                    };
+                }
+            };
+        }
+
+        GANModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.95
+                    };
+                    const pattern = history.slice(0, 10).map(h => h.number > 4 ? 1 : 0);
+                    const ones = pattern.filter(x => x === 1).length;
+                    const zeros = pattern.length - ones;
+                    const realPatternScore = 0.7;
+                    const generatedPatternScore = ones / pattern.length;
+                    const confidence = Math.abs(realPatternScore - generatedPatternScore) * 2;
+                    return {
+                        size: generatedPatternScore > 0.5 ? 'BIG' : 'SMALL',
+                        confidence: Math.min(0.95, confidence)
+                    };
+                }
+            };
+        }
+
+        TemporalFusionModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 20) return {
+                        size: 'BIG',
+                        confidence: 0.92
+                    };
+                    const shortTerm = history.slice(0, 5);
+                    const mediumTerm = history.slice(0, 10);
+                    const longTerm = history.slice(0, 20);
+                    const shortBig = shortTerm.filter(h => h.number > 4).length;
+                    const mediumBig = mediumTerm.filter(h => h.number > 4).length;
+                    const longBig = longTerm.filter(h => h.number > 4).length;
+                    const shortRatio = shortBig / shortTerm.length;
+                    const mediumRatio = mediumBig / mediumTerm.length;
+                    const longRatio = longBig / longTerm.length;
+                    const fused = (shortRatio * 0.5) + (mediumRatio * 0.3) + (longRatio * 0.2);
+                    return {
+                        size: fused > 0.5 ? 'BIG' : 'SMALL',
+                        confidence: Math.abs(fused - 0.5) * 2
+                    };
+                }
+            };
+        }
+
+        LocalClusterModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const recentNumbers = history.slice(0, 10).map(h => h.number);
+                    const mean = recentNumbers.reduce((a, b) => a + b, 0) / recentNumbers.length;
+                    const stdDev = Math.sqrt(recentNumbers.map(n => Math.pow(n - mean, 2)).reduce((a, b) => a + b, 0) / recentNumbers.length);
+                    const lastNum = recentNumbers[0];
+                    if (lastNum > mean + stdDev) return {
+                        size: 'SMALL',
+                        confidence: 0.85
+                    };
+                    if (lastNum < mean - stdDev) return {
+                        size: 'BIG',
+                        confidence: 0.85
+                    };
+                    return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                }
+            };
+        }
+
+        TrendStrengthModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    let bigStreak = 0;
+                    let smallStreak = 0;
+                    for (const h of history) {
+                        if (h.number > 4) {
+                            bigStreak++;
+                            smallStreak = 0;
+                        } else {
+                            smallStreak++;
+                            bigStreak = 0;
+                        }
+                        if (bigStreak >= 5) return {
+                            size: 'BIG',
+                            confidence: 0.9
+                        };
+                        if (smallStreak >= 5) return {
+                            size: 'SMALL',
+                            confidence: 0.9
+                        };
+                    }
+                    return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                }
+            };
+        }
+
+        CycleDetectionModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 20) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const sequence = history.slice(0, 20).map(h => h.number > 4 ? 'B' : 'S').join('');
+                    const pattern = sequence.slice(0, 5);
+                    if (sequence.substring(5, 10) === pattern) {
+                        const next = sequence.substring(10, 15);
+                        const nextPattern = next.split('').reverse().join('');
+                        return {
+                            size: nextPattern.includes('B') ? 'BIG' : 'SMALL',
+                            confidence: 0.95
+                        };
+                    }
+                    return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                }
+            };
+        }
+
+        PatternMatrixModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 30) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const last30 = history.slice(0, 30).map(h => h.number > 4 ? 1 : 0);
+                    const matrix = [];
+                    while (last30.length) matrix.push(last30.splice(0, 5));
+
+                    const patterns = {};
+                    matrix.forEach(row => {
+                        const p = row.join('');
+                        patterns[p] = (patterns[p] || 0) + 1;
+                    });
+
+                    const mostFrequentPattern = Object.keys(patterns).sort((a, b) => patterns[b] - patterns[a])[0];
+                    if (mostFrequentPattern && patterns[mostFrequentPattern] > 2) {
+                        const predictedPattern = mostFrequentPattern.split('').reverse().join('');
+                        return {
+                            size: predictedPattern[0] === '1' ? 'BIG' : 'SMALL',
+                            confidence: 0.98
+                        };
+                    }
+
+                    return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                }
+            };
+        }
+
+        AnomalyDetectionModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 20) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const bigs = history.slice(0, 20).filter(h => h.number > 4).length;
+                    const smalls = 20 - bigs;
+
+                    if (bigs >= 16) return {
+                        size: 'SMALL',
+                        confidence: 0.99
+                    };
+                    if (smalls >= 16) return {
+                        size: 'BIG',
+                        confidence: 0.99
+                    };
+
+                    return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                }
+            };
+        }
+
+        LSTMSimModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 20) return {
+                        size: 'BIG',
+                        confidence: 0.6
+                    };
+                    const weights = Array.from({
+                        length: 20
+                    }, (_, i) => Math.exp(-i / 20));
+                    const weightedSum = history.slice(0, 20).reduce((sum, h, i) => sum + (h.number > 4 ? 1 : -1) * weights[i], 0);
+                    const normSum = weightedSum / weights.reduce((a, b) => a + b, 0);
+                    return {
+                        size: normSum > 0 ? 'BIG' : 'SMALL',
+                        confidence: Math.min(0.98, 0.5 + Math.abs(normSum) * 0.5)
+                    };
+                }
+            };
+        }
+
+        BayesianModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 5) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    const priorBig = 0.5;
+                    const bigs = history.filter(h => h.number > 4).length;
+                    const total = history.length;
+                    const likelihoodBig = bigs / total;
+                    const posteriorBig = (likelihoodBig * priorBig) / ((likelihoodBig * priorBig) + ((1 - likelihoodBig) * (1 - priorBig)));
+                    return {
+                        size: posteriorBig > 0.5 ? 'BIG' : 'SMALL',
+                        confidence: Math.max(posteriorBig, 1 - posteriorBig)
+                    };
+                }
+            };
+        }
+
+        ReinforcementModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+                    let reward = 0;
+                    for (let i = 1; i < history.length; i++) {
+                        const prev = history[i].number > 4 ? 1 : -1;
+                        const curr = history[i - 1].number > 4 ? 1 : -1;
+                        reward += prev * curr;
+                    }
+                    return {
+                        size: reward > 0 ? 'BIG' : 'SMALL',
+                        confidence: Math.min(0.99, 0.5 + Math.abs(reward / history.length) * 0.5)
+                    };
+                }
+            };
+        }
+
+        DeepLearningModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 15) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+
+                    // Simulate a deep learning model with multiple layers
+                    const layers = [
+                        history.slice(0, 15).map(h => h.number > 4 ? 1 : 0),
+                        Array(10).fill(0),
+                        Array(5).fill(0),
+                        Array(2).fill(0)
+                    ];
+
+                    // Simulate forward propagation with random weights (in a real implementation, these would be trained)
+                    for (let l = 1; l < layers.length; l++) {
+                        for (let n = 0; n < layers[l].length; n++) {
+                            let sum = 0;
+                            for (let p = 0; p < layers[l - 1].length; p++) {
+                                sum += layers[l - 1][p] * (Math.sin(p * n) * 0.5 + 0.5);
+                            }
+                            layers[l][n] = 1 / (1 + Math.exp(-sum)); // Sigmoid activation
+                        }
+                    }
+
+                    const output = layers[layers.length - 1];
+                    const bigProbability = output[0];
+                    const smallProbability = output[1];
+
+                    return {
+                        size: bigProbability > smallProbability ? 'BIG' : 'SMALL',
+                        confidence: Math.max(bigProbability, smallProbability) * 100
+                    };
+                }
+            };
+        }
+
+        TransformerModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 10) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+
+                    // Simulate transformer attention mechanism
+                    const sequence = history.slice(0, 10).map(h => h.number > 4 ? 1 : -1);
+                    let attentionWeights = [];
+
+                    // Calculate attention weights (simplified)
+                    for (let i = 0; i < sequence.length; i++) {
+                        attentionWeights[i] = Math.exp(sequence[i] * (i + 1) / 10);
+                    }
+
+                    // Normalize attention weights
+                    const sum = attentionWeights.reduce((a, b) => a + b, 0);
+                    attentionWeights = attentionWeights.map(w => w / sum);
+
+                    // Apply attention
+                    let weightedSum = 0;
+                    for (let i = 0; i < sequence.length; i++) {
+                        weightedSum += sequence[i] * attentionWeights[i];
+                    }
+
+                    return {
+                        size: weightedSum > 0 ? 'BIG' : 'SMALL',
+                        confidence: Math.min(0.99, 0.5 + Math.abs(weightedSum) * 0.5)
+                    };
+                }
+            };
+        }
+
+        AttentionNetworkModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 12) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+
+                    // Simulate a more complex attention mechanism
+                    const keys = history.slice(0, 12).map(h => h.number > 4 ? 1 : 0);
+                    const queries = history.slice(0, 6).map(h => h.number > 4 ? 1 : 0);
+                    const values = history.slice(0, 12).map(h => h.number > 4 ? 1 : -1);
+
+                    // Calculate attention scores (simplified)
+                    let attentionScores = [];
+                    for (let i = 0; i < queries.length; i++) {
+                        for (let j = 0; j < keys.length; j++) {
+                            const score = queries[i] * keys[j] / Math.sqrt(keys.length);
+                            attentionScores.push(score);
+                        }
+                    }
+
+                    // Apply softmax
+                    const maxScore = Math.max(...attentionScores);
+                    const expScores = attentionScores.map(s => Math.exp(s - maxScore));
+                    const sumExp = expScores.reduce((a, b) => a + b, 0);
+                    const attentionWeights = expScores.map(score => score / sumExp);
+
+                    // Calculate weighted sum
+                    let output = 0;
+                    for (let i = 0; i < values.length; i++) {
+                        output += values[i] * (attentionWeights[i] || 0);
+                    }
+
+                    return {
+                        size: output > 0 ? 'BIG' : 'SMALL',
+                        confidence: Math.min(0.99, 0.5 + Math.abs(output) * 0.5)
+                    };
+                }
+            };
+        }
+
+        EvolutionaryModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 20) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+
+                    // Simulate evolutionary algorithm with population of strategies
+                    const populationSize = 5;
+                    let population = [];
+
+                    // Initialize population with different strategies
+                    for (let i = 0; i < populationSize; i++) {
+                        population.push({
+                            strategy: Math.random() > 0.5 ? 'momentum' : 'reversal',
+                            threshold: 0.5 + Math.random() * 0.4,
+                            weight: Math.random()
+                        });
+                    }
+
+                    // Evaluate each strategy on historical data
+                    for (let individual of population) {
+                        let correct = 0;
+                        let total = Math.min(10, history.length - 1);
+
+                        for (let i = 0; i < total; i++) {
+                            const actual = history[i].number > 4 ? 'BIG' : 'SMALL';
+                            let predicted;
+
+                            if (individual.strategy === 'momentum') {
+                                // Momentum strategy: follow the trend
+                                const prev = history[i + 1].number > 4 ? 'BIG' : 'SMALL';
+                                predicted = prev;
+                            } else {
+                                // Reversal strategy: bet against the trend
+                                const prev = history[i + 1].number > 4 ? 'BIG' : 'SMALL';
+                                predicted = prev === 'BIG' ? 'SMALL' : 'BIG';
+                            }
+
+                            if (predicted === actual) correct++;
+                        }
+
+                        individual.fitness = correct / total;
+                    }
+
+                    // Select best strategy
+                    population.sort((a, b) => b.fitness - a.fitness);
+                    const best = population[0];
+
+                    // Apply best strategy to current prediction
+                    let prediction;
+                    if (best.strategy === 'momentum') {
+                        prediction = history[0].number > 4 ? 'BIG' : 'SMALL';
+                    } else {
+                        prediction = history[0].number > 4 ? 'SMALL' : 'BIG';
+                    }
+
+                    return {
+                        size: prediction,
+                        confidence: best.fitness * 100
+                    };
+                }
+            };
+        }
+
+        SwarmIntelligenceModel() {
+            return {
+                predict: (history) => {
+                    if (history.length < 15) return {
+                        size: 'BIG',
+                        confidence: 0.5
+                    };
+
+                    // Simulate particle swarm optimization
+                    const particles = 10;
+                    let positions = Array(particles).fill(0).map(() => Math.random() * 2 - 1);
+                    let velocities = Array(particles).fill(0).map(() => Math.random() * 0.2 - 0.1);
+                    let personalBests = [...positions];
+                    let personalBestScores = Array(particles).fill(0);
+                    let globalBest = 0;
+                    let globalBestScore = -Infinity;
+
+                    // Evaluate particles on historical data
+                    for (let iter = 0; iter < 5; iter++) {
+                        for (let i = 0; i < particles; i++) {
+                            let score = 0;
+                            const threshold = 1 / (1 + Math.exp(-positions[i])); // Sigmoid to convert to 0-1
+
+                            // Test this threshold on historical data
+                            for (let j = 1; j < Math.min(10, history.length); j++) {
+                                const actual = history[j - 1].number > 4 ? 'BIG' : 'SMALL';
+                                const predicted = history[j].number > 4 ? (Math.random() < threshold ? 'BIG' : 'SMALL') : (Math.random() < threshold ? 'SMALL' : 'BIG');
+
+                                if (predicted === actual) score++;
+                            }
+
+                            // Update personal best
+                            if (score > personalBestScores[i]) {
+                                personalBestScores[i] = score;
+                                personalBests[i] = positions[i];
+                            }
+
+                            // Update global best
+                            if (score > globalBestScore) {
+                                globalBestScore = score;
+                                globalBest = positions[i];
+                            }
+
+                            // Update velocity and position
+                            velocities[i] = 0.7 * velocities[i] +
+                                0.2 * Math.random() * (personalBests[i] - positions[i]) +
+                                0.1 * Math.random() * (globalBest - positions[i]);
+
+                            positions[i] += velocities[i];
+
+                            // Clamp position
+                            if (positions[i] > 5) positions[i] = 5;
+                            if (positions[i] < -5) positions[i] = -5;
+                        }
+                    }
+
+                    // Use global best to make prediction
+                    const threshold = 1 / (1 + Math.exp(-globalBest));
+                    const lastNumber = history[0].number;
+                    const prediction = lastNumber > 4 ? (Math.random() < threshold ? 'BIG' : 'SMALL') : (Math.random() < threshold ? 'SMALL' : 'BIG');
+
+                    return {
+                        size: prediction,
+                        confidence: globalBestScore / 10 * 100
+                    };
+                }
+            };
+        }
+
+        async generatePrediction(history) {
+            this.history = history;
+            const historyKey = history.map(h => h.number).join(',');
+            if (this.predictionCache.has(historyKey)) {
+                return this.predictionCache.get(historyKey);
             }
+
+            const startTime = performance.now();
+            const modelPredictions = {};
+
+            for (const modelName in this.models) {
+                // Skip models based on settings
+                if (!this.deepLearningEnabled && modelName.includes('DeepLearning')) continue;
+                modelPredictions[modelName] = this.models[modelName].predict(history);
+            }
+
+            const prediction = this.ensemblePredict(modelPredictions);
+            const endTime = performance.now();
+
+            // Update prediction speed metric
+            const predictionSpeedElement = document.getElementById('prediction-speed');
+            if (predictionSpeedElement) {
+                predictionSpeedElement.textContent = `${Math.round(endTime - startTime)}ms`;
+            }
+
+            this.predictionCache.set(historyKey, prediction);
+            return prediction;
         }
-        const totalVotes = votes.BIG + votes.SMALL;
-        const bigRatio = totalVotes > 0 ? votes.BIG / totalVotes : 0.5;
-        const finalConfidence = (Math.max(bigRatio, 1 - bigRatio) * 100).toFixed(2);
-        
-        // This is the internal prediction that will be inverted
-        return {
-            size: bigRatio > 0.5 ? 'BIG' : 'SMALL',
-            confidence: finalConfidence
-        };
+
+        ensemblePredict(predictions) {
+            const votes = {
+                BIG: 0,
+                SMALL: 0
+            };
+            const aggressivenessFactor = this.aggressiveness / 10;
+
+            for (const modelName in predictions) {
+                const pred = predictions[modelName];
+                if (pred.size) {
+                    const weight = this.modelWeights[modelName] * Math.pow(pred.confidence, aggressivenessFactor);
+                    votes[pred.size] += weight;
+                }
+            }
+            const totalVotes = votes.BIG + votes.SMALL;
+            const bigRatio = totalVotes > 0 ? votes.BIG / totalVotes : 0.5;
+            const finalConfidence = (Math.max(bigRatio, 1 - bigRatio) * 100).toFixed(2);
+
+            return {
+                size: bigRatio > 0.5 ? 'BIG' : 'SMALL',
+                confidence: finalConfidence
+            };
+        }
+
+        getModelPerformance() {
+            return this.modelPerformance;
+        }
+
+        setAggressiveness(value) {
+            this.aggressiveness = value;
+            this.updateDynamicWeights();
+        }
+
+        setStrategy(strategy) {
+            this.strategy = strategy;
+            this.updateDynamicWeights();
+        }
+
+        setDeepLearning(enabled) {
+            this.deepLearningEnabled = enabled;
+        }
+
+        setAdaptiveModels(enabled) {
+            this.adaptiveModelsEnabled = enabled;
+        }
+
+        getLearningRate() {
+            return this.learningRate;
+        }
     }
 
-    getModelPerformance() {
-        return this.modelPerformance;
-    }
+    // Data and State
+    const infinityCoreAI = new InfinityCoreAI();
+    let lastFetchedPeriod = null;
+    let predictionHistory = [];
+    let totalBets = 0;
+    let successfulPredictions = 0;
+    let countdownSeconds = 59;
+    let timerInterval = null;
+    let currentPage = 1;
+    const itemsPerPage = 20;
+    let currentPrediction = {
+        size: '--',
+        confidence: '--'
+    };
+    let demoMode = false;
+    let historyChart = null;
 
-    setAggressiveness(value) {
-        this.aggressiveness = value;
-        this.updateDynamicWeights();
-    }
+    // Chat Predictor Logic
+    let previousResults = [];
+    let latestPeriod = null;
+    let serverOnline = true;
+    let lastPredictionPeriod = null;
+    let lastActualNumber = null;
 
-    setStrategy(strategy) {
-        this.strategy = strategy;
-        this.updateDynamicWeights();
-    }
+    // DOM elements
+    const messagesContainer = document.getElementById('messages-container');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const connectionStatus = document.getElementById('connection-status');
+    const currentTimeElement = document.getElementById('current-time');
+    const lastUpdateTime = document.getElementById('last-update-time');
+    const scrollDownBtn = document.getElementById('scroll-down-btn');
 
-    setDeepLearning(enabled) {
-        this.deepLearningEnabled = enabled;
-    }
-
-    setAdaptiveModels(enabled) {
-        this.adaptiveModelsEnabled = enabled;
-    }
-
-    getLearningRate() {
-        return this.learningRate;
-    }
-}
-
-// Initialize the Infinity-Core AI prediction system
-const infinityCoreAI = new InfinityCoreAI();
-
-// --- Helper Functions ---
-const getBigSmallOutcome = (num) => (num >= 5) ? 'BIG' : 'SMALL';
-const getRedGreenOutcome = (num) => (num % 2 === 0) ? 'RED' : 'GREEN';
-
-// --- Tab System and UI Logic ---
-document.addEventListener('DOMContentLoaded', function() {
-    const tabs = document.querySelectorAll('.tab');
-    const contentSections = document.querySelectorAll('.content-section');
-    tabs.forEach(tab => {
+    // Tab switching functionality
+    document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab');
-            tabs.forEach(t => {
-                t.classList.remove('active');
-                t.setAttribute('aria-selected', 'false');
-            });
+
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             this.classList.add('active');
-            this.setAttribute('aria-selected', 'true');
-            contentSections.forEach(section => {
+
+            // Show corresponding content section
+            document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
-                if (section.id === `${tabId}-section`) {
-                    section.classList.add('active');
-                    if (tabId === 'history') {
-                        fetchData();
-                    } else if (tabId === 'analysis') {
-                        performAdvancedAnalysis();
-                        displayAllStrategies();
-                    }
-                }
             });
+            document.getElementById(`${tabId}-section`).classList.add('active');
+
+            // Load specific content when switching tabs
+            if (tabId === 'analysis') {
+                displayAdvancedAnalysis(predictionHistory);
+                displayAllStrategies();
+            } else if (tabId === 'history') {
+                currentPage = 1;
+                displayGameHistory(predictionHistory);
+            }
         });
     });
 
-    const gameSelection = document.getElementById('gameSelection');
-    const gameFrame = document.getElementById('gameFrame');
-    const gameItems = document.querySelectorAll('.game-item');
-    const injectorTape = document.getElementById('injectorTape');
-    gameItems.forEach(item => {
-        item.addEventListener('click', function() {
+    // Game selection functionality
+    document.querySelectorAll('.game-item').forEach(game => {
+        game.addEventListener('click', function() {
             const gameUrl = this.getAttribute('data-url');
+            const gameFrame = document.getElementById('gameFrame');
+            const gameSelection = document.getElementById('gameSelection');
+            const injectorTape = document.getElementById('injectorTape');
+
+            // Load game in iframe
             gameFrame.src = gameUrl;
-            gameSelection.style.display = 'none';
             gameFrame.classList.remove('hidden');
+            gameSelection.classList.add('hidden');
             injectorTape.classList.remove('hidden');
-            this.classList.add('active');
-            setTimeout(() => this.classList.remove('active'), 500);
         });
     });
 
-    injectorTape.addEventListener('click', function() {
-        gameFrame.classList.add('hidden');
-        gameSelection.style.display = "flex";
-        injectorTape.classList.add('hidden');
-        gameFrame.src = '';
-    });
+    // Back button functionality
+    const injectorTapeElement = document.getElementById('injectorTape');
+    if (injectorTapeElement) {
+        injectorTapeElement.addEventListener('click', function() {
+            const gameFrame = document.getElementById('gameFrame');
+            const gameSelection = document.getElementById('gameSelection');
 
-    function createParticles() {
-        const colors = ['rgba(37, 99, 235, 0.25)', 'rgba(59, 130, 246, 0.25)', ' rgba(96, 165, 250, 0.25)'];
-        for (let i = 0; i < 20; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            const size = Math.random() * 10 + 3;
-            const posX = Math.random() * window.innerWidth;
-            const posY = Math.random() * window.innerHeight;
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            const duration = Math.random() * 20 + 10;
-            const delay = Math.random() * 5;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${posX}px`;
-            particle.style.top = `${posY}px`;
-            particle.style.background = color;
-            particle.style.opacity = Math.random() * 0.5 + 0.1;
-            particle.style.animationDuration = `${duration}s`;
-            particle.style.animationDelay = `${delay}s`;
-            document.body.appendChild(particle);
+            gameFrame.src = '';
+            gameFrame.classList.add('hidden');
+            gameSelection.classList.remove('hidden');
+            this.classList.add('hidden');
+        });
+    }
+
+    // Helper functions
+    function getLastFiveDigits(str) {
+        if (!str) return '--';
+        return str.toString().slice(-5);
+    }
+
+    function formatDateDDMMYYYY(d) {
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yy = d.getFullYear();
+        return `${dd}-${mm}-${yy}`;
+    }
+
+    function syncCountdownWithServerTime(serverTime = null) {
+        const now = serverTime ? new Date(serverTime) : new Date();
+        const totalSeconds = (now.getMinutes() * 60) + now.getSeconds();
+        const remainder = totalSeconds % 60;
+        countdownSeconds = 60 - remainder - 2;
+    }
+
+    async function fetchWithRetry(url, retries = 3, delay = 1000) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+                return await response.json();
+            } catch (e) {
+                if (i < retries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+                    continue;
+                }
+                throw e;
+            }
         }
     }
 
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            const historyItems = document.querySelectorAll('.history-item');
-            historyItems.forEach(item => {
-                if (filter === 'all') {
-                    item.style.display = 'grid';
-                } else {
-                    const isBig = item.querySelector('.history-value-highlight').textContent >= 5;
-                    const isRed = item.querySelector('.color-dot').classList.contains('color-red');
-                    if ((filter === 'big' && isBig) || (filter === 'small' && !isBig) || (filter === 'red' && isRed) || (filter === 'green' && !isRed)) {
-                        item.style.display = 'grid';
-                    } else {
-                        item.style.display = 'none';
+    function updateTrendAccuracy() {
+        if (predictionHistory.length < 10) {
+            const trendAccuracyElement = document.getElementById('trend-accuracy');
+            if (trendAccuracyElement) {
+                trendAccuracyElement.textContent = 'N/A';
+            }
+            return;
+        }
+
+        // Calculate accuracy of last 50 predictions
+        const recentHistory = predictionHistory.slice(0, 50);
+        let correct = 0;
+
+        for (const prediction of recentHistory) {
+            if (prediction.isWin) correct++;
+        }
+
+        const accuracy = recentHistory.length > 0 ? (correct / recentHistory.length * 100).toFixed(0) : 0;
+        const trendAccuracyElement = document.getElementById('trend-accuracy');
+        if (trendAccuracyElement) {
+            trendAccuracyElement.textContent = `${accuracy}%`;
+        }
+    }
+
+    function updatePredictionChart() {
+        const ctx = document.getElementById('history-chart');
+        if (!ctx) return;
+
+        if (historyChart) {
+            historyChart.destroy();
+        }
+
+        // Prepare data for chart
+        const labels = [];
+        const accuracyData = [];
+        const confidenceData = [];
+
+        // Get last 20 predictions for the chart
+        const chartData = predictionHistory.slice(0, 20).reverse();
+
+        chartData.forEach((pred) => {
+            labels.push(getLastFiveDigits(pred.issueNumber));
+            accuracyData.push(pred.isWin ? 100 : 0);
+            confidenceData.push(pred.confidence || 50);
+        });
+
+        historyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Accuracy',
+                    data: accuracyData,
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Confidence',
+                    data: confidenceData,
+                    borderColor: '#9C27B0',
+                    backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Prediction Performance History'
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
                     }
                 }
-            });
+            }
         });
-    });
+    }
 
-// Fetch data for history tab
-async function fetchData() {
-    try {
+    // NEW: Function to display the game history table with pagination
+    function displayGameHistory(data) {
+        const historyTableBody = document.getElementById('historyTableBody');
+        const paginationInfo = document.getElementById('paginationInfo');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const historyContent = document.getElementById('gameHistory');
+
+        if (!historyContent || !historyTableBody || !paginationInfo || !prevPageBtn || !nextPageBtn) {
+            console.error('One or more history elements not found.');
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            historyContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO GAME HISTORY AVAILABLE</div>';
+            return;
+        }
+
+        // Calculate data for the current page
+        const totalItems = data.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedData = data.slice(startIndex, endIndex);
+
+        historyTableBody.innerHTML = '';
+        paginatedData.forEach(item => {
+            const row = document.createElement('tr');
+            const resultColor = (item.number === 0 || item.number === 5) ? 'violet-bg' : (item.number % 2 === 0 ? 'red-bg' : 'green-bg');
+            const bigOrSmall = item.number > 4 ? 'BIG' : 'SMALL';
+            const winOrLoss = item.isWin ? 'win' : 'loss';
+            const winText = item.isWin ? 'WIN' : 'LOSS';
+
+            row.innerHTML = `
+                <td>${getLastFiveDigits(item.issueNumber)}</td>
+                <td><span class="number-circle ${resultColor}">${item.number}</span></td>
+                <td>${bigOrSmall}</td>
+                <td><span class="prediction-status ${winOrLoss}">${winText}</span></td>
+            `;
+            historyTableBody.appendChild(row);
+        });
+
+        // Update pagination UI
+        paginationInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = currentPage === totalPages;
+
+        // Add event listeners for pagination (ensuring they are only added once)
+        if (!prevPageBtn.hasEventListener) {
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayGameHistory(data);
+                }
+            });
+            prevPageBtn.hasEventListener = true;
+        }
+
+        if (!nextPageBtn.hasEventListener) {
+            nextPageBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayGameHistory(data);
+                }
+            });
+            nextPageBtn.hasEventListener = true;
+        }
+    }
+
+    // Display history data
+    function displayHistory(data) {
         const historyContent = document.getElementById('historyContent');
         if (!historyContent) return;
 
-        historyContent.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> LOADING DATA...</div>';
-
-        const timestamp = Date.now();
-        const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=10`);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data && data.data && data.data.list && data.data.list.length > 0) {
-            displayHistory(data.data.list);
-        } else {
+        if (!data || data.length === 0) {
             historyContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE</div>';
+            return;
         }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        const historyContent = document.getElementById('historyContent');
-        if (historyContent) {
-            historyContent.innerHTML = '<div class="error-container"><i class="fas fa-exclamation-triangle"></i> ERROR LOADING DATA</div>';
-        }
-    }
-}
 
-// Display history data
-function displayHistory(data) {
-    const historyContent = document.getElementById('historyContent');
-    if (!historyContent) return;
+        let html = '<div class="history-header">';
+        html += '<div class="history-header-item">Period</div>';
+        html += '<div class="history-header-item">Result</div>';
+        html += '<div class="history-header-item">Big/Small</div>';
+        html += '<div class="history-header-item">Color</div>';
+        html += '</div>';
 
-    if (!data || data.length === 0) {
-        historyContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE</div>';
-        return;
-    }
+        let totalCount = 0;
 
-    let html = '<div class="history-header">';
-    html += '<div class="history-header-item"></div>';
-    html += '<div class="history-header-item"></div>';
-    html += '<div class="history-header-item"></div>';
-    html += '<div class="history-header-item"></div>';
-    html += '</div>';
+        data.forEach(item => {
+            const sum = parseInt(item.premium || item.result || item.number || 0);
+            const bigSmall = getBigSmallOutcome(sum);
+            const isEven = sum % 2 === 0;
+            const redGreen = isEven ? 'RED' : 'GREEN';
+            const colorClass = isEven ? 'color-red' : 'color-green';
 
-    let totalCount = 0;
+            totalCount++;
 
-    data.forEach(item => {
-        const sum = parseInt(item.premium || item.result || item.number || 0);
-        const bigSmall = getBigSmallOutcome(sum);
-        const isEven = sum % 2 === 0;
-        const redGreen = isEven ? 'RED' : 'GREEN';
-        const colorClass = isEven ? 'color-red' : 'color-green';
-
-        totalCount++;
-
-        html += `
-            <div class="history-item">
-                <div>
-                    <div class="history-value">${item.issueNumber || item.period || 'N/A'}</div>
-                </div>
-                <div>
-                    <div class="history-value-highlight">${sum}</div>
-                </div>
-                <div>
-                    <div class="history-value">${bigSmall}</div>
-                </div>
-                <div>
-                    <div class="history-value">
-                        <span class="color-dot ${colorClass}"></span>${redGreen}
+            html += `
+                <div class="history-item">
+                    <div>
+                        <div class="history-value">${item.issueNumber || item.period || 'N/A'}</div>
+                    </div>
+                    <div>
+                        <div class="history-value-highlight">${sum}</div>
+                    </div>
+                    <div>
+                        <div class="history-value">${bigSmall}</div>
+                    </div>
+                    <div>
+                        <div class="history-value">
+                            <span class="color-dot ${colorClass}"></span>${redGreen}
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-    });
+            `;
+        });
 
-    // Update total count
-    document.getElementById('total-count').textContent = totalCount;
+        const totalCountElement = document.getElementById('total-count');
+        if (totalCountElement) {
+            totalCountElement.textContent = totalCount;
+        }
 
-    historyContent.innerHTML = html;
-}
+        historyContent.innerHTML = html;
+    }
 
-// Perform advanced analysis
-async function performAdvancedAnalysis() {
-    try {
+    // Perform advanced analysis
+    async function performAdvancedAnalysis() {
+        try {
+            const analysisContent = document.getElementById('advancedAnalysis');
+            if (!analysisContent) return;
+
+            analysisContent.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> ANALYZING DATA PATTERNS...</div>';
+
+            const timestamp = Date.now();
+            const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data && data.data && data.data.list && data.data.list.length > 0) {
+                displayAdvancedAnalysis(data.data.list);
+            } else {
+                analysisContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE FOR ANALYSIS</div>';
+            }
+        } catch (error) {
+            console.error('Error fetching analysis data:', error);
+            const analysisContent = document.getElementById('advancedAnalysis');
+            if (analysisContent) {
+                analysisContent.innerHTML = '<div class="error-container"><i class="fas fa-exclamation-triangle"></i> ERROR LOADING ANALYSIS DATA</div>';
+            }
+        }
+    }
+
+
+    // Display advanced analysis
+    function displayAdvancedAnalysis(data) {
         const analysisContent = document.getElementById('advancedAnalysis');
         if (!analysisContent) return;
 
-        analysisContent.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> ANALYZING DATA PATTERNS...</div>';
-
-        const timestamp = Date.now();
-        const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50`);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data && data.data && data.data.list && data.data.list.length > 0) {
-            displayAdvancedAnalysis(data.data.list);
-        } else {
+        if (!data || data.length === 0) {
             analysisContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE FOR ANALYSIS</div>';
+            return;
         }
-    } catch (error) {
-        console.error('Error fetching analysis data:', error);
-        const analysisContent = document.getElementById('advancedAnalysis');
-        if (analysisContent) {
-            analysisContent.innerHTML = '<div class="error-container"><i class="fas fa-exclamation-triangle"></i> ERROR LOADING ANALYSIS DATA</div>';
-        }
-    }
-}
 
-// Display advanced analysis
-function displayAdvancedAnalysis(data) {
-    const analysisContent = document.getElementById('advancedAnalysis');
-    if (!analysisContent) return;
+        // Process data for analysis
+        const numbers = data.map(item => parseInt(item.premium || item.result || item.number || 0));
 
-    if (!data || data.length === 0) {
-        analysisContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE FOR ANALYSIS</div>';
-        return;
-    }
+        // Calculate statistics
+        const bigCount = numbers.filter(n => n >= 5).length;
+        const smallCount = numbers.length - bigCount;
+        const redCount = numbers.filter(n => n % 2 === 0).length;
+        const greenCount = numbers.length - redCount;
 
-    // Process data for analysis
-    const numbers = data.map(item => parseInt(item.premium || item.result || item.number || 0));
+        // Find most common numbers
+        const frequency = {};
+        numbers.forEach(n => {
+            frequency[n] = (frequency[n] || 0) + 1;
+        });
 
-    // Calculate statistics
-    const bigCount = numbers.filter(n => n >= 5).length;
-    const smallCount = numbers.length - bigCount;
-    const redCount = numbers.filter(n => n % 2 === 0).length;
-    const greenCount = numbers.length - redCount;
+        const mostFrequent = Object.entries(frequency)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([num, count]) => ({
+                number: num,
+                count
+            }));
 
-    // Find most common numbers
-    const frequency = {};
-    numbers.forEach(n => {
-        frequency[n] = (frequency[n] || 0) + 1;
-    });
+        // Check for recent patterns
+        const recentPatterns = detectPatterns(numbers.slice(0, 10));
 
-    const mostFrequent = Object.entries(frequency)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-        .map(([num, count]) => ({
-            number: num,
-            count
-        }));
-
-    // Check for recent patterns
-    const recentPatterns = detectPatterns(numbers.slice(0, 10));
-
-    let html = `
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-value">${numbers.length}</div>
-                <div class="stat-label">Total Results</div>
+        let html = `
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">${numbers.length}</div>
+                    <div class="stat-label">Total Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${bigCount}</div>
+                    <div class="stat-label">Big Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${smallCount}</div>
+                    <div class="stat-label">Small Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${Math.round((bigCount/numbers.length)*100)}%</div>
+                    <div class="stat-label">Big Frequency</div>
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value">${bigCount}</div>
-                <div class="stat-label">Big Results</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">${smallCount}</div>
-                <div class="stat-label">Small Results</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">${Math.round((bigCount/numbers.length)*100)}%</div>
-                <div class="stat-label">Big Frequency</div>
-            </div>
-        </div>
 
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-value">${redCount}</div>
-                <div class="stat-label">Red Results</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">${redCount}</div>
+                    <div class="stat-label">Red Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${greenCount}</div>
+                    <div class="stat-label">Green Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${Math.round((redCount/numbers.length)*100)}%</div>
+                    <div class="stat-label">Red Frequency</div>
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value">${greenCount}</div>
-                <div class="stat-label">Green Results</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">${Math.round((redCount/numbers.length)*100)}%</div>
-                <div class="stat-label">Red Frequency</div>
-            </div>
-        </div>
 
-        <div class="analysis-title">
-            <i class="fas fa-star"></i> MOST FREQUENT NUMBERS
-        </div>
-        <div class="pattern-list">
-    `;
-
-    mostFrequent.forEach(item => {
-        html += `
-            <div class="pattern-item">
-                <span class="pattern-value">Number ${item.number}</span>
-                <span class="pattern-confidence">${item.count} times (${Math.round((item.count/numbers.length)*100)}%)</span>
-            </div>
-        `;
-    });
-
-    html += `</div>`;
-
-    if (recentPatterns.length > 0) {
-        html += `
             <div class="analysis-title">
-                <i class="fas fa-project-diagram"></i> DETECTED PATTERNS
+                <i class="fas fa-star"></i> MOST FREQUENT NUMBERS
             </div>
             <div class="pattern-list">
         `;
 
-        recentPatterns.forEach(pattern => {
+        mostFrequent.forEach(item => {
             html += `
                 <div class="pattern-item">
-                    <span class="pattern-value">${pattern.pattern}</span>
-                    <span class="pattern-confidence">${pattern.count} occurrences</span>
+                    <span class="pattern-value">Number ${item.number}</span>
+                    <span class="pattern-confidence">${item.count} times (${Math.round((item.count/numbers.length)*100)}%)</span>
                 </div>
             `;
         });
 
         html += `</div>`;
-    }
 
-    // Add pattern analysis from InfinityCoreAI
-    html += `
-        <div class="analysis-title">
-            <i class="fas fa-chart-line"></i> INFINITY-CORE ANALYSIS
-        </div>
-        <div class="pattern-analysis">
-            <div class="pattern-item">
-                <span class="pattern-value">History Size</span>
-                <span class="pattern-count">${infinityCoreAI.history.length}</span>
-            </div>
-            <div class="pattern-item">
-                <span class="pattern-value">Active Models</span>
-                <span class="pattern-count">${Object.keys(infinityCoreAI.models).length}</span>
-            </div>
-            <div class="pattern-item">
-                <span class="pattern-value">Learning Rate</span>
-                <span class="pattern-count">${infinityCoreAI.getLearningRate().toFixed(2)}</span>
-            </div>
-            <div class="pattern-item">
-                <span class="pattern-value">Strategy</span>
-                <span class="pattern-count">${infinityCoreAI.strategy}</span>
-            </div>
-        </div>
-    `;
-
-    analysisContent.innerHTML = html;
-}
-
-// Detect patterns in number sequences
-function detectPatterns(numbers) {
-    const patterns = [];
-    const sequence = numbers.join('');
-
-    // Check for repeating patterns of length 2-3
-    for (let len = 2; len <= 3; len++) {
-        for (let i = 0; i <= sequence.length - len; i++) {
-            const pattern = sequence.substring(i, i + len);
-            let count = 0;
-            let pos = -1;
-
-            // Count occurrences of this pattern
-            while ((pos = sequence.indexOf(pattern, pos + 1)) !== -1) {
-                count++;
-            }
-
-            if (count > 1) {
-                patterns.push({
-                    pattern: pattern.split('').join(' - '),
-                    count: count
-                });
-            }
-        }
-    }
-
-    // Remove duplicates and sort by count
-    const uniquePatterns = [];
-    patterns.forEach(p => {
-        const existing = uniquePatterns.find(up => up.pattern === p.pattern);
-        if (!existing) {
-            uniquePatterns.push(p);
-        }
-    });
-
-    return uniquePatterns.sort((a, b) => b.count - a.count).slice(0, 5);
-}
-
-// Display all strategies
-function displayAllStrategies() {
-    const strategiesContainer = document.getElementById('strategiesContainer');
-    if (!strategiesContainer) return;
-
-    const strategies = [{
-        title: "Infinity-Core Engine",
-        icon: "fas fa-infinity",
-        description: "Advanced ensemble prediction system combining 30+ AI models with dynamic weighting and adaptive learning."
-    }, {
-        title: "Quantum Entanglement Analysis",
-        icon: "fas fa-atom",
-        description: "Uses quantum-inspired algorithms to detect non-local correlations in number sequences."
-    }, {
-        title: "Temporal Fusion Modeling",
-        icon: "fas fa-clock",
-        description: "Combines short-term, medium-term, and long-term patterns for comprehensive analysis."
-    }, {
-        title: "Deep Learning Simulation",
-        icon: "fas fa-brain",
-        description: "Multi-layer neural network simulation with forward propagation and sigmoid activation."
-    }, {
-        title: "Evolutionary Optimization",
-        icon: "fas fa-dna",
-        description: "Genetic algorithm that evolves prediction strategies based on historical performance."
-    }, {
-        title: "Swarm Intelligence",
-        icon: "fas fa-users",
-        description: "Particle swarm optimization that finds optimal prediction thresholds through collective intelligence."
-    }];
-
-    let html = '';
-    strategies.forEach(strategy => {
-        html += `
-            <div class="strategy-card">
-                <div class="strategy-title">
-                    <i class="${strategy.icon}"></i>
-                    ${strategy.title}
+        if (recentPatterns.length > 0) {
+            html += `
+                <div class="analysis-title">
+                    <i class="fas fa-project-diagram"></i> DETECTED PATTERNS
                 </div>
-                <div class="strategy-description">
-                    ${strategy.description}
+                <div class="pattern-list">
+            `;
+
+            recentPatterns.forEach(pattern => {
+                html += `
+                    <div class="pattern-item">
+                        <span class="pattern-value">${pattern.pattern}</span>
+                        <span class="pattern-confidence">${pattern.count} occurrences</span>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+        }
+
+        // Add pattern analysis from InfinityCoreAI
+        html += `
+            <div class="analysis-title">
+                <i class="fas fa-chart-line"></i> INFINITY-CORE ANALYSIS
+            </div>
+            <div class="pattern-analysis">
+                <div class="pattern-item">
+                    <span class="pattern-value">History Size</span>
+                    <span class="pattern-count">${infinityCoreAI.history.length}</span>
+                </div>
+                <div class="pattern-item">
+                    <span class="pattern-value">Active Models</span>
+                    <span class="pattern-count">${Object.keys(infinityCoreAI.models).length}</span>
+                </div>
+                <div class="pattern-item">
+                    <span class="pattern-value">Learning Rate</span>
+                    <span class="pattern-count">${infinityCoreAI.getLearningRate().toFixed(2)}</span>
+                </div>
+                <div class="pattern-item">
+                    <span class="pattern-value">Strategy</span>
+                    <span class="pattern-count">${infinityCoreAI.strategy}</span>
                 </div>
             </div>
         `;
-    });
 
-    strategiesContainer.innerHTML = html;
-}
-
-// Chat Predictor Logic
-let previousResults = [];
-let latestPeriod = null;
-let currentPrediction = null;
-let serverOnline = true;
-let lastPredictionPeriod = null;
-let lastActualNumber = null;
-
-// DOM elements
-const messagesContainer = document.getElementById('messages-container');
-const typingIndicator = document.getElementById('typing-indicator');
-const connectionStatus = document.getElementById('connection-status');
-const currentTimeElement = document.getElementById('current-time');
-const lastUpdateTime = document.getElementById('last-update-time');
-const scrollDownBtn = document.getElementById('scroll-down-btn');
-
-// Initialize
-updateClock();
-setInterval(updateClock, 1000);
-setTimeout(() => {
-    typingIndicator.style.display = 'none';
-    addMessage('received',
-        `<div class="prediction-card">
-            <div class="prediction-title"><i class="fas fa-robot"></i> SYSTEM INITIALIZED</div>
-            <p>Welcome to <strong>LICUIS ULTRA V2</strong>, now powered by the Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
-        </div>`,
-        'LICUIS ULTRA');
-    simulateInitialAnalysis();
-}, 1500);
-
-// Scroll button functionality
-scrollDownBtn.addEventListener('click', () => {
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-});
-
-messagesContainer.addEventListener('scroll', () => {
-    const {
-        scrollTop,
-        scrollHeight,
-        clientHeight
-    } = messagesContainer;
-    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-    scrollDownBtn.classList.toggle('visible', distanceFromBottom > 100);
-});
-
-function updateClock() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('en-US', {
-        hour12: false
-    });
-    currentTimeElement.textContent = timeString;
-    return now;
-}
-
-function formatTime(date) {
-    return date.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-function addMessage(type, content, sender, timestamp = new Date()) {
-    typingIndicator.style.display = 'none';
-
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${type}`;
-
-    if (sender) {
-        messageDiv.innerHTML = `<div class="prediction-title">${sender}</div>`;
+        analysisContent.innerHTML = html;
     }
 
-    messageDiv.innerHTML += content;
-    messageDiv.innerHTML += `<div class="timestamp">${formatTime(timestamp)}</div>`;
+    // Detect patterns in number sequences
+    function detectPatterns(numbers) {
+        const patterns = [];
+        const sequence = numbers.join('');
 
-    messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        // Check for repeating patterns of length 2-3
+        for (let len = 2; len <= 3; len++) {
+            for (let i = 0; i <= sequence.length - len; i++) {
+                const pattern = sequence.substring(i, i + len);
+                let count = 0;
+                let pos = -1;
 
-    // Update last update time
-    lastUpdateTime.textContent = formatTime(timestamp);
+                // Count occurrences of this pattern
+                while ((pos = sequence.indexOf(pattern, pos + 1)) !== -1) {
+                    count++;
+                }
 
-    return messageDiv;
-}
-
-function showTyping() {
-    typingIndicator.style.display = 'flex';
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
-
-function simulateInitialAnalysis() {
-    showTyping();
-    setTimeout(() => {
-        addMessage('received',
-            `<div class="prediction-card">
-                <div class="prediction-title"><i class="fas fa-check-circle"></i> ANALYSIS COMPLETE</div>
-                <p>AI pattern detection complete. Advanced algorithms initialized and ready for predictions.</p>
-            </div>`,
-            'LICUIS ULTRA');
-
-        // Start the prediction cycle
-        fetchCurrentGameIssue();
-        setInterval(fetchCurrentGameIssue, 5000);
-    }, 2000);
-}
-
-function createPredictionMessage(predictionData) {
-    // Generate confidence between 90-95%
-    const baseConfidence = 90;
-    const randomVariation = Math.random() * 5; // 0-5% variation
-    const confidencePercentage = Math.round(baseConfidence + randomVariation);
-    const confidenceWidth = `${confidencePercentage}%`;
-
-    return `
-        <div class="prediction-card">
-            <div class="period-display">${latestPeriod}</div>
-            <div class="prediction-value">${predictionData.prediction}</div>
-
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: ${confidenceWidth}"></div>
-            </div>
-            <div class="confidence-display">
-                <span>Confidence</span>
-                <span class="confidence-value">${confidencePercentage}%</span>
-            </div>
-        </div>
-    `;
-}
-
-async function fetchCurrentGameIssue() {
-    const now = new Date();
-    const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
-    const requestData = {
-        typeId: 1,
-        language: 0,
-        random: "40079dcba93a48769c6ee9d4d4fae23f",
-        signature: "D12108C4F57C549D82B23A91E0FA20AE",
-        timestamp: 1727792520
-    };
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=UTF-8'
-            },
-            body: JSON.stringify(requestData)
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            if (data.code === 0) {
-                const newPeriod = data.data.issueNumber;
-
-                if (newPeriod !== latestPeriod) {
-                    if (latestPeriod && currentPrediction && previousResults.length > 0) {
-                        const lastResult = previousResults[0].number;
-                        lastActualNumber = parseInt(lastResult, 10);
-
-                        // Update history for the AI to learn from.
-                        infinityCoreAI.history.unshift({
-                            number: lastActualNumber,
-                            period: latestPeriod
-                        });
-                        if (infinityCoreAI.history.length > 100) {
-                            infinityCoreAI.history = infinityCoreAI.history.slice(0, 100);
-                        }
-
-                        // Update AI prediction system with actual result
-                        const actualPrediction = getBigSmallOutcome(lastActualNumber);
-
-                        // Check if the AI's *internal* prediction was correct.
-                        const internalPredictionWasCorrect = infinityCoreAI.lastPrediction === actualPrediction;
-
-                        // The logic to "show opposite" happens here. We intentionally track
-                        // wins/losses based on the internal prediction. The UI just shows the inverse.
-                        if (internalPredictionWasCorrect) {
-                            infinityCoreAI.consecutiveWins++;
-                            infinityCoreAI.consecutiveLosses = 0;
-                        } else {
-                            infinityCoreAI.consecutiveLosses++;
-                            infinityCoreAI.consecutiveWins = 0;
-                        }
-                    }
-
-                    latestPeriod = newPeriod;
-                    await fetchPreviousResults();
-                    updatePredictions(now, newPeriod);
+                if (count > 1) {
+                    patterns.push({
+                        pattern: pattern.split('').join(' - '),
+                        count: count
+                    });
                 }
             }
-        } else {
-            updateServerStatus(false);
         }
-    } catch (error) {
-        console.error("Fetch error:", error);
-        updateServerStatus(false);
-    }
-}
 
-async function fetchPreviousResults() {
-    const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetNoaverageEmerdList';
-    const requestData = {
-        pageSize: 10,
-        pageNo: 1,
-        typeId: 1,
-        language: 0,
-        random: "c2505d9138da4e3780b2c2b34f2fb789",
-        signature: "7D637E060DA35C0C6E28DC6D23D71BED",
-        timestamp: 1727792520
-    };
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=UTF-8'
-            },
-            body: JSON.stringify(requestData)
+        // Remove duplicates and sort by count
+        const uniquePatterns = [];
+        patterns.forEach(p => {
+            const existing = uniquePatterns.find(up => up.pattern === p.pattern);
+            if (!existing) {
+                uniquePatterns.push(p);
+            }
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            if (data.code === 0 && data.data.list.length > 0) {
-                previousResults = data.data.list;
-
-                // Update AI prediction system history
-                const historyData = data.data.list.map(item => ({
-                    number: parseInt(item.number, 10),
-                    period: item.issueNumber
-                }));
-
-                // To properly track history, we need to handle the state.
-                // We will update the internal history list with the new data.
-                infinityCoreAI.history = historyData;
-
-                updateServerStatus(true);
-            }
-        } else {
-            updateServerStatus(false);
-        }
-    } catch (error) {
-        console.error("Fetch error:", error);
-        updateServerStatus(false);
+        return uniquePatterns.sort((a, b) => b.count - a.count).slice(0, 5);
     }
-}
 
-async function updatePredictions(currentTime, currentPeriod) {
-    if (previousResults.length >= 10 && currentPeriod !== lastPredictionPeriod) {
-        const predictionData = await infinityCoreAI.generatePrediction(infinityCoreAI.history);
+    // Display all strategies
+    function displayAllStrategies() {
+        const strategiesContainer = document.getElementById('strategiesContainer');
+        if (!strategiesContainer) return;
 
-        // Show the OPPOSITE prediction as requested, unless it's a win.
-        const isWinStreak = infinityCoreAI.consecutiveWins > 0;
+        const strategies = [{
+            title: "Infinity-Core Engine",
+            icon: "fas fa-infinity",
+            description: "Advanced ensemble prediction system combining 30+ AI models with dynamic weighting and adaptive learning."
+        }, {
+            title: "Quantum Entanglement Analysis",
+            icon: "fas fa-atom",
+            description: "Uses quantum-inspired algorithms to detect non-local correlations in number sequences."
+        }, {
+            title: "Temporal Fusion Modeling",
+            icon: "fas fa-clock",
+            description: "Combines short-term, medium-term, and long-term patterns for comprehensive analysis."
+        }, {
+            title: "Deep Learning Simulation",
+            icon: "fas fa-brain",
+            description: "Multi-layer neural network simulation with forward propagation and sigmoid activation."
+        }, {
+            title: "Evolutionary Optimization",
+            icon: "fas fa-dna",
+            description: "Genetic algorithm that evolves prediction strategies based on historical performance."
+        }, {
+            title: "Swarm Intelligence",
+            icon: "fas fa-users",
+            description: "Particle swarm optimization that finds optimal prediction thresholds through collective intelligence."
+        }];
 
-        let finalPrediction;
-        let finalConfidence;
+        let html = '';
+        strategies.forEach(strategy => {
+            html += `
+                <div class="strategy-card">
+                    <div class="strategy-title">
+                        <i class="${strategy.icon}"></i>
+                        ${strategy.title}
+                    </div>
+                    <div class="strategy-description">
+                        ${strategy.description}
+                    </div>
+                </div>
+            `;
+        });
 
-        if (isWinStreak) {
-            finalPrediction = predictionData.size;
-            // Generate confidence between 90-95% for win streak
-            finalConfidence = 90 + Math.random() * 5;
-        } else {
-            finalPrediction = predictionData.size === 'BIG' ? 'SMALL' : 'BIG';
-            // Generate confidence between 90-95% for opposite prediction
-            finalConfidence = 90 + Math.random() * 5;
+        strategiesContainer.innerHTML = html;
+    }
+
+    // Chat Predictor Functions
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', {
+            hour12: false
+        });
+        if (currentTimeElement) {
+            currentTimeElement.textContent = timeString;
+        }
+        return now;
+    }
+
+    function formatTime(date) {
+        return date.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function addMessage(type, content, sender, timestamp = new Date()) {
+        if (typingIndicator) {
+            typingIndicator.style.display = 'none';
         }
 
-        // Track the internal prediction for learning purposes
-        infinityCoreAI.lastPrediction = predictionData.size;
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
 
-        currentPrediction = finalPrediction;
-        lastPredictionPeriod = currentPeriod;
+        if (sender) {
+            messageDiv.innerHTML = `<div class="prediction-title">${sender}</div>`;
+        }
 
-        // Show prediction message
+        messageDiv.innerHTML += content;
+        messageDiv.innerHTML += `<div class="timestamp">${formatTime(timestamp)}</div>`;
+
+        if (messagesContainer) {
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Update last update time
+        if (lastUpdateTime) {
+            lastUpdateTime.textContent = formatTime(timestamp);
+        }
+        return messageDiv;
+    }
+
+    function showTyping() {
+        if (typingIndicator) {
+            typingIndicator.style.display = 'flex';
+        }
+        if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
+
+    function simulateInitialAnalysis() {
         showTyping();
         setTimeout(() => {
-            addMessage('received', createPredictionMessage({
-                prediction: finalPrediction,
-                confidence: finalConfidence
-            }), 'LICUIS ULTRA');
-        }, 1000);
-    }
-}
+            addMessage('received',
+                `<div class="prediction-card">
+                    <div class="prediction-title"><i class="fas fa-check-circle"></i> ANALYSIS COMPLETE</div>
+                    <p>AI pattern detection complete. Advanced algorithms initialized and ready for predictions.</p>
+                </div>`,
+                'LICUIS ULTRA');
 
-function updateServerStatus(online) {
-    if (serverOnline !== online) {
-        serverOnline = online;
-        if (online) {
-            connectionStatus.textContent = "Connected to Server";
-            document.querySelector('.status-indicator').className = "status-indicator online";
-            addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> CONNECTION RESTORED</div><p>Server connection reestablished. Resuming normal operations.</p>', 'System');
-        } else {
-            connectionStatus.textContent = "Connecting...";
-            document.querySelector('.status-indicator').className = "status-indicator offline";
-            addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> CONNECTION LOST</div><p>Temporarily lost connection to prediction server. Attempting to reconnect...</p>', 'System');
+            // Start the prediction cycle
+            fetchCurrentGameIssue();
+            setInterval(fetchCurrentGameIssue, 5000);
+        }, 2000);
+    }
+
+    function createPredictionMessage(predictionData) {
+        // Generate confidence between 90-95%
+        const baseConfidence = 90;
+        const randomVariation = Math.random() * 5; // 0-5% variation
+        const confidencePercentage = Math.round(baseConfidence + randomVariation);
+        const confidenceWidth = `${confidencePercentage}%`;
+
+        return `
+            <div class="prediction-card">
+                <div class="period-display">${latestPeriod}</div>
+                <div class="prediction-value">${predictionData.prediction}</div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${confidenceWidth}"></div>
+                </div>
+                <div class="confidence-display">
+                    <span>Confidence</span>
+                    <span class="confidence-value">${confidencePercentage}%</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function getBigSmallOutcome(number) {
+        return number > 4 ? 'BIG' : 'SMALL';
+    }
+
+    async function fetchCurrentGameIssue() {
+        const now = new Date();
+        const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
+        const requestData = {
+            typeId: 1,
+            language: 0,
+            random: "40079dcba93a48769c6ee9d4d4fae23f",
+            signature: "D12108C4F57C549D82B23A91E0FA20AE",
+            timestamp: 1727792520
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.code === 0) {
+                    const newPeriod = data.data.issueNumber;
+
+                    if (newPeriod !== latestPeriod) {
+                        if (latestPeriod && currentPrediction && previousResults.length > 0) {
+                            const lastResult = previousResults[0].number;
+                            lastActualNumber = parseInt(lastResult, 10);
+
+                            // Update history for the AI to learn from.
+                            infinityCoreAI.history.unshift({
+                                number: lastActualNumber,
+                                period: latestPeriod
+                            });
+                            if (infinityCoreAI.history.length > 100) {
+                                infinityCoreAI.history = infinityCoreAI.history.slice(0, 100);
+                            }
+
+                            // Update AI prediction system with actual result
+                            const actualPrediction = getBigSmallOutcome(lastActualNumber);
+
+                            // Check if the AI's *internal* prediction was correct.
+                            const internalPredictionWasCorrect = infinityCoreAI.lastPrediction === actualPrediction;
+
+                            // The logic to "show opposite" happens here. We intentionally track
+                            // wins/losses based on the internal prediction. The UI just shows the inverse.
+                            if (internalPredictionWasCorrect) {
+                                infinityCoreAI.consecutiveWins++;
+                                infinityCoreAI.consecutiveLosses = 0;
+                            } else {
+                                infinityCoreAI.consecutiveLosses++;
+                                infinityCoreAI.consecutiveWins = 0;
+                            }
+                        }
+
+                        latestPeriod = newPeriod;
+                        await fetchPreviousResults();
+                        updatePredictions(now, newPeriod);
+                    }
+                }
+            } else {
+                updateServerStatus(false);
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            updateServerStatus(false);
         }
     }
-}
 
-// Initialize the application
-createParticles();
+    async function fetchPreviousResults() {
+        const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetNoaverageEmerdList';
+        const requestData = {
+            pageSize: 10,
+            pageNo: 1,
+            typeId: 1,
+            language: 0,
+            random: "c2505d9138da4e3780b2c2b34f2fb789",
+            signature: "7D637E060DA35C0C6E28DC6D23D71BED",
+            timestamp: 1727792520
+        };
 
-            // Animate the game selection title after page load
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.code === 0 && data.data.list.length > 0) {
+                    previousResults = data.data.list;
+
+                    // Update AI prediction system history
+                    const historyData = data.data.list.map(item => ({
+                        number: parseInt(item.number, 10),
+                        period: item.issueNumber
+                    }));
+
+                    // To properly track history, we need to handle the state.
+                    // We will update the internal history list with the new data.
+                    infinityCoreAI.history = historyData;
+
+                    // Update the global prediction history for the tabs
+                    predictionHistory = historyData.map(item => ({
+                        issueNumber: item.period,
+                        number: item.number,
+                        isWin: getBigSmallOutcome(item.number) === infinityCoreAI.lastPrediction,
+                        confidence: 90 // Placeholder confidence
+                    }));
+
+                    updateServerStatus(true);
+                }
+            } else {
+                updateServerStatus(false);
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            updateServerStatus(false);
+        }
+    }
+
+    async function updatePredictions(currentTime, currentPeriod) {
+        if (previousResults.length >= 10 && currentPeriod !== lastPredictionPeriod) {
+            const predictionData = await infinityCoreAI.generatePrediction(infinityCoreAI.history);
+
+            // Show the OPPOSITE prediction as requested, unless it's a win.
+            const isWinStreak = infinityCoreAI.consecutiveWins > 0;
+
+            let finalPrediction;
+            let finalConfidence;
+
+            if (isWinStreak) {
+                finalPrediction = predictionData.size;
+                // Generate confidence between 90-95% for win streak
+                finalConfidence = 90 + Math.random() * 5;
+            } else {
+                finalPrediction = predictionData.size === 'BIG' ? 'SMALL' : 'BIG';
+                // Generate confidence between 90-95% for opposite prediction
+                finalConfidence = 90 + Math.random() * 5;
+            }
+
+            // Track the internal prediction for learning purposes
+            infinityCoreAI.lastPrediction = predictionData.size;
+
+            currentPrediction = finalPrediction;
+            lastPredictionPeriod = currentPeriod;
+            // Show prediction message
+            showTyping();
             setTimeout(() => {
-                document.getElementById('gameSelectionTitle').classList.add('animate');
+                addMessage('received', createPredictionMessage({
+                    prediction: finalPrediction,
+                    confidence: finalConfidence
+                }), 'LICUIS ULTRA');
+            }, 1000);
+        }
+    }
+
+    function updateServerStatus(online) {
+        if (serverOnline !== online) {
+            serverOnline = online;
+            if (online) {
+                if (connectionStatus) connectionStatus.textContent = "Connected to Server";
+                const statusIndicator = document.querySelector('.status-indicator');
+                if (statusIndicator) statusIndicator.className = "status-indicator online";
+                addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> CONNECTION RESTORED</div><p>Server connection reestablished. Resuming normal operations.</p>', 'System');
+            } else {
+                if (connectionStatus) connectionStatus.textContent = "Connecting...";
+                const statusIndicator = document.querySelector('.status-indicator');
+                if (statusIndicator) statusIndicator.className = "status-indicator offline";
+                addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> CONNECTION LOST</div><p>Temporarily lost connection to prediction server. Attempting to reconnect...</p>', 'System');
+            }
+        }
+    }
+
+    // Initialize the application
+    function initializeApp() {
+        // Update current time
+        const updateCurrentTime = () => {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const timeElement = document.getElementById('current-time');
+            if (timeElement) timeElement.textContent = timeString;
+        };
+
+        // Update time every second
+        setInterval(updateCurrentTime, 1000);
+        updateCurrentTime();
+
+        // Initialize game selection title animation
+        const gameSelectionTitle = document.getElementById('gameSelectionTitle');
+        if (gameSelectionTitle) {
+            setTimeout(() => {
+                gameSelectionTitle.classList.add('animate');
             }, 500);
-        });
-    </script>
+        }
+
+        // Initialize the app
+        syncCountdownWithServerTime();
+        // The following functions are not defined in the provided code, so they will be commented out.
+        // updateDashboardUI();
+        // updateHistoryUI();
+
+        currentPrediction = {
+            size: 'BIG',
+            confidence: '99',
+            period: '123456'
+        };
+        // updateDashboardUI();
+
+        // startTimer(); // This function is not defined.
+
+        try {
+            // fetchAndUpdateGame(); // This function is not defined.
+        } catch (e) {
+            console.error("Initial data fetch failed:", e);
+            const errorElement = document.getElementById('error-message');
+            if (errorElement) {
+                errorElement.innerText = "Could not connect to game server. Showing demo mode.";
+                errorElement.style.display = 'block';
+            }
+            demoMode = true;
+        }
+
+        // Initialize chat predictor
+        updateClock();
+        setInterval(updateClock, 1000);
+        setTimeout(() => {
+            if (typingIndicator) {
+                typingIndicator.style.display = 'none';
+            }
+            addMessage('received',
+                `<div class="prediction-card">
+                    <div class="prediction-title"><i class="fas fa-robot"></i> SYSTEM INITIALIZED</div>
+                    <p>Welcome to <strong>LICUIS ULTRA V2</strong>, now powered by the Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
+                </div>`,
+                'LICUIS ULTRA');
+            simulateInitialAnalysis();
+        }, 1500);
+
+        // Scroll button functionality
+        if (scrollDownBtn && messagesContainer) {
+            scrollDownBtn.addEventListener('click', () => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+
+            messagesContainer.addEventListener('scroll', () => {
+                const {
+                    scrollTop,
+                    scrollHeight,
+                    clientHeight
+                } = messagesContainer;
+                const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+                scrollDownBtn.classList.toggle('visible', distanceFromBottom > 100);
+            });
+        }
+
+        // Create floating particles
+        createParticles();
+    }
+
+    // Create floating particles for background effect
+    function createParticles() {
+        const particleCount = 30;
+        const body = document.body;
+        if (!body) return;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+
+            // Random size and position
+            const size = Math.random() * 10 + 5;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+
+            // Random color variation
+            const hue = 240 + Math.random() * 30; // Blue to purple range
+            particle.style.backgroundColor = `hsla(${hue}, 70%, 60%, ${Math.random() * 0.3})`;
+
+            // Random animation duration and delay
+            particle.style.animationDuration = `${Math.random() * 20 + 10}s`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+
+            body.appendChild(particle);
+        }
+    }
+
+    // Start the application when DOM is loaded
+    document.addEventListener('DOMContentLoaded', initializeApp);
+</script>
+
 </body>
 </html>
