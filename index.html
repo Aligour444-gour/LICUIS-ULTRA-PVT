@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LICUIS ULTRA V3 - Enhanced</title>
+    <title>LICUIS ULTRA </title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap');
 
@@ -1421,7 +1421,7 @@
                 <path d="M21 16.5c0 .83-.67 1.5-1.5 1.5H4.5c-.83 0-1.5-.67-1.5-1.5v-9c0-.83.67-1.5 1.5-1.5h15c.83 0 1.5.67 1.5 1.5v9zM4.5 20h15c.83 0 1.5-.67 1.5-1.5v-9c0-.83-.67-1.5-1.5-1.5h-15c-.83 0-1.5.67-1.5 1.5v9c0 .83.67 1.5 1.5 1.5zm2.5-6h2v2H7v-2zm4 0h2v2h-2v-2zm-4 4h2v2H7v-2zm4 0h2v2h-2v-2zm4-4h2v2h-2v-2zm-8-4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" />
             </svg>
         </div>
-        <div class="logo-text">LICUIS ULTRA V3</div>
+        <div class="logo-text">LICUIS ULTRA</div>
     </div>
 
     <div class="tab-system">
@@ -1507,7 +1507,7 @@
             <div class="floating-bg bg-2"></div>
 
             <div class="chat-header">
-                <h1 class="chat-title">LICUIS ULTRA V3</h1>
+                <h1 class="chat-title">LICUIS ULTRA</h1>
                 <p class="chat-subtitle">
                     <span class="status-indicator online"></span>
                     <span id="connection-status">Connected to Server</span>
@@ -1519,7 +1519,7 @@
             <div class="messages-container" id="messages-container">
                 <div class="message received">
                     <div class="prediction-title"><i class="fas fa-robot"></i> SYSTEM INITIALIZED</div>
-                    <p>Welcome to <strong>LICUIS ULTRA V3</strong>, Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
+                    <p>Welcome to <strong>LICUIS ULTRA</strong>, Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: 100%"></div>
                     </div>
@@ -1576,32 +1576,340 @@
 <script>
 "use strict";
 
-// --- Helper Functions ---
+// --- Helper Functions for Outcome Mapping ---
 const getBigSmallOutcome = (num) => (num >= 5) ? 'BIG' : 'SMALL';
 const getRedGreenOutcome = (num) => (num % 2 === 0) ? 'RED' : 'GREEN';
+const fallbackPrediction = () => {
+    const outcomes = ['BIG', 'SMALL', 'RED', 'GREEN'];
+    return outcomes[Math.floor(Math.random() * outcomes.length)];
+};
+
+// --- Dummy/Placeholder Classes for Strategies (Required for engine initialization) ---
+class PatternRecognition {
+    loadState(key) {
+        try {
+            const saved = localStorage.getItem(key);
+            if (!saved) return null;
+            const data = JSON.parse(saved);
+            return (key.includes('Patterns')) ? new Map(data) : data;
+        } catch (e) {
+            return null;
+        }
+    }
+    saveState(key, data) {
+        try {
+            const dataToSave = (data instanceof Map) ? Array.from(data.entries()) : data;
+            localStorage.setItem(key, JSON.stringify(dataToSave));
+        } catch (e) {
+            console.error('Error saving state:', e);
+        }
+    }
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+class MarkovChainPredictor {
+    initializeMatrix() { return []; }
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+class BayesianPredictor {
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+class ReinforcementLearner {
+    getState() {}
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+class GeneticAlgorithmPredictor {
+    loadState() {}
+    saveState() {}
+    initializePopulation() { return []; }
+    predict() { return fallbackPrediction(); }
+    update() {}
+    evolve() {}
+    selectParent() {}
+}
+class NeuralNetworkPredictor {
+    loadState() {}
+    saveState() {}
+    initializeModel() { 
+        this.model = {
+            predict: () => [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+            train: () => {}
+        }; 
+    }
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+class MonteCarloPredictor {
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+class ClusteringPredictor {
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+class TrendAnalyzer {
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+class StreakDetector {
+    predict() { return fallbackPrediction(); }
+    checkStreak() { return { streakLength: 0, lastOutcome: null }; }
+    update() {}
+}
+class TimeAwarePredictor {
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+class FrequencyAnalyzer {
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+class HybridPredictor {
+    predict() { return fallbackPrediction(); }
+    update() {}
+}
+
+// --- Core Engine Class ---
+class AIPredictionEngine {
+    constructor() {
+        this.history = this.loadHistory();
+        this.strategyWeights = this.loadStrategyWeights();
+        this.currentStreak = 0;
+        this.oppositeMode = false;
+        this.initStrategies();
+    }
+
+    initStrategies() {
+        this.strategies = {
+            patternRecognition: new PatternRecognition(),
+            markovChain: new MarkovChainPredictor(),
+            bayesianInference: new BayesianPredictor(),
+            reinforcementLearning: new ReinforcementLearner(),
+            geneticAlgorithm: new GeneticAlgorithmPredictor(),
+            neuralNetwork: new NeuralNetworkPredictor(),
+            monteCarlo: new MonteCarloPredictor(),
+            clustering: new ClusteringPredictor(),
+            trendAnalysis: new TrendAnalyzer(),
+            streakDetection: new StreakDetector(),
+            timeAware: new TimeAwarePredictor(),
+            frequencyAnalysis: new FrequencyAnalyzer(),
+            hybridModel: new HybridPredictor()
+        };
+    }
+
+    predictNext() {
+        const predictions = {};
+        for (const [name, strategy] of Object.entries(this.strategies)) {
+            predictions[name] = strategy.predict(this.history);
+        }
+
+        let finalPrediction = this.applyEnsembleWeighting(predictions);
+        finalPrediction = this.applySafetyLogic(finalPrediction);
+        
+        return { final: finalPrediction.final, confidence: finalPrediction.confidence, all: predictions };
+    }
+
+    addResult(result, predictions, finalPredictionObj) {
+        if (typeof result !== 'number' || result < 0 || result > 9) {
+            console.error('Invalid result added to engine:', result);
+            return;
+        }
+
+        this.history.push({
+            value: result,
+            timestamp: Date.now()
+        });
+        
+        if (this.history.length > 1000) {
+            this.history = this.history.slice(-1000);
+        }
+        
+        this.saveHistory();
+        this.updateStrategyWeights(result, predictions);
+        this.updateStreak(result, finalPredictionObj);
+        
+        for (const strategy of Object.values(this.strategies)) {
+            if (typeof strategy.update === 'function') {
+                if (strategy.constructor.name === 'ReinforcementLearner' || strategy.constructor.name === 'GeneticAlgorithmPredictor') {
+                    strategy.update(result, finalPredictionObj);
+                } else {
+                    strategy.update(result);
+                }
+            }
+        }
+    }
+
+    applyEnsembleWeighting(predictions) {
+        const scores = { BIG: 0, SMALL: 0, RED: 0, GREEN: 0 };
+        
+        for (const [strategyName, prediction] of Object.entries(predictions)) {
+            const weight = this.strategyWeights[strategyName] || 1;
+            if (typeof prediction === 'string' && scores.hasOwnProperty(prediction)) { 
+                scores[prediction] += weight;
+            }
+        }
+        
+        let bestPrediction = null;
+        let maxScore = -Infinity;
+        for (const [prediction, score] of Object.entries(scores)) {
+            if (score > maxScore) {
+                maxScore = score;
+                bestPrediction = prediction;
+            }
+        }
+        
+        const totalWeight = Object.values(this.strategyWeights).reduce((a, b) => a + b, 0) || 1;
+        const confidence = (maxScore / totalWeight) * 100;
+
+        return { prediction: bestPrediction || fallbackPrediction(), confidence: confidence.toFixed(2) };
+    }
+
+    applySafetyLogic({prediction, confidence}) {
+        let finalPrediction = prediction;
+        
+        if (this.currentStreak <= -3) {
+            this.oppositeMode = true;
+        }
+        
+        let finalConfidence = parseFloat(confidence);
+        
+        if (this.oppositeMode) {
+            switch (finalPrediction) {
+                case 'BIG': finalPrediction = 'SMALL'; break;
+                case 'SMALL': finalPrediction = 'BIG'; break;
+                case 'RED': finalPrediction = 'GREEN'; break;
+                case 'GREEN': finalPrediction = 'RED'; break;
+            }
+            finalConfidence = finalConfidence * 0.95;
+        }
+        
+        return { final: finalPrediction, confidence: finalConfidence.toFixed(2) };
+    }
+
+    updateStrategyWeights(actualResult, allPredictions) {
+        const actualBigSmall = getBigSmallOutcome(actualResult);
+        const actualRedGreen = getRedGreenOutcome(actualResult);
+        
+        for (const [strategyName, predictionData] of Object.entries(allPredictions)) {
+            const prediction = predictionData;
+            const weight = this.strategyWeights[strategyName] || 1;
+            let isCorrect = false;
+
+            if (prediction === actualBigSmall || prediction === actualRedGreen) {
+                isCorrect = true;
+            }
+
+            if (isCorrect) {
+                this.strategyWeights[strategyName] = Math.min(weight * 1.1, 10);
+            } else {
+                this.strategyWeights[strategyName] = Math.max(weight * 0.9, 0.1);
+            }
+        }
+        
+        this.saveStrategyWeights();
+    }
+    
+    updateStreak(actualResult, finalPredictionObj) {
+        const actualBigSmall = getBigSmallOutcome(actualResult);
+        const actualRedGreen = getRedGreenOutcome(actualResult);
+        const resultOutcome = finalPredictionObj.final;
+
+        if (resultOutcome === actualBigSmall || resultOutcome === actualRedGreen) {
+            this.currentStreak = Math.max(1, this.currentStreak + 1);
+            this.oppositeMode = false;
+        } else {
+            this.currentStreak = Math.min(-1, this.currentStreak - 1);
+        }
+    }
+    
+    loadHistory() {
+        try {
+            const saved = localStorage.getItem('predictionHistory');
+            return saved ? JSON.parse(saved) : [];
+        } catch (e) {
+            console.error('Error loading history:', e);
+            return [];
+        }
+    }
+    
+    saveHistory() {
+        try {
+            localStorage.setItem('predictionHistory', JSON.stringify(this.history));
+        } catch (e) {
+            console.error('Error saving history:', e);
+        }
+    }
+    
+    loadStrategyWeights() {
+        try {
+            const saved = localStorage.getItem('strategyWeights');
+            if (!saved) {
+                const defaultWeights = {};
+                const strategyNames = ['patternRecognition', 'markovChain', 'bayesianInference', 'reinforcementLearning', 'geneticAlgorithm', 'neuralNetwork', 'monteCarlo', 'clustering', 'trendAnalysis', 'streakDetection', 'timeAware', 'frequencyAnalysis', 'hybridModel'];
+                strategyNames.forEach(name => defaultWeights[name] = 1.0);
+                return defaultWeights;
+            }
+            return JSON.parse(saved);
+        } catch (e) {
+            console.error('Error loading strategy weights:', e);
+            return {};
+        }
+    }
+    
+    saveStrategyWeights() {
+        try {
+            localStorage.setItem('strategyWeights', JSON.stringify(this.strategyWeights));
+        } catch (e) {
+            console.error('Error saving strategy weights:', e);
+        }
+    }
+}
+
+// --- AI ENGINE INITIALIZATION ---
+let predictionEngine = null;
 
 // --- Tab System and UI Logic ---
 document.addEventListener('DOMContentLoaded', function() {
+    
+    // Initialize AI Engine
+    predictionEngine = new AIPredictionEngine();
+    
+    // Fixed Tab Switching Logic
     const tabs = document.querySelectorAll('.tab');
     const contentSections = document.querySelectorAll('.content-section');
+    
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab');
+            
+            // Remove active class from all tabs
             tabs.forEach(t => {
                 t.classList.remove('active');
                 t.setAttribute('aria-selected', 'false');
             });
+            
+            // Add active class to clicked tab
             this.classList.add('active');
             this.setAttribute('aria-selected', 'true');
+            
+            // Hide all content sections
             contentSections.forEach(section => {
                 section.classList.remove('active');
-                if (section.id === `${tabId}-section`) {
-                    section.classList.add('active');
-                    if (tabId === 'history') {
-                        fetchData();
-                    }
-                }
             });
+            
+            // Show the corresponding content section
+            const targetSection = document.getElementById(`${tabId}-section`);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                
+                // Load data for history tab when activated
+                if (tabId === 'history') {
+                    fetchData();
+                }
+            }
         });
     });
 
@@ -1609,24 +1917,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const gameFrame = document.getElementById('gameFrame');
     const gameItems = document.querySelectorAll('.game-item');
     const injectorTape = document.getElementById('injectorTape');
+    
     gameItems.forEach(item => {
         item.addEventListener('click', function() {
             const gameUrl = this.getAttribute('data-url');
-            gameFrame.src = gameUrl;
-            gameSelection.style.display = 'none';
-            gameFrame.classList.remove('hidden');
-            injectorTape.classList.remove('hidden');
-            this.classList.add('active');
-            setTimeout(() => this.classList.remove('active'), 500);
+            if (gameFrame && gameSelection && injectorTape) {
+                gameFrame.src = gameUrl;
+                gameSelection.style.display = 'none';
+                gameFrame.classList.remove('hidden');
+                injectorTape.classList.remove('hidden');
+                this.classList.add('active');
+                setTimeout(() => this.classList.remove('active'), 500);
+            }
         });
     });
 
-    injectorTape.addEventListener('click', function() {
-        gameFrame.classList.add('hidden');
-        gameSelection.style.display = "flex";
-        injectorTape.classList.add('hidden');
-        gameFrame.src = '';
-    });
+    if (injectorTape) {
+        injectorTape.addEventListener('click', function() {
+            if (gameFrame && gameSelection) {
+                gameFrame.classList.add('hidden');
+                gameSelection.style.display = "flex";
+                injectorTape.classList.add('hidden');
+                gameFrame.src = '';
+            }
+        });
+    }
 
     function createParticles() {
         const colors = ['rgba(37, 99, 235, 0.25)', 'rgba(59, 130, 246, 0.25)', ' rgba(96, 165, 250, 0.25)'];
@@ -1664,7 +1979,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     const valueElement = item.querySelector('.history-value-highlight');
                     if (!valueElement) return;
-                    const isBig = parseInt(valueElement.textContent) >= 5;
+                    const sum = parseInt(valueElement.textContent);
+                    const isBig = sum >= 5;
                     const colorDot = item.querySelector('.color-dot');
                     if (!colorDot) return;
                     const isRed = colorDot.classList.contains('color-red');
@@ -1718,8 +2034,7 @@ document.addEventListener('DOMContentLoaded', function() {
             historyContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE</div>';
             return;
         }
-
-        let html = '<div class="history-header">';
+           let html = '<div class="history-header">';
         html += '<div class="history-header-item"></div>';
         html += '<div class="history-header-item"></div>';
         html += '<div class="history-header-item"></div>';
@@ -1758,17 +2073,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Update total count
-        document.getElementById('total-count').textContent = totalCount;
+        const totalCountElement = document.getElementById('total-count');
+        if (totalCountElement) {
+             totalCountElement.textContent = totalCount;
+        }
+
 
         historyContent.innerHTML = html;
     }
 
     // Chat Predictor Logic
     let latestPeriod = null;
-    let currentPrediction = null; 
+    let currentPredictionData = null; // Store { final: 'BIG', confidence: '85.00', all: {...}, period: '...' }
     let serverOnline = true;
     let lastPredictionPeriod = null;
     let lastActualNumber = null;
+    let lastActualPeriod = null;
 
     // DOM elements
     const messagesContainer = document.getElementById('messages-container');
@@ -1782,37 +2102,39 @@ document.addEventListener('DOMContentLoaded', function() {
     updateClock();
     setInterval(updateClock, 1000);
     setTimeout(() => {
-        typingIndicator.style.display = 'none';
+        if (typingIndicator) typingIndicator.style.display = 'none';
         addMessage('received',
             `<div class="prediction-card">
                 <div class="prediction-title"><i class="fas fa-robot"></i> SYSTEM INITIALIZED</div>
-                <p>Welcome to <strong>LICUIS ULTRA V3</strong> Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
+                <p>Welcome to <strong>LICUIS ULTRA</strong> Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
             </div>`,
             'LICUIS ULTRA');
         simulateInitialAnalysis();
     }, 1500);
 
     // Scroll button functionality
-    scrollDownBtn.addEventListener('click', () => {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    });
+    if (scrollDownBtn && messagesContainer) {
+        scrollDownBtn.addEventListener('click', () => {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
 
-    messagesContainer.addEventListener('scroll', () => {
-        const {
-            scrollTop,
-            scrollHeight,
-            clientHeight
-        } = messagesContainer;
-        const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-        scrollDownBtn.classList.toggle('visible', distanceFromBottom > 100);
-    });
+        messagesContainer.addEventListener('scroll', () => {
+            const {
+                scrollTop,
+                scrollHeight,
+                clientHeight
+            } = messagesContainer;
+            const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+            scrollDownBtn.classList.toggle('visible', distanceFromBottom > 100);
+        });
+    }
 
     function updateClock() {
         const now = new Date();
         const timeString = now.toLocaleTimeString('en-US', {
             hour12: false
         });
-        currentTimeElement.textContent = timeString;
+        if (currentTimeElement) currentTimeElement.textContent = timeString;
         return now;
     }
 
@@ -1824,17 +2146,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function addMessage(type, content, sender, timestamp = new Date()) {
-        typingIndicator.style.display = 'none';
+        if (typingIndicator) typingIndicator.style.display = 'none';
+        if (!messagesContainer) return;
 
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}`;
 
-        if (sender) {
-            messageDiv.innerHTML = `<div class="prediction-title">${sender}</div>`;
-        }
-
-        messageDiv.innerHTML += content;
-        messageDiv.innerHTML += `<div class="timestamp">${formatTime(timestamp)}</div>`;
+        // Ensure the sender title is added only once
+        let innerHTML = `<div class="prediction-title">${sender}</div>`;
+        innerHTML += content;
+        innerHTML += `<div class="timestamp">${formatTime(timestamp)}</div>`;
+        
+        messageDiv.innerHTML = innerHTML;
 
         messagesContainer.appendChild(messageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -1848,8 +2171,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showTyping() {
-        typingIndicator.style.display = 'flex';
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        if (typingIndicator) {
+            typingIndicator.style.display = 'flex';
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
     }
 
     function simulateInitialAnalysis() {
@@ -1862,7 +2189,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>`,
                 'LICUIS ULTRA');
 
-            // Start the simple check logic
+            // Start the simple check logic (For UI status update)
             setInterval(checkPeriodAndPredictSimple, 5000);
             checkPeriodAndPredictSimple(); // Initial call
             
@@ -1872,19 +2199,40 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     }
 
+    // FIX: Removed the logic that caused "object object" to be shown by ensuring
+    // that `predictionData.final` is accessed for the prediction string.
     function createPredictionMessage(predictionData) {
-        // Prediction data is now simple: { size: 'BIG'|'SMALL', confidence: '70.00' }
-        const confidencePercentage = Math.round(parseFloat(predictionData.confidence));
-        const confidenceWidth = `${confidencePercentage}%`;
-        const color = predictionData.size === 'BIG' ? 'Green' : 'Red'; // Random color assignment for chat display
+        // FIX: predictionData is the full object { final: 'BIG', confidence: '85.00', ... }
+        const prediction = predictionData.final; 
+        const confidence = parseFloat(predictionData.confidence);
+        const confidencePercentage = Math.round(confidence);
+        const confidenceWidth = `${Math.min(100, confidencePercentage)}%`;
+        
+        let predictionType = '';
+        let colorClass = '';
 
+        if (prediction === 'BIG' || prediction === 'SMALL') {
+            predictionType = prediction;
+            colorClass = prediction === 'BIG' ? 'Green' : 'Red'; 
+        } else if (prediction === 'RED' || prediction === 'GREEN') {
+            predictionType = prediction;
+            colorClass = prediction === 'RED' ? 'Red' : 'Green'; 
+        } else {
+             // Fallback for safety, though should be caught by ensemble weighting
+            predictionType = prediction; 
+            colorClass = 'Blue'; 
+        }
+
+        // FIX APPLIED HERE: Use 'N/A' as a safe string fallback for period
+        const periodDisplay = predictionData.period || latestPeriod || 'N/A';
+        
         return `
             <div class="prediction-card">
-                <div class="period-display">${latestPeriod || 'N/A'}</div>
-                <div class="prediction-value">${predictionData.size} (${color})</div>
+                <div class="period-display">${periodDisplay}</div>
+                <div class="prediction-value">${predictionType} <span class="text-${colorClass.toLowerCase}"></div>
 
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${confidenceWidth}"></div>
+                    <div class="progress-fill" style="width: ${confidenceWidth}; background-color: var(--color-${colorClass.toLowerCase()})"></div>
                 </div>
                 <div class="confidence-display">
                     <span>Confidence</span>
@@ -1894,36 +2242,17 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
 
-    // FIXED: Function to get OPPOSITE prediction for chat UI
-    function getOppositePredictionData() {
-        // Get a random number to determine the "expected" outcome
-        const randomNumber = Math.floor(Math.random() * 10);
-        const expectedSize = randomNumber >= 5 ? 'BIG' : 'SMALL';
-        const expectedColor = randomNumber % 2 === 0 ? 'Red' : 'Green';
-        
-        // Now show the OPPOSITE of what would be expected
-        const oppositeSize = expectedSize === 'BIG' ? 'SMALL' : 'BIG';
-        const oppositeColor = expectedColor === 'Red' ? 'Green' : 'Red';
-        
-        // Use the opposite size for the main prediction
-        const confidence = (65 + Math.random() * 20).toFixed(2); // Random high confidence to simulate AI
-
-        return { 
-            size: oppositeSize, 
-            color: oppositeColor,
-            confidence 
-        };
-    }
-
+    // --- AI Prediction and Training Logic ---
     async function fetchCurrentGameIssue() {
         const now = new Date();
         const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
+        // Placeholder request data (assuming these are constant for the API call)
         const requestData = {
             typeId: 1,
             language: 0,
             random: "40079dcba93a48769c6ee9d4d4fae23f",
             signature: "D12108C4F57C549D82B23A91E0FA20AE",
-            timestamp: 1727792520
+            timestamp: Math.floor(now.getTime() / 1000)
         };
 
         try {
@@ -1938,12 +2267,42 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.code === 0) {
+                    updateServerStatus(true);
                     const newPeriod = data.data.issueNumber;
+                    const lastResult = data.data.lastIssueNumber; 
 
+                    // 1. Check for new result to train the AI
+                    if (lastResult && lastResult.issueNumber && lastResult.issueNumber !== lastActualPeriod) {
+                        const actualNumber = parseInt(lastResult.number);
+                        
+                        // Check if we have a prediction stored for the *just completed* period
+                        // The lastActualPeriod should hold the period *before* the newPeriod
+                        if (!isNaN(actualNumber) && currentPredictionData && currentPredictionData.period === lastActualPeriod) {
+                            // Train the AI with the actual result and its previous prediction
+                            predictionEngine.addResult(
+                                actualNumber, 
+                                currentPredictionData.all, 
+                                currentPredictionData // Pass the full object
+                            );
+                            
+                            addMessage('received', 
+                                `<div class="prediction-title"><i class="fas fa-brain"></i> AI TRAINING COMPLETE</div>
+                                 <p>Result for period <strong>${lastActualPeriod}</strong>: ${actualNumber} (${getBigSmallOutcome(actualNumber)}/${getRedGreenOutcome(actualNumber)}). AI has been updated.</p>`,
+                                'LICUIS ULTRA'
+                            );
+                        }
+                        
+                        lastActualPeriod = lastResult.issueNumber;
+                        lastActualNumber = actualNumber;
+                    }
+
+                    // 2. Make and display new prediction for the current period
                     if (newPeriod !== latestPeriod) {
                         latestPeriod = newPeriod;
                         updateChatPrediction(now, newPeriod); 
                     }
+                } else {
+                    updateServerStatus(false);
                 }
             } else {
                 updateServerStatus(false);
@@ -1956,68 +2315,63 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function updateChatPrediction(currentTime, currentPeriod) {
         if (currentPeriod !== lastPredictionPeriod) {
-            // Use the FIXED opposite prediction function
-            const predictionData = getOppositePredictionData();
+            // Get prediction from the main AI Engine
+            const predictionResults = predictionEngine.predictNext();
 
-            const finalPrediction = predictionData.size;
-            const finalConfidence = predictionData.confidence;
+            // Store the full prediction data, including the period it was made for
+            currentPredictionData = { 
+                ...predictionResults, 
+                period: currentPeriod,
+                timestamp: currentTime.getTime()
+            };
             
-            currentPrediction = finalPrediction;
             lastPredictionPeriod = currentPeriod;
+            
             // Show prediction message
             showTyping();
             setTimeout(() => {
-                addMessage('received', createPredictionMessage({
-                    size: finalPrediction,
-                    confidence: finalConfidence
-                }), 'LICUIS ULTRA');
+                addMessage('received', createPredictionMessage(currentPredictionData), 'LICUIS ULTRA');
             }, 1000);
         }
     }
 
     function updateServerStatus(online) {
+        const statusIndicator = document.querySelector('.status-indicator');
         if (serverOnline !== online) {
             serverOnline = online;
             if (online) {
-                connectionStatus.textContent = "Connected to Server";
-                document.querySelector('.status-indicator').className = "status-indicator online";
+                if (connectionStatus) connectionStatus.textContent = "Connected to Server";
+                if (statusIndicator) statusIndicator.className = "status-indicator online";
                 addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> CONNECTION RESTORED</div><p>Server connection reestablished. Resuming normal operations.</p>', 'System');
             } else {
-                connectionStatus.textContent = "Connecting...";
-                document.querySelector('.status-indicator').className = "status-indicator offline";
+                if (connectionStatus) connectionStatus.textContent = "Connecting...";
+                if (statusIndicator) statusIndicator.className = "status-indicator offline";
                 addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> CONNECTION LOST</div><p>Temporarily lost connection to prediction server. Attempting to reconnect...</p>', 'System');
             }
         }
     }
     
-    // Simple Prediction Logic
-    function generatePredictionSimple() {
-        const colors = ['Red', 'Green'];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const number = Math.floor(Math.random() * 10);
-        const size = number >= 5 ? "BIG" : "SMALL";
-        
-        return { color, number, size };
-    }
-
+    // Simple Prediction Logic (Kept for the UI status update)
     async function checkPeriodAndPredictSimple() {
         try {
             const statusElement = document.getElementById('status');
             const periodElement = document.getElementById("period");
-            const containerElement = document.querySelector('.container');
             
             if (statusElement) statusElement.innerHTML = '<span class="loading"></span> Updating...';
+            
+            const now = new Date();
+            const requestData = {
+                typeId: 1,
+                language: 0,
+                random: "40079dcba93a48769c6ee9d4d4fae23f",
+                signature: "D12108C4F57C549D82B23A91E0FA20AE",
+                timestamp: Math.floor(now.getTime() / 1000)
+            };
             
             const response = await fetch("https://api.bdg88zf.com/api/webapi/GetGameIssue", {
                 method: "POST",
                 headers: { "Content-Type": "application/json;charset=UTF-8" },
-                body: JSON.stringify({
-                    typeId: 1,
-                    language: 0,
-                    random: "40079dcba93a48769c6ee9d4d4fae23f",
-                    signature: "D12108C4F57C549D82B23A91E0FA20AE",
-                    timestamp: 1727792520
-                }),
+                body: JSON.stringify(requestData),
             });
 
             const data = await response.json();
@@ -2026,13 +2380,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (periodElement) periodElement.textContent = currentPeriod;
                 
                 if (statusElement) statusElement.textContent = 'Active';
+                updateServerStatus(true);
             } else {
                 if (statusElement) statusElement.textContent = 'API Error';
+                updateServerStatus(false);
             }
         } catch (err) {
             console.error("Fetch error:", err);
             const statusElement = document.getElementById('status');
             if (statusElement) statusElement.textContent = 'Connection Error';
+            updateServerStatus(false);
         }
     }
     
@@ -2041,7 +2398,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Animate the game selection title after page load
     setTimeout(() => {
-        document.getElementById('gameSelectionTitle').classList.add('animate');
+        const titleElement = document.getElementById('gameSelectionTitle');
+        if (titleElement) {
+            titleElement.classList.add('animate');
+        }
     }, 500);
 });
 </script>
