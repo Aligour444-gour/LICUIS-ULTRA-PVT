@@ -1603,6 +1603,7 @@
 <script>
 // 🔮 LICUIS ULTRA V3: INFINITY-CORE PREDICTION ENGINE 10.1 (Enhanced & Accurate)
 // FIXED: IMPLEMENTED DISPLAY-OPPOSITE LOGIC AND LOCAL STORAGE SUPPORT.
+// FIXED: MERGED SIMPLISTIC PREDICTION LOGIC INTO MAIN APP LOOP FOR PERIOD TRACKING.
 
 "use strict";
 
@@ -2998,12 +2999,16 @@ let serverOnline = true;
 let lastPredictionPeriod = null;
 let lastActualNumber = null;
 
+// --- New Logic State Merge ---
+let simplePredictionLastPeriod = null;
+let simplePredictionLastUpdateTime = new Date();
+
 // DOM elements
 const messagesContainer = document.getElementById('messages-container');
 const typingIndicator = document.getElementById('typing-indicator');
 const connectionStatus = document.getElementById('connection-status');
 const currentTimeElement = document.getElementById('current-time');
-const lastUpdateTime = document.getElementById('last-update-time');
+const lastUpdateTimeElement = document.getElementById('last-update-time'); // Changed variable name to avoid conflict
 const scrollDownBtn = document.getElementById('scroll-down-btn');
 
 // Initialize
@@ -3067,8 +3072,13 @@ function addMessage(type, content, sender, timestamp = new Date()) {
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-    // Update last update time
-    lastUpdateTime.textContent = formatTime(timestamp);
+    // Update last update time for chat UI
+    if (lastUpdateTimeElement) {
+        lastUpdateTimeElement.textContent = formatTime(timestamp);
+    }
+    
+    // Update simple prediction time tracker for new logic
+    simplePredictionLastUpdateTime = new Date();
 
     return messageDiv;
 }
@@ -3088,9 +3098,14 @@ function simulateInitialAnalysis() {
             </div>`,
             'LICUIS ULTRA');
 
-        // Start the prediction cycle
+        // Start the prediction cycle for the main chat UI
         fetchCurrentGameIssue();
         setInterval(fetchCurrentGameIssue, 5000);
+        
+        // Start the simple check logic (merged from the new script)
+        setInterval(checkPeriodAndPredictSimple, 5000);
+        setInterval(updateLastUpdateTimeSimple, 60000);
+        checkPeriodAndPredictSimple(); // Initial call
     }, 2000);
 }
 
@@ -3258,6 +3273,97 @@ async function updatePredictions(currentTime, currentPeriod) {
             }
         }
     }
+    
+    // --- New Logic Integration: Simplified Prediction and Period Check ---
+
+    function updateLastUpdateTimeSimple() {
+        const lastUpdateElement = document.getElementById('lastUpdate');
+        if (!lastUpdateElement) return;
+
+        const now = new Date();
+        const diffMs = now - simplePredictionLastUpdateTime;
+        const diffSec = Math.floor(diffMs / 1000);
+        const diffMin = Math.floor(diffSec / 60);
+        
+        if (diffMin > 0) {
+            lastUpdateElement.textContent = `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
+        } else {
+            lastUpdateElement.textContent = `${diffSec} second${diffSec > 1 ? 's' : ''} ago`;
+        }
+    }
+
+    function generatePredictionSimple() {
+        const colors = ['Red', 'Green'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const number = Math.floor(Math.random() * 10);
+        const size = number >= 5 ? "BIG" : "SMALL";
+        
+        return { color, number, size };
+    }
+
+    async function checkPeriodAndPredictSimple() {
+        try {
+            const statusElement = document.getElementById('status');
+            const periodElement = document.getElementById("period");
+            const containerElement = document.querySelector('.container');
+            
+            if (statusElement) statusElement.innerHTML = '<span class="loading"></span> Updating...';
+            
+            const response = await fetch("https://api.bdg88zf.com/api/webapi/GetGameIssue", {
+                method: "POST",
+                headers: { "Content-Type": "application/json;charset=UTF-8" },
+                body: JSON.stringify({
+                    typeId: 1,
+                    language: 0,
+                    random: "40079dcba93a48769c6ee9d4d4fae23f",
+                    signature: "D12108C4F57C549D82B23A91E0FA20AE",
+                    timestamp: 1727792520
+                }),
+            });
+
+            const data = await response.json();
+            if (data.code === 0) {
+                const currentPeriod = data.data.issueNumber;
+                if (periodElement) periodElement.textContent = currentPeriod;
+
+                if (currentPeriod !== simplePredictionLastPeriod) {
+                    simplePredictionLastPeriod = currentPeriod;
+                    const prediction = generatePredictionSimple();
+                    
+                    // Update elements
+                    const colorElement = document.getElementById("color");
+                    const numberElement = document.getElementById("number");
+                    const sizeElement = document.getElementById("size");
+
+                    if (colorElement) colorElement.textContent = prediction.color;
+                    if (numberElement) numberElement.textContent = prediction.number;
+                    if (sizeElement) sizeElement.textContent = prediction.size;
+                    
+                    // Update the timestamp
+                    simplePredictionLastUpdateTime = new Date();
+                    updateLastUpdateTimeSimple();
+                    
+                    // Add visual feedback for update
+                    if (containerElement) {
+                        containerElement.classList.add('pulse');
+                        setTimeout(() => {
+                            containerElement.classList.remove('pulse');
+                        }, 2000);
+                    }
+                }
+                
+                if (statusElement) statusElement.textContent = 'Active';
+            } else {
+                if (statusElement) statusElement.textContent = 'API Error';
+            }
+        } catch (err) {
+            console.error("Fetch error:", err);
+            const statusElement = document.getElementById('status');
+            if (statusElement) statusElement.textContent = 'Connection Error';
+        }
+    }
+
+    // --- End of New Logic Integration ---
 
     // Initialize the application
     createParticles();
