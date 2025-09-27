@@ -1437,7 +1437,6 @@
             <div class="tab-icon"><i class="fas fa-history"></i></div>
             <div class="tab-label">History</div>
         </div>
-        <!-- Removed Advanced Analysis Tab -->
     </div>
 
     <div class="content-section active" id="web-section" role="tabpanel" aria-labelledby="web-tab">
@@ -1573,8 +1572,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Removed Analysis Section -->
 
 <script>
 "use strict";
@@ -1897,12 +1894,25 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
 
-    // Stub function to get random prediction for chat UI
-    function getRandomPredictionData() {
-        const size = Math.random() > 0.5 ? 'BIG' : 'SMALL';
+    // FIXED: Function to get OPPOSITE prediction for chat UI
+    function getOppositePredictionData() {
+        // Get a random number to determine the "expected" outcome
+        const randomNumber = Math.floor(Math.random() * 10);
+        const expectedSize = randomNumber >= 5 ? 'BIG' : 'SMALL';
+        const expectedColor = randomNumber % 2 === 0 ? 'Red' : 'Green';
+        
+        // Now show the OPPOSITE of what would be expected
+        const oppositeSize = expectedSize === 'BIG' ? 'SMALL' : 'BIG';
+        const oppositeColor = expectedColor === 'Red' ? 'Green' : 'Red';
+        
+        // Use the opposite size for the main prediction
         const confidence = (65 + Math.random() * 20).toFixed(2); // Random high confidence to simulate AI
 
-        return { size, confidence };
+        return { 
+            size: oppositeSize, 
+            color: oppositeColor,
+            confidence 
+        };
     }
 
     async function fetchCurrentGameIssue() {
@@ -1946,8 +1956,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function updateChatPrediction(currentTime, currentPeriod) {
         if (currentPeriod !== lastPredictionPeriod) {
-            // Use the simple randomizer
-            const predictionData = getRandomPredictionData();
+            // Use the FIXED opposite prediction function
+            const predictionData = getOppositePredictionData();
 
             const finalPrediction = predictionData.size;
             const finalConfidence = predictionData.confidence;
