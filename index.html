@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1600,14 +1600,15 @@
             </div>
         </div>
     </div>
-<script>
-// 🔮 LICUIS ULTRA: INFINITY-CORE PREDICTION ENGINE 10.1 (Enhanced & Accurate)
-// FIXED: ELIMINATED BIG BIAS IN STUB MODELS AND REFINED CONFIDENCE SCORING.
-// FIXED: IMPLEMENTED 'AFTER 3 LOSS, 4TH PREDICTION OPPOSITE THEN RESET' LOGIC.
+    <script>
+      // 🔮 LICUIS ULTRA : ZENITH AI-CORE ENGINE 10.1 (Enhanced & Accurate) - FIXED VERSION
 
 "use strict";
 
-class InfinityCoreAI {
+const LOCAL_STORAGE_KEY = 'zenithAICoreState';
+const PREDICTOR_COORDINATOR_KEY = 'zenithPredictorCoordinatorState';
+
+class zenithAICore {
     constructor() {
         this.history = [];
         this.modelWeights = {
@@ -1645,7 +1646,6 @@ class InfinityCoreAI {
             swarmIntelligence: 10.3,
             geneticAlgorithm: 10.5,
             bayesianNetwork: 11.0,
-            // New models from "Prediction Logic"
             antiStreak: 12.0,
             alternatingMatch: 11.5,
             weightedProbability: 10.5,
@@ -1661,19 +1661,20 @@ class InfinityCoreAI {
         this.predictionCache = new Map();
         this.consecutiveWins = 0;
         this.consecutiveLosses = 0;
-        this.lastPrediction = null; // Internal prediction (BIG/SMALL)
-        this.lastActual = null; // Actual result (BIG/SMALL)
+        this.lastPrediction = null; 
+        this.lastActual = null; 
         this.aggressiveness = 10;
-        this.strategy = 'trendFollowing'; // UPGRADED DEFAULT STRATEGY
+        this.strategy = 'trendFollowing';
         this.deepLearningEnabled = true;
         this.adaptiveModelsEnabled = true;
         this.learningRate = 0.87;
         this.minHistoryRequired = 5;
+        
         this.initializeModels();
+        this.loadState();
     }
 
     initializeModels() {
-        // --- NOTE: Only models with no logic (the stubs) are modified for a better default balance. ---
         this.models = {
             momentum: this.MomentumModel(),
             zigzag: this.ZigZagModel(),
@@ -1709,8 +1710,6 @@ class InfinityCoreAI {
             swarmIntelligence: this.SwarmIntelligenceModel(),
             geneticAlgorithm: this.GeneticAlgorithmModel(),
             bayesianNetwork: this.BayesianNetworkModel(),
-
-            // New Models Integration
             antiStreak: this.AntiStreakModel(),
             alternatingMatch: this.AlternatingMatchModel(),
             weightedProbability: this.WeightedProbabilityModel(),
@@ -1729,6 +1728,46 @@ class InfinityCoreAI {
                 accuracy: 0,
                 weight: this.modelWeights[modelName] || 5.0
             };
+        }
+    }
+    
+    saveState() {
+        const state = {
+            modelWeights: this.modelWeights,
+            modelPerformance: this.modelPerformance,
+            consecutiveWins: this.consecutiveWins,
+            consecutiveLosses: this.consecutiveLosses,
+            lastPrediction: this.lastPrediction,
+            lastActual: this.lastActual,
+            aggressiveness: this.aggressiveness,
+            strategy: this.strategy,
+            deepLearningEnabled: this.deepLearningEnabled,
+            adaptiveModelsEnabled: this.adaptiveModelsEnabled,
+            learningRate: this.learningRate,
+        };
+        try {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+            console.error("Could not save zenithAICore state to local storage:", e);
+        }
+    }
+
+    loadState() {
+        try {
+            const state = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (state) {
+                const parsedState = JSON.parse(state);
+                Object.assign(this, parsedState);
+                
+                for (const modelName in this.modelPerformance) {
+                    const perf = this.modelPerformance[modelName];
+                    if (perf.total > 0) {
+                        perf.accuracy = perf.correct / perf.total;
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn("Could not load ZenithAICore state from local storage:", e);
         }
     }
 
@@ -1765,9 +1804,6 @@ class InfinityCoreAI {
                             strategyMultiplier = 2.0;
                         }
                         break;
-                    case 'opposite': // Strategy for EnhancedOppositePredictor
-                        strategyMultiplier = 1.1; // Slight boost
-                        break;
                 }
 
                 this.modelWeights[modelName] = Math.max(0.5, baseWeight * strategyMultiplier);
@@ -1778,11 +1814,11 @@ class InfinityCoreAI {
                 }
             }
         }
+        this.saveState();
     }
 
     updateModelPerformance(actualSize) {
         for (const modelName in this.models) {
-            // Note: Models are supposed to return {size: 'BIG'|'SMALL', confidence: 0-1}
             const prediction = this.models[modelName].predict(this.history, {
                 consecutiveLosses: this.consecutiveLosses,
                 lastPrediction: this.lastPrediction,
@@ -1802,18 +1838,13 @@ class InfinityCoreAI {
         }
         this.updateDynamicWeights();
         this.predictionCache.clear();
+        this.saveState();
     }
     
-    // Helper to map number to BIG/SMALL
     _mapToSize(number) {
         return number > 4 ? 'BIG' : 'SMALL';
     }
     
-    // --- Model Implementations from "Prediction Logic" (No changes applied here) ---
-
-    /**
-     * Logic 1: Anti-Streak Streak Detection: If a streak of >= 3 consecutive results, predict the opposite.
-     */
     AntiStreakModel() {
         const MIN_STREAK = 3;
         return {
@@ -1832,7 +1863,6 @@ class InfinityCoreAI {
 
                 if (streakLength >= MIN_STREAK) {
                     const opposite = streakType === 'BIG' ? 'SMALL' : 'BIG';
-                    // Confidence scales with streak length (0 to 1)
                     const confidence = Math.min(1.0, 0.7 + (streakLength / 10));
                     return { size: opposite, confidence };
                 }
@@ -1841,9 +1871,6 @@ class InfinityCoreAI {
         };
     }
 
-    /**
-     * Logic 3: Alternating Pattern: If results show an alternating pattern for >= 4 rounds, predict continuation.
-     */
     AlternatingMatchModel() {
         const MIN_LEN = 4;
         return {
@@ -1860,7 +1887,6 @@ class InfinityCoreAI {
                 }
                 
                 if (isAlternating) {
-                    // Prediction is the opposite of the last result in the alternating sequence
                     const prediction = results[0] === 'BIG' ? 'SMALL' : 'BIG';
                     return { size: prediction, confidence: 0.90 };
                 }
@@ -1869,12 +1895,9 @@ class InfinityCoreAI {
         };
     }
     
-    /**
-     * Logic 8: Weighted Probability Reversion to Mean: If imbalanced (>20% difference over 15), predict the less frequent.
-     */
     WeightedProbabilityModel() {
         const LOOKBACK = 15;
-        const IMBALANCE_THRESHOLD = 0.2; // 20% difference from 50%
+        const IMBALANCE_THRESHOLD = 0.2;
         return {
             predict: (history) => {
                 if (history.length < LOOKBACK) return { size: null, confidence: 0 };
@@ -1885,7 +1908,7 @@ class InfinityCoreAI {
 
                 if (Math.abs(bigRatio - 0.5) > IMBALANCE_THRESHOLD) {
                     const prediction = bigRatio > smallRatio ? 'SMALL' : 'BIG';
-                    const confidence = Math.abs(bigRatio - 0.5); // Max 0.5
+                    const confidence = Math.abs(bigRatio - 0.5);
                     return { size: prediction, confidence: Math.min(0.95, 0.6 + confidence) };
                 }
                 return { size: null, confidence: 0 };
@@ -1893,26 +1916,19 @@ class InfinityCoreAI {
         };
     }
 
-    /**
-     * Logic 22: Loss Recovery Hybrid Martingale Strategy: If >= 2 consecutive losses, predict the reverse of the last prediction.
-     */
     LossRecoveryModel() {
         return {
             predict: (history, context) => {
-                const { consecutiveLosses, lastPrediction } = context;
+                const { consecutiveLosses, lastPrediction } = context; 
                 if (consecutiveLosses >= 2 && lastPrediction) {
                     const opposite = lastPrediction === 'BIG' ? 'SMALL' : 'BIG';
-                    // High-confidence, loss-mitigation strategy
-                    return { size: opposite, confidence: 0.99 }; // Confidence up to 1.0
+                    return { size: opposite, confidence: 0.99 };
                 }
                 return { size: null, confidence: 0 };
             }
         };
     }
 
-    /**
-     * Logic 19: Neural Network (NN) Simulated AI Consensus: Favors opposite of last, but shifts to SMALL if BIG > 65% recent.
-     */
     SimulatedNNModel() {
         const LOOKBACK = 15;
         const BIG_BIAS_THRESHOLD = 0.65;
@@ -1920,15 +1936,15 @@ class InfinityCoreAI {
             predict: (history) => {
                 if (history.length === 0) return { size: null, confidence: 0 };
                 const lastResult = this._mapToSize(history[0].number);
-                let prediction = lastResult === 'BIG' ? 'SMALL' : 'BIG'; // Default: opposite of last
-                let confidence = 0.75; // Confidence up to 1.0
+                let prediction = lastResult === 'BIG' ? 'SMALL' : 'BIG';
+                let confidence = 0.75;
 
                 if (history.length >= LOOKBACK) {
                     const last15 = history.slice(0, LOOKBACK);
                     const bigRatio = last15.filter(h => h.number > 4).length / LOOKBACK;
                     
                     if (bigRatio > BIG_BIAS_THRESHOLD) {
-                        prediction = 'SMALL'; // Strong shift to SMALL
+                        prediction = 'SMALL';
                         confidence = 0.90;
                     }
                 }
@@ -1938,9 +1954,6 @@ class InfinityCoreAI {
         };
     }
 
-    /**
-     * Logic 28: Machine Learning (ML) Simulated Pattern Matching: Default is repeat of second-to-last. Finds "double-repeat" (BBS S) and predicts opposite (B).
-     */
     SimulatedMLModel() {
         const DOUBLE_REPEAT_LEN = 4;
         return {
@@ -1948,25 +1961,19 @@ class InfinityCoreAI {
                 if (history.length < 2) return { size: null, confidence: 0 };
                 const results = history.map(h => this._mapToSize(h.number));
                 
-                // Double-Repeat Pattern: BBSS or SSBB
                 if (history.length >= DOUBLE_REPEAT_LEN) {
                     const p = results.slice(0, DOUBLE_REPEAT_LEN);
                     if ((p[0] === p[1] && p[2] === p[3]) && (p[1] !== p[2])) {
-                        // Pattern found (e.g., B B S S). Predict opposite of the last pair.
                         const prediction = p[3] === 'BIG' ? 'SMALL' : 'BIG';
                         return { size: prediction, confidence: 0.88 };
                     }
                 }
                 
-                // Default: Repeat of second-to-last result
                 return { size: results[1], confidence: 0.65 };
             }
         };
     }
 
-    /**
-     * Logic 6: Mirror Pattern Sequence Matching: Looks for B A B A over last 4 and predicts a repeat of the first (B).
-     */
     MirrorPatternModel() {
         const LOOKBACK = 4;
         return {
@@ -1975,8 +1982,8 @@ class InfinityCoreAI {
                 const results = history.map(h => this._mapToSize(h.number));
                 const [r0, r1, r2, r3] = results;
 
-                if (r0 !== r1 && r1 !== r2 && r2 !== r3) { // Alternating: B S B S
-                    const prediction = r0; // Repeat of the first (B)
+                if (r0 !== r1 && r1 !== r2 && r2 !== r3) {
+                    const prediction = r0;
                     return { size: prediction, confidence: 0.85 };
                 }
                 return { size: null, confidence: 0 };
@@ -1984,9 +1991,6 @@ class InfinityCoreAI {
         };
     }
 
-    /**
-     * Logic 12: Odd/Even Parity Imbalance: If imbalance >= 4 over lookback, predict the result type corresponding to the less frequent parity.
-     */
     ParityImbalanceModel() {
         const LOOKBACK = 15;
         const IMBALANCE_THRESHOLD = 4;
@@ -2001,7 +2005,6 @@ class InfinityCoreAI {
                     let bigCount = last15.filter(h => h.number > 4).length;
                     let smallCount = LOOKBACK - bigCount;
                     
-                    // Simple logic: Predict the type that corresponds to the less frequent *total*
                     const prediction = bigCount < smallCount ? 'BIG' : 'SMALL';
                     return { size: prediction, confidence: 0.78 };
                 }
@@ -2010,9 +2013,6 @@ class InfinityCoreAI {
         };
     }
     
-    /**
-     * Logic 4: Double Repeat Break Fallback: If no strong pattern, if last two results were the same (BB), predict the opposite (S).
-     */
     DoubleRepeatBreakModel() {
         return {
             predict: (history) => {
@@ -2020,7 +2020,7 @@ class InfinityCoreAI {
                 const results = history.map(h => this._mapToSize(h.number));
                 const [r0, r1] = results;
 
-                if (r0 === r1) { // Double repeat (BB or SS)
+                if (r0 === r1) {
                     const opposite = r0 === 'BIG' ? 'SMALL' : 'BIG';
                     return { size: opposite, confidence: 0.77 };
                 }
@@ -2029,13 +2029,9 @@ class InfinityCoreAI {
         };
     }
     
-    // --- FIXED STUB MODEL IMPLEMENTATIONS (Eliminated BIG bias) ---
-
-    // Generic helper for new stubs
     _getNonBiasedPred(history) {
         if (history.length === 0) return { size: Math.random() > 0.5 ? 'BIG' : 'SMALL', confidence: 0.5 };
         const last = this._mapToSize(history[0].number);
-        // Simple alternation logic to reduce bias
         const prediction = last === 'BIG' ? 'SMALL' : 'BIG';
         return { size: prediction, confidence: 0.55 + (Math.random() * 0.1) };
     }
@@ -2075,14 +2071,11 @@ class InfinityCoreAI {
     GeneticAlgorithmModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
     BayesianNetworkModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
     
-    /**
-     * Generates a prediction based on the current history - NOW RETURNS DIRECT PREDICTION
-     */
     async generatePrediction(history) {
         if (history.length < this.minHistoryRequired) {
             return {
-                size: "BIG", // Default prediction
-                confidence: 50, // Default confidence
+                size: "BIG",
+                confidence: 50,
                 insufficientData: true
             };
         }
@@ -2097,7 +2090,6 @@ class InfinityCoreAI {
 
         for (const modelName in this.models) {
             if (!this.deepLearningEnabled && modelName.includes('deepLearning')) continue;
-            // Pass context for models like LossRecovery
             modelPredictions[modelName] = this.models[modelName].predict(history, {
                 consecutiveLosses: this.consecutiveLosses,
                 lastPrediction: this.lastPrediction,
@@ -2108,28 +2100,22 @@ class InfinityCoreAI {
 
         let prediction = this.ensemblePredict(modelPredictions);
 
-        // --- FIX: NO LONGER ENFORCING OPPOSITE PREDICTION ---
         const finalPrediction = {
-            size: prediction.size, // Direct prediction
-            confidence: prediction.confidence, // Direct confidence
+            size: prediction.size,
+            confidence: prediction.confidence,
         };
-        // ----------------------------------------
 
         this.predictionCache.set(historyKey, finalPrediction);
         return finalPrediction;
     }
 
-    /**
-     * Combines predictions from all models - INTERNALLY USED, NOW RETURNS DIRECT PREDICTION
-     */
     ensemblePredict(predictions) {
         const votes = { BIG: 0, SMALL: 0 };
         const aggressivenessFactor = this.aggressiveness / 10;
         for (const modelName in predictions) {
             const pred = predictions[modelName];
             if (pred.size) {
-                // Ensure confidence is between 0 and 1 for weight calculation
-                const predConfidence = Math.min(1.0, Math.max(0, pred.confidence)); // Clamp confidence to [0, 1]
+                const predConfidence = Math.min(1.0, Math.max(0, pred.confidence));
                 const weight = this.modelWeights[modelName] * Math.pow(predConfidence, aggressivenessFactor);
                 votes[pred.size] += weight;
             }
@@ -2137,13 +2123,11 @@ class InfinityCoreAI {
         const totalVotes = votes.BIG + votes.SMALL;
         const bigRatio = totalVotes > 0 ? votes.BIG / totalVotes : 0.5;
         
-        // Return confidence as a percentage (0-100)
         const finalConfidence = (Math.max(bigRatio, 1 - bigRatio) * 100);
         
-        // This is the internal prediction that is now the final prediction
         return {
             size: bigRatio > 0.5 ? 'BIG' : 'SMALL',
-            confidence: finalConfidence.toFixed(2) // FIX: Return as a fixed-point string
+            confidence: parseFloat(finalConfidence.toFixed(2))
         };
     }
 
@@ -2163,10 +2147,12 @@ class InfinityCoreAI {
 
     setDeepLearning(enabled) {
         this.deepLearningEnabled = enabled;
+        this.saveState();
     }
 
     setAdaptiveModels(enabled) {
         this.adaptiveModelsEnabled = enabled;
+        this.saveState();
     }
 
     getLearningRate() {
@@ -2174,12 +2160,8 @@ class InfinityCoreAI {
     }
 }
 
-// The rest of the classes and logic remain the same, as they already handle the
-// "Enhanced Opposite Prediction" logic using the InfinityCoreAI class.
-
-class EnhancedOppositePredictor {
+class ZenithPredictorCoordinator {
     constructor() {
-        // Layer 1: Pattern Analysis
         this.patternWeights = {
             wmaTrend: 0.3,
             microPatterns: 0.25,
@@ -2187,64 +2169,80 @@ class EnhancedOppositePredictor {
             frequency: 0.25
         };
         
-        // Layer 2: Trap Detection
         this.safetyThresholds = {
             volatilitySpike: 2.5,
             entropyHigh: 0.8,
             clusterTrap: 0.7
         };
         
-        // Layer 3: Reinforcement Logic
         this.consecutiveLosses = 0;
         this.consecutiveWins = 0;
         this.mode = 'normal';
         
-        // Infinity-Core AI integration
-        this.infinityAI = new InfinityCoreAI();
-        this.infinityAI.setStrategy('trendFollowing'); // UPGRADED DEFAULT STRATEGY
+        this.zenithAI = new zenithAICore(); 
+        this.zenithAI.setStrategy('trendFollowing');
         
-        // Combined history tracking
         this.history = [];
         this.predictionLog = [];
+
+        this.loadState();
+    }
+    
+    saveState() {
+        const state = {
+            patternWeights: this.patternWeights,
+            consecutiveLosses: this.consecutiveLosses,
+            consecutiveWins: this.consecutiveWins,
+            mode: this.mode,
+            predictionLog: this.predictionLog.slice(-20)
+        };
+        try {
+            localStorage.setItem(PREDICTOR_COORDINATOR_KEY, JSON.stringify(state));
+        } catch (e) {
+            console.error("Could not save ZenithPredictorCoordinator state to local storage:", e);
+        }
     }
 
-    // Layer 1: Enhanced Pattern Analysis with Opposite Focus
+    loadState() {
+        try {
+            const state = localStorage.getItem(PREDICTOR_COORDINATOR_KEY);
+            if (state) {
+                const parsedState = JSON.parse(state);
+                Object.assign(this, parsedState);
+            }
+        } catch (e) {
+            console.warn("Could not load ZenithPredictorCoordinator state from local storage:", e);
+        }
+    }
+
     analyzePatterns(history) {
         const patterns = {};
         
-        // A. Weighted Moving Average Trend (REVERSED)
         const shortTerm = this.calculateWMA(history.slice(0, 7));
         const longTerm = this.calculateWMA(history.slice(0, 25));
         patterns.wmaTrend = {
-            // FIX: Removed internal 'REVERSED' logic to align with direct prediction
             prediction: shortTerm > longTerm ? 'BIG' : 'SMALL',
             confidence: Math.abs(shortTerm - longTerm) * 10,
             strength: 'trend'
         };
 
-        // B. Micro-Pattern Recognition (REVERSED)
         const last10 = history.slice(0, 10).map(h => h.number > 4 ? 'B' : 'S');
         const microPattern = this.detectMicroPattern(last10);
         patterns.microPatterns = {
-            // FIX: Removed internal 'REVERSED' logic to align with direct prediction
             prediction: microPattern === 'B' ? 'BIG' : 'SMALL',
             confidence: 0.85,
             strength: 'pattern'
         };
 
-        // C. Momentum Oscillator (REVERSED)
         const momentum = this.calculateMomentum(history.slice(0, 10));
         patterns.momentum = {
-            // FIX: Removed internal 'REVERSED' logic to align with direct prediction
             prediction: momentum > 70 ? 'BIG' : momentum < 30 ? 'SMALL' : null,
             confidence: Math.abs(momentum - 50) / 50,
             strength: 'momentum'
         };
 
-        // D. Frequency Analysis (REVERSED)
         const frequency = this.calculateFrequency(history.slice(0, 20));
         patterns.frequency = {
-            // FIX: Removed internal 'REVERSED' logic to align with direct prediction
             prediction: frequency.bigRatio > 0.6 ? 'BIG' : frequency.smallRatio > 0.6 ? 'SMALL' : null,
             confidence: Math.max(frequency.bigRatio, frequency.smallRatio),
             strength: 'frequency'
@@ -2253,7 +2251,6 @@ class EnhancedOppositePredictor {
         return patterns;
     }
 
-    // Layer 2: Enhanced Trap Detection
     assessSafety(history) {
         const safety = {
             score: 'green',
@@ -2262,21 +2259,18 @@ class EnhancedOppositePredictor {
             entropy: 0
         };
 
-        // A. Volatility Spike Detection
         safety.volatility = this.calculateVolatility(history.slice(0, 20));
         if (safety.volatility > this.safetyThresholds.volatilitySpike) {
             safety.score = 'red';
             safety.flags.push('high_volatility');
         }
 
-        // B. Entropy Measurement
         safety.entropy = this.calculateEntropy(history.slice(0, 15));
         if (safety.entropy > this.safetyThresholds.entropyHigh) {
             safety.score = 'red';
             safety.flags.push('high_entropy');
         }
 
-        // C. Counter-Trend Clustering
         const clusterBias = this.detectClusterBias(history);
         if (clusterBias > this.safetyThresholds.clusterTrap) {
             safety.score = safety.score === 'green' ? 'yellow' : 'red';
@@ -2286,13 +2280,10 @@ class EnhancedOppositePredictor {
         return safety;
     }
 
-    // Layer 3: Combined Reinforcement Logic
-    updateReinforcement(actualResult) {
-        const lastPred = this.predictionLog[this.predictionLog.length - 1];
-        
-        // Track internal accuracy (not displayed)
-        // FIX: The internal prediction is now the displayed prediction.
-        const internalCorrect = lastPred.displayedPrediction === actualResult;
+    updateReinforcement(actualResult, internalPrediction) {
+        if (!internalPrediction) return; 
+
+        const internalCorrect = internalPrediction === actualResult;
         
         if (internalCorrect) {
             this.consecutiveWins++;
@@ -2302,7 +2293,6 @@ class EnhancedOppositePredictor {
             this.consecutiveWins = 0;
         }
 
-        // Update operating mode
         if (this.consecutiveLosses === 1) {
             this.mode = 'cautious';
         } else if (this.consecutiveLosses >= 2) {
@@ -2310,64 +2300,45 @@ class EnhancedOppositePredictor {
         } else {
             this.mode = 'normal';
         }
-
-        // Update pattern weights based on performance
-        this.updatePatternWeights(lastPred, actualResult);
+        
+        this.saveState();
     }
 
-    // Main Prediction Logic - NOW SHOWS DIRECT PREDICTION
-    async generateOppositePrediction(history) {
+    async generateDirectPrediction(history, period) {
         if (history.length < 5) {
-            return this.generateRandomDirect(); // Updated helper
+            const randomPred = this.generateRandomDirect(period);
+            this.predictionLog.push(randomPred);
+            this.saveState();
+            return randomPred;
         }
 
         this.history = history;
 
-        // Step 1: Get internal prediction from combined analysis
         const patterns = this.analyzePatterns(history);
         const safety = this.assessSafety(history);
         
-        // Step 2: Get Infinity-Core prediction (direct prediction)
-        // Note: infinityAI.generatePrediction now returns the DIRECT prediction
-        const infinityPred = await this.infinityAI.generatePrediction(history);
+        const zenithPred = await this.zenithAI.generatePrediction(history);
         
-        // Step 3: Use the direct prediction from Infinity-Core
-        let finalPrediction = infinityPred.size;
-        let finalConfidence = infinityPred.confidence;
-
-        // NEW LOGIC IMPLEMENTATION: "After 3 loss 4th one prediction show opposite prediction opposite outcome then reset"
-        if (this.infinityAI.consecutiveLosses === 3) {
-            finalPrediction = finalPrediction === 'BIG' ? 'SMALL' : 'BIG'; // Opposite prediction
-            finalConfidence = (parseFloat(finalConfidence) + 5).toFixed(2); // Slight confidence boost for forced opposite
-            // The reset happens *after* the 4th result is processed (in fetchCurrentGameIssue), so the consecutiveLosses is 4, which is reset to 0 if it wins, or stays 4/5/etc. if it loses. 
-            // We only need to force the prediction here.
-        }
-        // END NEW LOGIC
-
-        // Step 4: GENERATE DIRECT PREDICTION WITH CALCULATED CONFIDENCE
-        const displayedConfidence = finalConfidence;
+        const finalPrediction = zenithPred.size;
+        const finalConfidence = zenithPred.confidence;
         
         const finalOutput = {
-            // DISPLAYED PREDICTION (NOW DIRECT)
-            displayedPrediction: finalPrediction,
-            displayedConfidence: finalConfidence,
-            
-            // INTERNAL TRACKING (NOW MATCHES DISPLAYED)
+            size: finalPrediction, 
+            confidence: finalConfidence,
             internalPrediction: finalPrediction,
             internalConfidence: finalConfidence,
-            
-            // METADATA
             mode: this.mode,
             safety: safety.score,
             patterns: Object.keys(patterns),
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            period: period
         };
 
         this.predictionLog.push(finalOutput);
+        this.saveState();
         return finalOutput;
     }
 
-    // Helper Methods
     calculateWMA(data) {
         if (data.length === 0) return 0.5;
         const numbers = data.map(d => d.number);
@@ -2398,7 +2369,6 @@ class EnhancedOppositePredictor {
         };
         
         const last3 = sequence.slice(0, 3).join('');
-        // FIX: Returned the actual pattern prediction, not the opposite, for consistency
         return patterns[last3] || (Math.random() > 0.5 ? 'B' : 'S');
     }
 
@@ -2425,21 +2395,20 @@ class EnhancedOppositePredictor {
         return Math.abs(bigBias - 0.5) * 2;
     }
     
-    // FIX: Helper to generate a random DIRECT prediction for low history
-    generateRandomDirect() {
-        const randomPred = Math.random() > 0.5 ? 'BIG' : 'SMALL';
+    generateRandomDirect(period) {
+        const directPred = Math.random() > 0.5 ? 'BIG' : 'SMALL';
         
         return {
-            displayedPrediction: randomPred,
-            displayedConfidence: 50 + Math.random() * 10,
-            internalPrediction: randomPred,
+            size: directPred,
+            confidence: 50 + Math.random() * 10,
+            internalPrediction: directPred,
             internalConfidence: 0.5,
             mode: 'random',
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            period: period
         };
     }
 
-    // Update pattern weights based on performance
     updatePatternWeights(lastPred, actualResult) {
         const wasCorrect = lastPred.internalPrediction === actualResult;
         const adjustment = wasCorrect ? 1.1 : 0.9;
@@ -2451,21 +2420,32 @@ class EnhancedOppositePredictor {
                     Math.min(0.5, this.patternWeights[pattern]));
             }
         });
+        this.saveState();
     }
 }
 
-// Enhanced initialization with direct prediction focus
-const enhancedPredictor = new EnhancedOppositePredictor();
+const predictorCoordinator = new ZenithPredictorCoordinator();
+const zenithCoreAI = predictorCoordinator.zenithAI;
 
-// Initialize the Infinity-Core AI prediction system
-const infinityCoreAI = enhancedPredictor.infinityAI; // Use the internal instance
-
-// --- Helper Functions ---
 const getBigSmallOutcome = (num) => (num >= 5) ? 'BIG' : 'SMALL';
 const getRedGreenOutcome = (num) => (num % 2 === 0) ? 'RED' : 'GREEN';
 
-// --- Tab System and UI Logic ---
+// Export for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        zenithAICore,
+        ZenithPredictorCoordinator,
+        predictorCoordinator,
+        zenithCoreAI,
+        getBigSmallOutcome,
+        getRedGreenOutcome
+    };
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
+
+    // --- Tab System and UI Logic (No changes in this block) ---
     const tabs = document.querySelectorAll('.tab');
     const contentSections = document.querySelectorAll('.content-section');
     tabs.forEach(tab => {
@@ -2534,7 +2514,7 @@ document.addEventListener('DOMContentLoaded', function() {
             particle.style.opacity = Math.random() * 0.5 + 0.1;
             particle.style.animationDuration = `${duration}s`;
             particle.style.animationDelay = `${delay}s`;
-            document.body.appendChild(particle);
+            // document.body.appendChild(particle); 
         }
     }
 
@@ -2549,8 +2529,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (filter === 'all') {
                     item.style.display = 'grid';
                 } else {
-                    const isBig = item.querySelector('.history-value-highlight').textContent >= 5;
-                    const isRed = item.querySelector('.color-dot').classList.contains('color-red');
+                    const sumElement = item.querySelector('.history-value-highlight');
+                    const colorDotElement = item.querySelector('.color-dot');
+
+                    if (!sumElement || !colorDotElement) return;
+
+                    const sum = parseInt(sumElement.textContent, 10);
+                    const isBig = sum >= 5;
+                    const isRed = colorDotElement.classList.contains('color-red');
+
                     if ((filter === 'big' && isBig) || (filter === 'small' && !isBig) || (filter === 'red' && isRed) || (filter === 'green' && !isRed)) {
                         item.style.display = 'grid';
                     } else {
@@ -2561,656 +2548,621 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-// Fetch data for history tab
-async function fetchData() {
-    try {
+    // Fetch data for history tab
+    async function fetchData() {
+        try {
+            const historyContent = document.getElementById('historyContent');
+            if (!historyContent) return;
+
+            historyContent.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> LOADING DATA...</div>';
+
+            const timestamp = Date.now();
+            const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50`); 
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data && data.data && data.data.list && data.data.list.length > 0) {
+                displayHistory(data.data.list);
+            } else {
+                historyContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE</div>';
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            const historyContent = document.getElementById('historyContent');
+            if (historyContent) {
+                historyContent.innerHTML = '<div class="error-container"><i class="fas fa-exclamation-triangle"></i> ERROR LOADING DATA</div>';
+            }
+        }
+    }
+
+    // Display history data
+    function displayHistory(data) {
         const historyContent = document.getElementById('historyContent');
         if (!historyContent) return;
 
-        historyContent.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> LOADING DATA...</div>';
-
-        const timestamp = Date.now();
-        const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=10`);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data && data.data && data.data.list && data.data.list.length > 0) {
-            displayHistory(data.data.list);
-        } else {
+        if (!data || data.length === 0) {
             historyContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE</div>';
+            return;
         }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        const historyContent = document.getElementById('historyContent');
-        if (historyContent) {
-            historyContent.innerHTML = '<div class="error-container"><i class="fas fa-exclamation-triangle"></i> ERROR LOADING DATA</div>';
-        }
-    }
-}
 
-// Display history data
-function displayHistory(data) {
-    const historyContent = document.getElementById('historyContent');
-    if (!historyContent) return;
+        let html = '<div class="history-header">';
+        html += '<div class="history-header-item"></div>';
+        html += '<div class="history-header-item"></div>';
+        html += '<div class="history-header-item"></div>';
+        html += '<div class="history-header-item"></div>';
+        html += '</div>';
 
-    if (!data || data.length === 0) {
-        historyContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE</div>';
-        return;
-    }
+        let totalCount = 0;
 
-    let html = '<div class="history-header">';
-    html += '<div class="history-header-item"></div>';
-    html += '<div class="history-header-item"></div>';
-    html += '<div class="history-header-item"></div>';
-    html += '<div class="history-header-item"></div>';
-    html += '</div>';
+        data.forEach(item => {
+            const sum = parseInt(item.premium || item.result || item.number || 0, 10);
+            const bigSmall = getBigSmallOutcome(sum);
+            const isEven = sum % 2 === 0;
+            const redGreen = isEven ? 'RED' : 'GREEN';
+            const colorClass = isEven ? 'color-red' : 'color-green';
 
-    let totalCount = 0;
+            totalCount++;
 
-    data.forEach(item => {
-        const sum = parseInt(item.premium || item.result || item.number || 0);
-        const bigSmall = getBigSmallOutcome(sum);
-        const isEven = sum % 2 === 0;
-        const redGreen = isEven ? 'RED' : 'GREEN';
-        const colorClass = isEven ? 'color-red' : 'color-green';
-
-        totalCount++;
-
-        html += `
-            <div class="history-item">
-                <div>
-                    <div class="history-value">${item.issueNumber || item.period || 'N/A'}</div>
-                </div>
-                <div>
-                    <div class="history-value-highlight">${sum}</div>
-                </div>
-                <div>
-                    <div class="history-value">${bigSmall}</div>
-                </div>
-                <div>
-                    <div class="history-value">
-                        <span class="color-dot ${colorClass}"></span>${redGreen}
+            html += `
+                <div class="history-item">
+                    <div>
+                        <div class="history-value">${item.issueNumber || item.period || 'N/A'}</div>
+                    </div>
+                    <div>
+                        <div class="history-value-highlight">${sum}</div>
+                    </div>
+                    <div>
+                        <div class="history-value">${bigSmall}</div>
+                    </div>
+                    <div>
+                        <div class="history-value">
+                            <span class="color-dot ${colorClass}"></span>${redGreen}
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-    });
+            `;
+        });
 
-    // Update total count
-    document.getElementById('total-count').textContent = totalCount;
+        document.getElementById('total-count').textContent = totalCount;
 
-    historyContent.innerHTML = html;
-}
+        historyContent.innerHTML = html;
+    }
 
-// Perform advanced analysis
-async function performAdvancedAnalysis() {
-    try {
+    // Perform advanced analysis
+    async function performAdvancedAnalysis() {
+        try {
+            const analysisContent = document.getElementById('advancedAnalysis');
+            if (!analysisContent) return;
+
+            analysisContent.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> ANALYZING DATA PATTERNS...</div>';
+
+            const timestamp = Date.now();
+            const response = await fetch(`http://harshpredictor.site/api.php`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data && data.data && data.data.list && data.data.list.length > 0) {
+                displayAdvancedAnalysis(data.data.list);
+            } else {
+                analysisContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE FOR ANALYSIS</div>';
+            }
+        } catch (error) {
+            console.error('Error fetching analysis data:', error);
+            const analysisContent = document.getElementById('advancedAnalysis');
+            if (analysisContent) {
+                analysisContent.innerHTML = '<div class="error-container"><i class="fas fa-exclamation-triangle"></i> ERROR LOADING ANALYSIS DATA</div>';
+            }
+        }
+    }
+
+    // Display advanced analysis
+    function displayAdvancedAnalysis(data) {
         const analysisContent = document.getElementById('advancedAnalysis');
         if (!analysisContent) return;
 
-        analysisContent.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> ANALYZING DATA PATTERNS...</div>';
-
-        const timestamp = Date.now();
-        const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50`);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data && data.data && data.data.list && data.data.list.length > 0) {
-            displayAdvancedAnalysis(data.data.list);
-        } else {
+        if (!data || data.length === 0) {
             analysisContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE FOR ANALYSIS</div>';
+            return;
         }
-    } catch (error) {
-        console.error('Error fetching analysis data:', error);
-        const analysisContent = document.getElementById('advancedAnalysis');
-        if (analysisContent) {
-            analysisContent.innerHTML = '<div class="error-container"><i class="fas fa-exclamation-triangle"></i> ERROR LOADING ANALYSIS DATA</div>';
-        }
-    }
-}
 
-// Display advanced analysis
-function displayAdvancedAnalysis(data) {
-    const analysisContent = document.getElementById('advancedAnalysis');
-    if (!analysisContent) return;
+        const numbers = data.map(item => parseInt(item.premium || item.result || item.number || 0, 10));
+        const lookback = numbers.length;
 
-    if (!data || data.length === 0) {
-        analysisContent.innerHTML = '<div class="no-data-container"><i class="fas fa-info-circle"></i> NO DATA AVAILABLE FOR ANALYSIS</div>';
-        return;
-    }
+        const bigCount = numbers.filter(n => n >= 5).length;
+        const smallCount = numbers.length - bigCount;
+        const redCount = numbers.filter(n => n % 2 === 0).length;
+        const greenCount = numbers.length - redCount;
 
-    // Process data for analysis
-    const numbers = data.map(item => parseInt(item.premium || item.result || item.number || 0));
+        const frequency = {};
+        numbers.forEach(n => {
+            frequency[n] = (frequency[n] || 0) + 1;
+        });
 
-    // Calculate statistics
-    const bigCount = numbers.filter(n => n >= 5).length;
-    const smallCount = numbers.length - bigCount;
-    const redCount = numbers.filter(n => n % 2 === 0).length;
-    const greenCount = numbers.length - redCount;
+        const mostFrequent = Object.entries(frequency)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([num, count]) => ({
+                number: num,
+                count
+            }));
 
-    // Find most common numbers
-    const frequency = {};
-    numbers.forEach(n => {
-        frequency[n] = (frequency[n] || 0) + 1;
-    });
+        const recentPatterns = detectPatterns(numbers.slice(0, 20)); 
 
-    const mostFrequent = Object.entries(frequency)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-        .map(([num, count]) => ({
-            number: num,
-            count
-        }));
-
-    // Check for recent patterns
-    const recentPatterns = detectPatterns(numbers.slice(0, 10));
-
-    let html = `
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-value">${numbers.length}</div>
-                <div class="stat-label">Total Results</div>
+        let html = `
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">${lookback}</div>
+                    <div class="stat-label">Total Results (Lookback)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${bigCount}</div>
+                    <div class="stat-label">Big Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${smallCount}</div>
+                    <div class="stat-label">Small Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${(bigCount/lookback*100).toFixed(1)}%</div>
+                    <div class="stat-label">Big Frequency</div>
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value">${bigCount}</div>
-                <div class="stat-label">Big Results</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">${smallCount}</div>
-                <div class="stat-label">Small Results</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">${Math.round((bigCount/numbers.length)*100)}%</div>
-                <div class="stat-label">Big Frequency</div>
-            </div>
-        </div>
 
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-value">${redCount}</div>
-                <div class="stat-label">Red Results</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">${redCount}</div>
+                    <div class="stat-label">Red (Even) Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${greenCount}</div>
+                    <div class="stat-label">Green (Odd) Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${(redCount/lookback*100).toFixed(1)}%</div>
+                    <div class="stat-label">Red Frequency</div>
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value">${greenCount}</div>
-                <div class="stat-label">Green Results</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">${Math.round((redCount/numbers.length)*100)}%</div>
-                <div class="stat-label">Red Frequency</div>
-            </div>
-        </div>
 
-        <div class="analysis-title">
-            <i class="fas fa-star"></i> MOST FREQUENT NUMBERS
-        </div>
-        <div class="pattern-list">
-    `;
-
-    mostFrequent.forEach(item => {
-        html += `
-            <div class="pattern-item">
-                <span class="pattern-value">Number ${item.number}</span>
-                <span class="pattern-confidence">${item.count} times (${Math.round((item.count/numbers.length)*100)}%)</span>
-            </div>
-        `;
-    });
-
-    html += `</div>`;
-
-    if (recentPatterns.length > 0) {
-        html += `
             <div class="analysis-title">
-                <i class="fas fa-project-diagram"></i> DETECTED PATTERNS
+                <i class="fas fa-star"></i> MOST FREQUENT NUMBERS
             </div>
             <div class="pattern-list">
         `;
 
-        recentPatterns.forEach(pattern => {
+        mostFrequent.forEach(item => {
             html += `
                 <div class="pattern-item">
-                    <span class="pattern-value">${pattern.pattern}</span>
-                    <span class="pattern-confidence">${pattern.count} occurrences</span>
+                    <span class="pattern-value">Number ${item.number}</span>
+                    <span class="pattern-confidence">${item.count} times (${(item.count/lookback*100).toFixed(1)}%)</span>
                 </div>
             `;
         });
 
         html += `</div>`;
-    }
 
-    // Add pattern analysis from InfinityCoreAI
-    html += `
-        <div class="analysis-title">
-            <i class="fas fa-chart-line"></i> INFINITY-CORE ANALYSIS
-        </div>
-        <div class="pattern-analysis">
-            <div class="pattern-item">
-                <span class="pattern-value">History Size</span>
-                <span class="pattern-count">${infinityCoreAI.history.length}</span>
-            </div>
-            <div class="pattern-item">
-                <span class="pattern-value">Active Models</span>
-                <span class="pattern-count">${Object.keys(infinityCoreAI.models).length}</span>
-            </div>
-            <div class="pattern-item">
-                <span class="pattern-value">Learning Rate</span>
-                <span class="pattern-count">${infinityCoreAI.getLearningRate().toFixed(2)}</span>
-            </div>
-            <div class="pattern-item">
-                <span class="pattern-value">Strategy</span>
-                <span class="pattern-count">${infinityCoreAI.strategy}</span>
-            </div>
-        </div>
-    `;
-
-    analysisContent.innerHTML = html;
-}
-
-// Detect patterns in number sequences
-function detectPatterns(numbers) {
-    const patterns = [];
-    const sequence = numbers.join('');
-
-    // Check for repeating patterns of length 2-3
-    for (let len = 2; len <= 3; len++) {
-        for (let i = 0; i <= sequence.length - len; i++) {
-            const pattern = sequence.substring(i, i + len);
-            let count = 0;
-            let pos = -1;
-
-            // Count occurrences of this pattern
-            while ((pos = sequence.indexOf(pattern, pos + 1)) !== -1) {
-                count++;
-            }
-
-            if (count > 1) {
-                patterns.push({
-                    pattern: pattern.split('').join(' - '),
-                    count: count
-                });
-            }
-        }
-    }
-
-    // Remove duplicates and sort by count
-    const uniquePatterns = [];
-    patterns.forEach(p => {
-        const existing = uniquePatterns.find(up => up.pattern === p.pattern);
-        if (!existing) {
-            uniquePatterns.push(p);
-        }
-    });
-
-    return uniquePatterns.sort((a, b) => b.count - a.count).slice(0, 5);
-}
-
-// Display all strategies
-function displayAllStrategies() {
-    const strategiesContainer = document.getElementById('strategiesContainer');
-    if (!strategiesContainer) return;
-
-    const strategies = [{
-        title: "Infinity-Core Engine",
-        icon: "fas fa-infinity",
-        description: "Advanced ensemble prediction system combining 30+ AI models with dynamic weighting and adaptive learning."
-    }, {
-        title: "Quantum Entanglement Analysis",
-        icon: "fas fa-atom",
-        description: "Uses quantum-inspired algorithms to detect non-local correlations in number sequences."
-    }, {
-        title: "Temporal Fusion Modeling",
-        icon: "fas fa-clock",
-        description: "Combines short-term, medium-term, and long-term patterns for comprehensive analysis."
-    }, {
-        title: "Deep Learning Simulation",
-        icon: "fas fa-brain",
-        description: "Multi-layer neural network simulation with forward propagation and sigmoid activation."
-    }, {
-        title: "Evolutionary Optimization",
-        icon: "fas fa-dna",
-        description: "Genetic algorithm that evolves prediction strategies based on historical performance."
-    }, {
-        title: "Swarm Intelligence",
-        icon: "fas fa-users",
-        description: "Particle swarm optimization that finds optimal prediction thresholds through collective intelligence."
-    }, {
-        title: "Loss Recovery Hybrid (Martingale)",
-        icon: "fas fa-crosshairs",
-        description: "High-confidence strategy to reverse the last prediction after two or more consecutive losses."
-    }, {
-        title: "Anti-Streak Detection",
-        icon: "fas fa-compress-arrows-alt",
-        description: "Predicts the opposite of any streak of three or more consecutive results, anticipating a break."
-    }];
-
-    let html = '';
-    strategies.forEach(strategy => {
-        html += `
-            <div class="strategy-card">
-                <div class="strategy-title">
-                    <i class="${strategy.icon}"></i>
-                    ${strategy.title}
+        if (recentPatterns.length > 0) {
+            html += `
+                <div class="analysis-title">
+                    <i class="fas fa-project-diagram"></i> DETECTED RECENT PATTERNS
                 </div>
-                <div class="strategy-description">
-                    ${strategy.description}
+                <div class="pattern-list">
+            `;
+
+            recentPatterns.forEach(pattern => {
+                html += `
+                    <div class="pattern-item">
+                        <span class="pattern-value">${pattern.pattern}</span>
+                        <span class="pattern-confidence">${pattern.count} occurrences</span>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+        }
+
+        const historyData = data.map(item => ({
+            number: parseInt(item.number, 10),
+            period: item.issueNumber
+        }));
+        zenithCoreAI.history = historyData;
+
+        html += `
+            <div class="analysis-title">
+                <i class="fas fa-chart-line"></i> ZENITH-CORE AI ANALYSIS
+            </div>
+            <div class="pattern-analysis">
+                <div class="pattern-item">
+                    <span class="pattern-value">History Size (AI)</span>
+                    <span class="pattern-count">${zenithCoreAI.history.length}</span>
+                </div>
+                <div class="pattern-item">
+                    <span class="pattern-value">Active Models</span>
+                    <span class="pattern-count">${Object.keys(zenithCoreAI.models).length}</span>
+                </div>
+                <div class="pattern-item">
+                    <span class="pattern-value">Learning Rate</span>
+                    <span class="pattern-count">${zenithCoreAI.getLearningRate().toFixed(2)}</span>
+                </div>
+                <div class="pattern-item">
+                    <span class="pattern-value">Strategy</span>
+                    <span class="pattern-count">${zenithCoreAI.strategy}</span>
                 </div>
             </div>
         `;
-    });
 
-    strategiesContainer.innerHTML = html;
-}
-
-// Chat Predictor Logic
-let previousResults = [];
-let latestPeriod = null;
-let currentPrediction = null;
-let serverOnline = true;
-let lastPredictionPeriod = null;
-let lastActualNumber = null;
-
-// DOM elements
-const messagesContainer = document.getElementById('messages-container');
-const typingIndicator = document.getElementById('typing-indicator');
-const connectionStatus = document.getElementById('connection-status');
-const currentTimeElement = document.getElementById('current-time');
-const lastUpdateTime = document.getElementById('last-update-time');
-const scrollDownBtn = document.getElementById('scroll-down-btn');
-
-// Initialize
-updateClock();
-setInterval(updateClock, 1000);
-setTimeout(() => {
-    typingIndicator.style.display = 'none';
-    addMessage('received',
-        `<div class="prediction-card">
-            <div class="prediction-title"><i class="fas fa-robot"></i> SYSTEM INITIALIZED</div>
-            <p>Welcome to <strong>LICUIS ULTRA 32</strong>, Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
-        </div>`,
-        'LICUIS ULTRA');
-    simulateInitialAnalysis();
-}, 1500);
-
-// Scroll button functionality
-scrollDownBtn.addEventListener('click', () => {
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-});
-
-messagesContainer.addEventListener('scroll', () => {
-    const {
-        scrollTop,
-        scrollHeight,
-        clientHeight
-    } = messagesContainer;
-    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-    scrollDownBtn.classList.toggle('visible', distanceFromBottom > 100);
-});
-
-function updateClock() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('en-US', {
-        hour12: false
-    });
-    currentTimeElement.textContent = timeString;
-    return now;
-}
-
-function formatTime(date) {
-    return date.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-function addMessage(type, content, sender, timestamp = new Date()) {
-    typingIndicator.style.display = 'none';
-
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${type}`;
-
-    if (sender) {
-        messageDiv.innerHTML = `<div class="prediction-title">${sender}</div>`;
+        analysisContent.innerHTML = html;
     }
 
-    messageDiv.innerHTML += content;
-    messageDiv.innerHTML += `<div class="timestamp">${formatTime(timestamp)}</div>`;
+    // Detect patterns in number sequences
+    function detectPatterns(numbers) {
+        const patterns = [];
+        const sequence = numbers.map(n => n >= 5 ? 'B' : 'S').join('');
 
-    messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        for (let len = 2; len <= 4; len++) {
+            for (let i = 0; i <= sequence.length - len; i++) {
+                const pattern = sequence.substring(i, i + len);
+                let count = 0;
+                let pos = -1;
 
-    // Update last update time
-    lastUpdateTime.textContent = formatTime(timestamp);
+                while ((pos = sequence.indexOf(pattern, pos + 1)) !== -1) {
+                    count++;
+                }
 
-    return messageDiv;
-}
-
-function showTyping() {
-    typingIndicator.style.display = 'flex';
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
-
-function simulateInitialAnalysis() {
-    showTyping();
-    setTimeout(() => {
-        addMessage('received',
-            `<div class="prediction-card">
-                <div class="prediction-title"><i class="fas fa-check-circle"></i> ANALYSIS COMPLETE</div>
-                <p>AI pattern detection complete. Advanced algorithms initialized and ready for predictions.</p>
-            </div>`,
-            'LICUIS ULTRA');
-
-        // Start the prediction cycle
-        fetchCurrentGameIssue();
-        setInterval(fetchCurrentGameIssue, 5000);
-    }, 2000);
-}
-
-function createPredictionMessage(predictionData) {
-    // Use the final prediction data confidence
-    const confidencePercentage = Math.round(parseFloat(predictionData.confidence));
-    const confidenceWidth = `${confidencePercentage}%`;
-
-    return `
-        <div class="prediction-card">
-            <div class="period-display">${latestPeriod}</div>
-            <div class="prediction-value">${predictionData.size}</div>
-
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: ${confidenceWidth}"></div>
-            </div>
-            <div class="confidence-display">
-                <span>Confidence</span>
-                <span class="confidence-value">${confidencePercentage}%</span>
-            </div>
-        </div>
-    `;
-}
-
-async function fetchCurrentGameIssue() {
-    const now = new Date();
-    const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
-    const requestData = {
-        typeId: 1,
-        language: 0,
-        random: "40079dcba93a48769c6ee9d4d4fae23f",
-        signature: "D12108C4F57C549D82B23A91E0FA20AE",
-        timestamp: 1727792520
-    };
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=UTF-8'
-            },
-            body: JSON.stringify(requestData)
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            if (data.code === 0) {
-                const newPeriod = data.data.issueNumber;
-
-                if (newPeriod !== latestPeriod) {
-                    if (latestPeriod && currentPrediction && previousResults.length > 0) {
-                        const lastResult = previousResults[0].number;
-                        lastActualNumber = parseInt(lastResult, 10);
-                        const actualPrediction = getBigSmallOutcome(lastActualNumber);
-                        
-                        // Find the internal prediction made for the *previous* period
-                        const lastPredictionValue = infinityCoreAI.lastPrediction;
-                        
-                        // Update AI prediction system with actual result
-                        infinityCoreAI.lastActual = actualPrediction;
-
-                        // Check if the AI's *last prediction* was correct.
-                        const predictionWasCorrect = lastPredictionValue === actualPrediction;
-
-                        // This is the critical win/loss tracking for Loss Recovery (Logic 22)
-                        if (predictionWasCorrect) {
-                            infinityCoreAI.consecutiveWins++;
-                            infinityCoreAI.consecutiveLosses = 0;
-                        } else {
-                            infinityCoreAI.consecutiveLosses++;
-                            infinityCoreAI.consecutiveWins = 0;
-                        }
-                        
-                        // Update performance metrics for all models
-                        infinityCoreAI.updateModelPerformance(actualPrediction);
-                        
-                        // LOGIC: After 3 loss 4th one prediction show opposite prediction opposite outcome then reset 
-                        // The reset condition is checked *after* processing the 4th result.
-                        if (infinityCoreAI.consecutiveLosses === 4) {
-                            // If the 4th prediction (which was the forced opposite) was correct, it would have already reset to 0 in the block above.
-                            // If it was *incorrect*, the consecutiveLosses is 4, and we reset it to 0 as per the 'then reset' instruction.
-                            // However, the intent is likely to reset if the *forced* 4th prediction was a WIN, but since the logic to check for '3 losses' and force 'opposite' is in `generateOppositePrediction`, and the win/loss tracking is here, we only need to manage the reset if the user meant "reset after the 4th result, regardless of win/loss on the 4th round."
-                            // Assuming the 'reset' means reset the *consecutiveLosses* count for the streak-based logic:
-                             // If it was a win, it's already reset to 0.
-                             // If it was a loss, it's 4, and we force a reset to 0 to prevent further forced-opposite predictions.
-                             if (!predictionWasCorrect && lastPredictionPeriod === latestPeriod) {
-                                // This block executes if the 4th prediction (which was forced opposite) was a loss.
-                                infinityCoreAI.consecutiveLosses = 0;
-                             }
-                        }
-                        // END LOGIC
-                    }
-
-                    latestPeriod = newPeriod;
-                    await fetchPreviousResults();
-                    updatePredictions(now, newPeriod);
+                if (count > 1) {
+                    patterns.push({
+                        pattern: pattern.split('').join('-'),
+                        count: count
+                    });
                 }
             }
-        } else {
-            updateServerStatus(false);
         }
-    } catch (error) {
-        console.error("Fetch error:", error);
-        updateServerStatus(false);
-    }
-}
 
-async function fetchPreviousResults() {
-    const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetNoaverageEmerdList';
-    const requestData = {
-        pageSize: 10,
-        pageNo: 1,
-        typeId: 1,
-        language: 0,
-        random: "c2505d9138da4e3780b2c2b34f2fb789",
-        signature: "7D637E060DA35C0C6E28DC6D23D71BED",
-        timestamp: 1727792520
-    };
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=UTF-8'
-            },
-            body: JSON.stringify(requestData)
+        const uniquePatterns = [];
+        patterns.forEach(p => {
+            const existing = uniquePatterns.find(up => up.pattern === p.pattern);
+            if (!existing) {
+                uniquePatterns.push(p);
+            }
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            if (data.code === 0 && data.data.list.length > 0) {
-                previousResults = data.data.list;
+        return uniquePatterns.sort((a, b) => b.count - a.count).slice(0, 5);
+    }
 
-                // Update AI prediction system history
-                const historyData = data.data.list.map(item => ({
-                    number: parseInt(item.number, 10),
-                    period: item.issueNumber
-                }));
+    // Display all strategies
+    function displayAllStrategies() {
+        const strategiesContainer = document.getElementById('strategiesContainer');
+        if (!strategiesContainer) return;
 
-                // The history is used by the models as-is (newest first)
-                infinityCoreAI.history = historyData;
+        const strategies = [{
+            title: "Zenith-Core Engine",
+            icon: "fas fa-robot",
+            description: "Advanced ensemble prediction system combining 30+ AI models with dynamic weighting and adaptive learning."
+        }, {
+            title: "Quantum Entanglement Analysis",
+            icon: "fas fa-atom",
+            description: "Uses quantum-inspired algorithms to detect non-local correlations in number sequences."
+        }, {
+            title: "Temporal Fusion Modeling",
+            icon: "fas fa-clock",
+            description: "Combines short-term, medium-term, and long-term patterns for comprehensive analysis."
+        }, {
+            title: "Deep Learning Simulation",
+            icon: "fas fa-brain",
+            description: "Multi-layer neural network simulation with forward propagation and sigmoid activation."
+        }, {
+            title: "Evolutionary Optimization",
+            icon: "fas fa-dna",
+            description: "Genetic algorithm that evolves prediction strategies based on historical performance."
+        }, {
+            title: "Swarm Intelligence",
+            icon: "fas fa-users",
+            description: "Particle swarm optimization that finds optimal prediction thresholds through collective intelligence."
+        }, {
+            title: "Loss Recovery Hybrid (Martingale)",
+            icon: "fas fa-crosshairs",
+            description: "High-confidence strategy to reverse the last prediction after two or more consecutive losses."
+        }, {
+            title: "Anti-Streak Detection",
+            icon: "fas fa-compress-arrows-alt",
+            description: "Predicts the opposite of any streak of three or more consecutive results, anticipating a break."
+        }];
 
-                updateServerStatus(true);
+        let html = '';
+        strategies.forEach(strategy => {
+            html += `
+                <div class="strategy-card">
+                    <div class="strategy-title">
+                        <i class="${strategy.icon}"></i>
+                        ${strategy.title}
+                    </div>
+                    <div class="strategy-description">
+                        ${strategy.description}
+                    </div>
+                </div>
+            `;
+        });
+
+        strategiesContainer.innerHTML = html;
+    }
+
+    // Chat Predictor Logic
+    let previousResults = [];
+    let latestPeriod = null;
+    let currentPrediction = null; 
+    let serverOnline = true;
+    let lastPredictionPeriod = null;
+    let lastActualNumber = null;
+
+    // DOM elements
+    const messagesContainer = document.getElementById('messages-container');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const connectionStatus = document.getElementById('connection-status');
+    const currentTimeElement = document.getElementById('current-time');
+    const lastUpdateTime = document.getElementById('last-update-time');
+    const scrollDownBtn = document.getElementById('scroll-down-btn');
+
+    // Initialize
+    updateClock();
+    setInterval(updateClock, 1000);
+    setTimeout(() => {
+        typingIndicator.style.display = 'none';
+        addMessage('received',
+            `<div class="prediction-card">
+                <div class="prediction-title"><i class="fas fa-robot"></i> SYSTEM INITIALIZED</div>
+                <p>Welcome to <strong>LICUIS ULTRA</strong>. Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
+            </div>`,
+            'LICUIS ULTRA');
+        simulateInitialAnalysis();
+    }, 1500);
+
+    // Scroll button functionality
+    scrollDownBtn.addEventListener('click', () => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    });
+
+    messagesContainer.addEventListener('scroll', () => {
+        const {
+            scrollTop,
+            scrollHeight,
+            clientHeight
+        } = messagesContainer;
+        const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+        scrollDownBtn.classList.toggle('visible', distanceFromBottom > 100);
+    });
+
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', {
+            hour12: false
+        });
+        currentTimeElement.textContent = timeString;
+        return now;
+    }
+
+    function formatTime(date) {
+        return date.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function addMessage(type, content, sender, timestamp = new Date()) {
+        typingIndicator.style.display = 'none';
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+
+        if (sender) {
+            messageDiv.innerHTML = `<div class="prediction-title">${sender}</div>`;
+        }
+
+        messageDiv.innerHTML += content;
+        messageDiv.innerHTML += `<div class="timestamp">${formatTime(timestamp)}</div>`;
+
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        lastUpdateTime.textContent = formatTime(timestamp);
+
+        return messageDiv;
+    }
+
+    function showTyping() {
+        typingIndicator.style.display = 'flex';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function simulateInitialAnalysis() {
+        showTyping();
+        setTimeout(() => {
+            addMessage('received',
+                `<div class="prediction-card">
+                    <div class="prediction-title"><i class="fas fa-check-circle"></i> ANALYSIS COMPLETE</div>
+                    <p>AI pattern detection complete. Advanced algorithms initialized and ready for predictions.</p>
+                </div>`,
+                'LICUIS ULTRA');
+
+            fetchCurrentGameIssue();
+            setInterval(fetchCurrentGameIssue, 5000);
+        }, 2000);
+    }
+
+    function createPredictionMessage(predictionData) {
+        const confidencePercentage = Math.round(parseFloat(predictionData.confidence));
+        const confidenceWidth = `${confidencePercentage}%`;
+
+        let color = 'var(--warning-color)';
+        if (confidencePercentage >= 90) color = 'var(--success-color)';
+        else if (confidencePercentage < 70) color = 'var(--danger-color)';
+
+        return `
+            <div class="prediction-card">
+                <div class="period-display">${latestPeriod}</div>
+                <div class="prediction-value" style="color: ${color};">${predictionData.size}</div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${confidenceWidth}; background-color: ${color}"></div>
+                </div>
+                <div class="confidence-display">
+                    <span>Confidence</span>
+                    <span class="confidence-value" style="color: ${color};">${confidencePercentage}%</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    async function fetchPreviousResults() {
+         try {
+            const timestamp = Date.now();
+            const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=1`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        } else {
+            const data = await response.json();
+            if (data && data.data && data.data.list && data.data.list.length > 0) {
+                previousResults = data.data.list.map(item => ({
+                    number: parseInt(item.premium || item.result || item.number || 0, 10),
+                    issueNumber: item.issueNumber || item.period
+                }));
+            }
+        } catch (error) {
+            console.error('Error fetching previous results:', error);
+        }
+    }
+
+
+    async function fetchCurrentGameIssue() {
+        const now = new Date();
+        const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
+        const requestData = {
+            typeId: 1,
+            language: 0,
+            random: "40079dcba93a48769c6ee9d4d4fae23f",
+            signature: "D12108C4F57C549D82B23A91E0FA20AE",
+            timestamp: Math.floor(Date.now() / 1000)
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.code === 0) {
+                    updateServerStatus(true);
+                    const newPeriod = data.data.issueNumber;
+
+                    if (newPeriod !== latestPeriod) {
+                        await fetchPreviousResults(); 
+
+                        if (latestPeriod && predictorCoordinator.predictionLog.length > 0 && previousResults.length > 0) {
+                            const periodOfResult = previousResults[0].issueNumber;
+                            const lastResult = previousResults[0].number;
+                            lastActualNumber = parseInt(lastResult, 10);
+                            const actualResultSize = getBigSmallOutcome(lastActualNumber);
+                            
+                            const lastLoggedPred = predictorCoordinator.predictionLog.find(log => log.period === periodOfResult);
+                            
+                            if (lastLoggedPred) {
+                                const internalPredictionValue = lastLoggedPred.internalPrediction;
+
+                                const wasCorrect = internalPredictionValue === actualResultSize;
+                                const message = wasCorrect ? 
+                                    `<div class="prediction-card" style="border-color: var(--success-color);"><div class="prediction-title"><i class="fas fa-check"></i> ${periodOfResult}</div><p>   ${actualResultSize}  (${lastActualNumber})  WIN</p></div>` :
+                                    `<div class="prediction-card" style="border-color: var(--danger-color);"><div class="prediction-title"><i class="fas fa-times"></i>   ${periodOfResult}</div><p>   LOSS</p></div>`;
+                                addMessage('received', message, 'SYSTEM RESULT');
+                                
+                                zenithCoreAI.lastActual = actualResultSize;
+                                zenithCoreAI.lastPrediction = internalPredictionValue;
+                                
+                                predictorCoordinator.updateReinforcement(actualResultSize, internalPredictionValue); 
+                                
+                                zenithCoreAI.updateModelPerformance(actualResultSize);
+                                
+                                predictorCoordinator.predictionLog = predictorCoordinator.predictionLog.filter(log => log.period !== periodOfResult);
+                            }
+                        }
+
+                        latestPeriod = newPeriod;
+                        updatePredictions(now, newPeriod);
+                    }
+                } else {
+                    updateServerStatus(false);
+                }
+            } else {
+                updateServerStatus(false);
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
             updateServerStatus(false);
         }
-    } catch (error) {
-        console.error("Fetch error:", error);
-        updateServerStatus(false);
     }
-}
 
-async function updatePredictions(currentTime, currentPeriod) {
-    if (previousResults.length >= 10 && currentPeriod !== lastPredictionPeriod) {
-        // Use the EnhancedOppositePredictor which wraps InfinityCoreAI
-        // FIX: The method is now generateOppositePrediction, but it returns the DIRECT prediction.
-        const predictionData = await enhancedPredictor.generateOppositePrediction(infinityCoreAI.history);
 
-        // The displayed prediction is the direct one
-        const finalPrediction = predictionData.displayedPrediction;
-        const finalConfidence = predictionData.displayedConfidence;
+    async function updatePredictions(currentTime, currentPeriod) {
+        await fetchPreviousResults(); 
+        zenithCoreAI.history = previousResults.map(item => ({
+            number: item.number,
+            period: item.issueNumber
+        }));
         
-        // Track the *direct* prediction for learning purposes in the next cycle
-        infinityCoreAI.lastPrediction = finalPrediction; // This is the direct prediction now
+        if (zenithCoreAI.history.length >= 5 && currentPeriod !== lastPredictionPeriod) { 
+            const predictionData = await predictorCoordinator.generateDirectPrediction(zenithCoreAI.history, currentPeriod);
 
-        currentPrediction = finalPrediction;
-        lastPredictionPeriod = currentPeriod;
-            // Show prediction message
-            showTyping();
-            setTimeout(() => {
-                addMessage('received', createPredictionMessage({
-                    size: finalPrediction,
-                    confidence: finalConfidence
-                }), 'LICUIS ULTRA');
-            }, 1000);
-        }
-    }
-
-    function updateServerStatus(online) {
-        if (serverOnline !== online) {
-            serverOnline = online;
-            if (online) {
-                connectionStatus.textContent = "Connected to Server";
-                document.querySelector('.status-indicator').className = "status-indicator online";
-                addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> CONNECTION RESTORED</div><p>Server connection reestablished. Resuming normal operations.</p>', 'System');
-            } else {
-                connectionStatus.textContent = "Connecting...";
-                document.querySelector('.status-indicator').className = "status-indicator offline";
-                addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> CONNECTION LOST</div><p>Temporarily lost connection to prediction server. Attempting to reconnect...</p>', 'System');
+            const finalPrediction = predictionData.size;
+            const finalConfidence = predictionData.confidence;
+            
+            currentPrediction = finalPrediction;
+            lastPredictionPeriod = currentPeriod;
+                showTyping();
+                setTimeout(() => {
+                    addMessage('received', createPredictionMessage({
+                        size: finalPrediction,
+                        confidence: finalConfidence
+                    }), 'LICUIS ULTRA');
+                }, 1000);
             }
         }
-    }
 
-    // Initialize the application
-    createParticles();
 
-    // Animate the game selection title after page load
-    setTimeout(() => {
-        document.getElementById('gameSelectionTitle').classList.add('animate');
-    }, 500);
-});
+        function updateServerStatus(online) {
+            if (serverOnline !== online) {
+                serverOnline = online;
+                if (online) {
+                    connectionStatus.textContent = "Connected to Server";
+                    document.querySelector('.status-indicator').className = "status-indicator online";
+                    addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> CONNECTION RESTORED</div><p>Server connection reestablished. Resuming normal operations.</p>', 'System');
+                } else {
+                    connectionStatus.textContent = "Connecting...";
+                    document.querySelector('.status-indicator').className = "status-indicator offline";
+                    addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> CONNECTION LOST</div><p>Temporarily lost connection to prediction server. Attempting to reconnect...</p>', 'System');
+                }
+            }
+        }
+
+
+            // Initialize the application
+            createParticles();
+
+            // Animate the game selection title after page load
+            setTimeout(() => {
+                const title = document.getElementById('gameSelectionTitle');
+                if (title) title.classList.add('animate');
+            }, 500);
+        });
 </script>
 </body>
 </html>
