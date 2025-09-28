@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LICUIS ULTRA V3 - Enhanced</title>
+    <title>LICUIS ULTRA - Enhanced</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap');
 
@@ -1421,7 +1421,7 @@
                 <path d="M21 16.5c0 .83-.67 1.5-1.5 1.5H4.5c-.83 0-1.5-.67-1.5-1.5v-9c0-.83.67-1.5 1.5-1.5h15c.83 0 1.5.67 1.5 1.5v9zM4.5 20h15c.83 0 1.5-.67 1.5-1.5v-9c0-.83-.67-1.5-1.5-1.5h-15c-.83 0-1.5.67-1.5 1.5v9c0 .83.67 1.5 1.5 1.5zm2.5-6h2v2H7v-2zm4 0h2v2h-2v-2zm-4 4h2v2H7v-2zm4 0h2v2h-2v-2zm4-4h2v2h-2v-2zm-8-4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" />
             </svg>
         </div>
-        <div class="logo-text">LICUIS ULTRA V3</div>
+        <div class="logo-text">LICUIS ULTRA</div>
     </div>
 
     <div class="tab-system">
@@ -1511,7 +1511,7 @@
             <div class="floating-bg bg-2"></div>
 
             <div class="chat-header">
-                <h1 class="chat-title">LICUIS ULTRA V3</h1>
+                <h1 class="chat-title">LICUIS ULTRA</h1>
                 <p class="chat-subtitle">
                     <span class="status-indicator online"></span>
                     <span id="connection-status">Connected to Server</span>
@@ -1523,7 +1523,7 @@
             <div class="messages-container" id="messages-container">
                 <div class="message received">
                     <div class="prediction-title"><i class="fas fa-robot"></i> SYSTEM INITIALIZED</div>
-                    <p>Welcome to <strong>LICUIS ULTRA V3</strong>, now powered by the Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
+                    <p>Welcome to <strong>LICUIS ULTRA</strong>, now powered by the Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: 100%"></div>
                     </div>
@@ -1600,13 +1600,14 @@
             </div>
         </div>
     </div>
-     <script>
-        // 🔮 LICUIS ULTRA V3: ZENITH AI-CORE ENGINE 10.1 (Enhanced & Accurate) - FIXED VERSION
+    <script>
+        // 🔮 LICUIS ULTRA : ZENITH AI-CORE ENGINE 10.1 (Enhanced & Accurate) - FIXED VERSION
 
         "use strict";
 
         const LOCAL_STORAGE_KEY = 'zenithAICoreState';
-        const ENHANCED_PREDICTOR_KEY = 'enhancedPredictorState';
+        // Renamed key to reflect the change from 'OppositePredictor'
+        const PREDICTOR_COORDINATOR_KEY = 'zenithPredictorCoordinatorState';
 
         class zenithAICore {
             constructor() {
@@ -1810,9 +1811,7 @@
                                     strategyMultiplier = 2.0;
                                 }
                                 break;
-                            case 'opposite': // Strategy for EnhancedOppositePredictor
-                                strategyMultiplier = 1.1; // Slight boost
-                                break;
+                            // FIXED: Removed 'opposite' strategy case completely
                         }
 
                         this.modelWeights[modelName] = Math.max(0.5, baseWeight * strategyMultiplier);
@@ -2227,7 +2226,8 @@
             }
         }
 
-        class EnhancedOppositePredictor {
+        // FIXED: Renamed EnhancedOppositePredictor to ZenithPredictorCoordinator
+        class ZenithPredictorCoordinator {
             constructor() {
                 // Layer 1: Pattern Analysis
                 this.patternWeights = {
@@ -2250,7 +2250,7 @@
                 this.mode = 'normal';
                 
                 // Zenith AI Core integration
-                this.zenithAI = new zenithAICore(); // FIXED: Changed from zenithAICore to zenithAI
+                this.zenithAI = new zenithAICore(); 
                 this.zenithAI.setStrategy('trendFollowing'); // UPGRADED DEFAULT STRATEGY
                 
                 // Combined history tracking
@@ -2270,36 +2270,33 @@
                     predictionLog: this.predictionLog.slice(-20) // Keep log size manageable
                 };
                 try {
-                    localStorage.setItem(ENHANCED_PREDICTOR_KEY, JSON.stringify(state));
+                    // FIXED: Changed local storage key
+                    localStorage.setItem(PREDICTOR_COORDINATOR_KEY, JSON.stringify(state));
                 } catch (e) {
-                    console.error("Could not save EnhancedOppositePredictor state to local storage:", e);
+                    console.error("Could not save ZenithPredictorCoordinator state to local storage:", e);
                 }
             }
 
             loadState() {
                 try {
-                    const state = localStorage.getItem(ENHANCED_PREDICTOR_KEY);
+                    // FIXED: Changed local storage key
+                    const state = localStorage.getItem(PREDICTOR_COORDINATOR_KEY);
                     if (state) {
                         const parsedState = JSON.parse(state);
                         Object.assign(this, parsedState);
                     }
                 } catch (e) {
-                    console.warn("Could not load EnhancedOppositePredictor state from local storage:", e);
+                    console.warn("Could not load ZenithPredictorCoordinator state from local storage:", e);
                 }
             }
 
-            // Helper to get the required opposite prediction
-            _getOppositePrediction(prediction) {
-                if (prediction === 'BIG') return 'SMALL';
-                if (prediction === 'SMALL') return 'BIG';
-                return prediction;
-            }
+            // FIXED: Removed _getOppositePrediction helper
 
-            // Layer 1: Enhanced Pattern Analysis with Opposite Focus
+            // Layer 1: Enhanced Pattern Analysis (No opposite focus now)
             analyzePatterns(history) {
                 const patterns = {};
                 
-                // A. Weighted Moving Average Trend (REVERSED)
+                // A. Weighted Moving Average Trend 
                 const shortTerm = this.calculateWMA(history.slice(0, 7));
                 const longTerm = this.calculateWMA(history.slice(0, 25));
                 patterns.wmaTrend = {
@@ -2309,7 +2306,7 @@
                     strength: 'trend'
                 };
 
-                // B. Micro-Pattern Recognition (REVERSED)
+                // B. Micro-Pattern Recognition 
                 const last10 = history.slice(0, 10).map(h => h.number > 4 ? 'B' : 'S');
                 const microPattern = this.detectMicroPattern(last10);
                 patterns.microPatterns = {
@@ -2318,7 +2315,7 @@
                     strength: 'pattern'
                 };
 
-                // C. Momentum Oscillator (REVERSED)
+                // C. Momentum Oscillator 
                 const momentum = this.calculateMomentum(history.slice(0, 10));
                 patterns.momentum = {
                     prediction: momentum > 70 ? 'BIG' : momentum < 30 ? 'SMALL' : null,
@@ -2326,7 +2323,7 @@
                     strength: 'momentum'
                 };
 
-                // D. Frequency Analysis (REVERSED)
+                // D. Frequency Analysis 
                 const frequency = this.calculateFrequency(history.slice(0, 20));
                 patterns.frequency = {
                     prediction: frequency.bigRatio > 0.6 ? 'BIG' : frequency.smallRatio > 0.6 ? 'SMALL' : null,
@@ -2371,7 +2368,7 @@
             }
 
             // Layer 3: Combined Reinforcement Logic
-            // ***FIXED: This now tracks win/loss against the internal prediction, removing the opposite logic.***
+            // ***FIXED: This now tracks win/loss against the internal (direct) prediction.***
             updateReinforcement(actualResult, internalPrediction) {
                 // If the internal prediction was not made or is invalid, do not update tracking
                 if (!internalPrediction) return; 
@@ -2398,18 +2395,15 @@
                 }
                 
                 // Note: Pattern weights update is removed from this simplified model. 
-                // A full implementation would update pattern weights here based on `internalCorrect`
                 
                 this.saveState(); // Save state after reinforcement update
             }
 
-            // Main Prediction Logic - NOW SHOWS OPPOSITE PREDICTION
-            // FIXED: Add 'period' argument to store with the prediction.
-            async generateOppositePrediction(history, period) {
+            // Main Prediction Logic - FIXED: Renamed to generateDirectPrediction
+            async generateDirectPrediction(history, period) {
                 if (history.length < 5) {
-                    const randomPred = this.generateRandomOpposite();
-                    // FIXED: Add period to the random prediction log entry
-                    randomPred.period = period; 
+                    // FIXED: Generate random *direct* prediction for low history
+                    const randomPred = this.generateRandomDirect(period);
                     this.predictionLog.push(randomPred);
                     this.saveState();
                     return randomPred;
@@ -2424,31 +2418,24 @@
                 // Step 2: Get Zenith-AICore prediction (Direct Prediction)
                 const zenithPred = await this.zenithAI.generatePrediction(history);
                 
-                // Step 3: This is the AI's TRUE, calculated prediction
-                const internalPrediction = zenithPred.size;
-                const internalConfidence = zenithPred.confidence;
-                
-                // Step 4: GENERATE THE OPPOSITE PREDICTION FOR DISPLAY
-                const displayedPrediction = this._getOppositePrediction(internalPrediction);
-                
-                // Use the internal confidence for the displayed prediction
-                const displayedConfidence = internalConfidence; 
+                // Step 3: This is the AI's TRUE, calculated prediction (no inversion)
+                const finalPrediction = zenithPred.size;
+                const finalConfidence = zenithPred.confidence;
                 
                 const finalOutput = {
-                    // DISPLAYED PREDICTION (The required opposite)
-                    size: displayedPrediction, // Use 'size' and 'confidence' for chat message
-                    confidence: displayedConfidence,
+                    // DISPLAYED PREDICTION (Now the direct prediction)
+                    size: finalPrediction, 
+                    confidence: finalConfidence,
                     
-                    // INTERNAL TRACKING (The true calculated prediction)
-                    internalPrediction: internalPrediction,
-                    internalConfidence: internalConfidence,
+                    // INTERNAL TRACKING - Now the same as the final output
+                    internalPrediction: finalPrediction,
+                    internalConfidence: finalConfidence,
                     
                     // METADATA
                     mode: this.mode,
                     safety: safety.score,
                     patterns: Object.keys(patterns),
                     timestamp: Date.now(),
-                    // FIXED: Store the period with the prediction for later lookup
                     period: period
                 };
 
@@ -2488,7 +2475,7 @@
                 };
                 
                 const last3 = sequence.slice(0, 3).join('');
-                // Returned the actual pattern prediction, not the opposite, for consistency
+                // Returned the actual pattern prediction
                 return patterns[last3] || (Math.random() > 0.5 ? 'B' : 'S');
             }
 
@@ -2515,20 +2502,18 @@
                 return Math.abs(bigBias - 0.5) * 2;
             }
             
-            // Helper to generate a random OPPOSITE prediction for low history
-            generateRandomOpposite() {
-                // AI's random internal prediction (BIG or SMALL)
-                const internalPred = Math.random() > 0.5 ? 'BIG' : 'SMALL';
-                // Display the opposite
-                const displayedPred = this._getOppositePrediction(internalPred);
+            // FIXED: Helper to generate a random *DIRECT* prediction for low history
+            generateRandomDirect(period) {
+                const directPred = Math.random() > 0.5 ? 'BIG' : 'SMALL';
                 
                 return {
-                    size: displayedPred,
+                    size: directPred,
                     confidence: 50 + Math.random() * 10,
-                    internalPrediction: internalPred,
+                    internalPrediction: directPred,
                     internalConfidence: 0.5,
                     mode: 'random',
-                    timestamp: Date.now()
+                    timestamp: Date.now(),
+                    period: period
                 };
             }
 
@@ -2548,15 +2533,15 @@
             }
         }
 
-        // Enhanced initialization with local storage load
-        const enhancedPredictor = new EnhancedOppositePredictor();
-        const zenithCoreAI = enhancedPredictor.zenithAI; // Use the internal instance
+        // FIXED: Renamed enhancedPredictor to predictorCoordinator and changed class name
+        const predictorCoordinator = new ZenithPredictorCoordinator();
+        const zenithCoreAI = predictorCoordinator.zenithAI; // Use the internal instance
 
         // --- Helper Functions ---
         const getBigSmallOutcome = (num) => (num >= 5) ? 'BIG' : 'SMALL';
         const getRedGreenOutcome = (num) => (num % 2 === 0) ? 'RED' : 'GREEN';
 
-        // --- Tab System and UI Logic ---
+        // --- Tab System and UI Logic (No changes in this block) ---
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('.tab');
             const contentSections = document.querySelectorAll('.content-section');
@@ -3021,7 +3006,7 @@
         // Chat Predictor Logic
         let previousResults = [];
         let latestPeriod = null;
-        let currentPrediction = null; // This will hold the *displayed* (opposite) prediction
+        let currentPrediction = null; // This will hold the *displayed* (direct) prediction
         let serverOnline = true;
         let lastPredictionPeriod = null;
         let lastActualNumber = null;
@@ -3042,7 +3027,7 @@
             addMessage('received',
                 `<div class="prediction-card">
                     <div class="prediction-title"><i class="fas fa-robot"></i> SYSTEM INITIALIZED</div>
-                    <p>Welcome to <strong>LICUIS ULTRA V3</strong>. Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions. **Note: This is running client-side, fetching data directly from game APIs.**</p>
+                    <p>Welcome to <strong>LICUIS ULTRA</strong>. Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
                 </div>`,
                 'LICUIS ULTRA');
             simulateInitialAnalysis();
@@ -3134,7 +3119,7 @@
 
             return `
                 <div class="prediction-card">
-                    <div class="period-display">Prediction for: **${latestPeriod}**</div>
+                    <div class="period-display">${latestPeriod}</div>
                     <div class="prediction-value" style="color: ${color};">${predictionData.size}</div>
 
                     <div class="progress-bar">
@@ -3199,7 +3184,7 @@
                             // A new period has started, meaning the previous period's result is available.
                             await fetchPreviousResults(); // Ensure previousResults is updated
 
-                            if (latestPeriod && enhancedPredictor.predictionLog.length > 0 && previousResults.length > 0) {
+                            if (latestPeriod && predictorCoordinator.predictionLog.length > 0 && previousResults.length > 0) {
                                 // 1. Determine the actual result of the *previous* period
                                 const periodOfResult = previousResults[0].issueNumber;
                                 const lastResult = previousResults[0].number;
@@ -3207,32 +3192,32 @@
                                 const actualResultSize = getBigSmallOutcome(lastActualNumber);
                                 
                                 // 2. ***FIX: Find the specific log entry for the period whose result just arrived.***
-                                const lastLoggedPred = enhancedPredictor.predictionLog.find(log => log.period === periodOfResult);
+                                const lastLoggedPred = predictorCoordinator.predictionLog.find(log => log.period === periodOfResult);
                                 
                                 // Only proceed if a prediction was logged for this period
                                 if (lastLoggedPred) {
-                                    // ***FIXED: Use internalPrediction for win/loss tracking***
+                                    // ***FIXED: Use internalPrediction (which is now the direct prediction) for win/loss tracking***
                                     const internalPredictionValue = lastLoggedPred.internalPrediction;
 
                                     // 3. Log the result to the chat
                                     const wasCorrect = internalPredictionValue === actualResultSize;
                                     const message = wasCorrect ? 
-                                        `<div class="prediction-card" style="border-color: var(--success-color);"><div class="prediction-title"><i class="fas fa-check"></i> RESULT: **${periodOfResult}**</div><p>Actual Result: **${actualResultSize}** (${lastActualNumber}). **ZENITH AI's INTERNAL prediction was correct.**</p></div>` :
-                                        `<div class="prediction-card" style="border-color: var(--danger-color);"><div class="prediction-title"><i class="fas fa-times"></i> RESULT: **${periodOfResult}**</div><p>Actual Result: **${actualResultSize}** (${lastActualNumber}). **ZENITH AI's INTERNAL prediction was incorrect.**</p></div>`;
+                                        `<div class="prediction-card" style="border-color: var(--success-color);"><div class="prediction-title"><i class="fas fa-check"></i> ${periodOfResult}</div><p>   ${actualResultSize}  (${lastActualNumber})  WIN</p></div>` :
+                                        `<div class="prediction-card" style="border-color: var(--danger-color);"><div class="prediction-title"><i class="fas fa-times"></i>   ${periodOfResult}</div><p>${actualResultSize} (${lastActualNumber})   LOSS</p></div>`;
                                     addMessage('received', message, 'SYSTEM RESULT');
                                     
                                     // 4. Update AI's internal state using the *correct* prediction
                                     zenithCoreAI.lastActual = actualResultSize;
                                     zenithCoreAI.lastPrediction = internalPredictionValue;
                                     
-                                    // ***FIXED: Update EnhancedPredictor's win/loss tracking based on INTERNAL prediction***
-                                    enhancedPredictor.updateReinforcement(actualResultSize, internalPredictionValue); 
+                                    // ***FIXED: Update PredictorCoordinator's win/loss tracking based on DIRECT prediction***
+                                    predictorCoordinator.updateReinforcement(actualResultSize, internalPredictionValue); 
                                     
                                     // Update model performance based on the model's prediction vs actual result
                                     zenithCoreAI.updateModelPerformance(actualResultSize);
                                     
                                     // 5. Remove the processed prediction from the log to prevent double-processing 
-                                    enhancedPredictor.predictionLog = enhancedPredictor.predictionLog.filter(log => log.period !== periodOfResult);
+                                    predictorCoordinator.predictionLog = predictorCoordinator.predictionLog.filter(log => log.period !== periodOfResult);
                                 }
                             }
 
@@ -3251,7 +3236,7 @@
         }
 
 
-        // ***FIXED: The updatePredictions function now correctly uses the opposite prediction for the displayed output.***
+        // ***FIXED: The updatePredictions function now correctly uses the direct prediction.***
         async function updatePredictions(currentTime, currentPeriod) {
             // Update ZenithCoreAI history with the latest result before predicting the new period
             await fetchPreviousResults(); 
@@ -3261,10 +3246,10 @@
             }));
             
             if (zenithCoreAI.history.length >= 5 && currentPeriod !== lastPredictionPeriod) { // Minimum history check
-                // Use the EnhancedOppositePredictor which handles the inversion
-                const predictionData = await enhancedPredictor.generateOppositePrediction(zenithCoreAI.history, currentPeriod);
+                // FIXED: Use the new generateDirectPrediction function
+                const predictionData = await predictorCoordinator.generateDirectPrediction(zenithCoreAI.history, currentPeriod);
 
-                // The displayed prediction is the required opposite (stored in `size`)
+                // The displayed prediction is the direct prediction (stored in `size`)
                 const finalPrediction = predictionData.size;
                 const finalConfidence = predictionData.confidence;
                 
@@ -3306,6 +3291,6 @@
                 if (title) title.classList.add('animate');
             }, 500);
         });
-    </script>
+</script>
 </body>
 </html>
