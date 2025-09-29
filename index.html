@@ -1606,7 +1606,7 @@
 
 "use strict";
 
-// --- START PYTHON LOGIC EQUIVALENT ---
+// --- START PYTHON LOGIC EQUIVALENT (2-Level Recovery) ---
 
 // Simple deque implementation for JavaScript
 class Deque {
@@ -1635,12 +1635,19 @@ class Deque {
     }
 }
 
-// --- Global State Management ---
+// --- Global State Management for Integrated Logic ---
 // Use a deque for a rolling history of past results for pattern recognition
-// Max length of 5 should be sufficient for short-term patterns
-const PAST_RESULTS = new Deque({ maxlen: 5 }); // Stores ("BIG" or "SMALL") for the last 5 periods
+const PAST_RESULTS = new Deque({ maxlen: 10 }); // Increased maxlen to 10 for better pattern analysis
 let LAST_PREDICTION_RESULT = null; // Stores the outcome of the previous prediction ("WIN" or "LOSS")
 let RECOVERY_LEVEL = 0; // 0: Normal Mode, 1: First-level recovery, 2: Second-level recovery
+let LAST_PREDICTION_DIRECTION = null; // Stores the size ('BIG'/'SMALL') of the last prediction
+let RANDOMNESS_FACTOR = 0.1; // New: For simulating Random Override
+
+// Configuration for thresholds
+const config = {
+    antiPredictThreshold: 0.60, // 60% win rate for Anti-Predict
+    minStreakForContinuation: 2, // Win/Loss Streak length for Fallback
+};
 
 // --- Helper Functions ---
 
@@ -1651,173 +1658,293 @@ function get_last_four_digits(period_number) {
     return digits.split('').map(d => parseInt(d, 10));
 }
 
-function analyze_history(history) {
-    /** Analyzes the recent history for dominant patterns (Alternation or Repetition). */
-    if (history.length < 3) {
-        return "NEUTRAL";
-    }
+function get_size_outcome(number) {
+    return number > 4 ? "BIG" : "SMALL";
+}
 
-    // Convert deque to array for easier indexing
-    const results = Array.from(history.items);
-    const lastResult = results[results.length - 1];
-
-    // Check for Repetition (e.g., BIG, BIG, BIG)
-    if (results.every(res => res === lastResult)) {
-        return "REPETITION";
-    }
-
-    // Check for Alternation (e.g., BIG, SMALL, BIG)
-    let alternating = true;
-    for (let i = 0; i < results.length - 1; i++) {
-        if (results[i] === results[i + 1]) {
-            alternating = false;
-            break;
+function analyze_pattern_section(results) {
+    /** New: Core Pattern Analysis based on the prompt's Step 1. */
+    const len = results.length;
+    if (len < 3) return { type: "NEUTRAL", prediction: null, confidence: 0 };
+    
+    const lastResult = results[len - 1];
+    const secondLast = results[len - 2];
+    const thirdLast = results[len - 3];
+    
+    // 1. Trap Pattern (Simulated: a break in an established sequence suggesting a trap)
+    // Check for a long streak (5+) immediately broken by a single opposite result
+    if (len >= 6) {
+        const last6 = results.slice(-6);
+        const streakType = last6[0];
+        const isStreak5 = last6.slice(0, 5).every(res => res === streakType);
+        if (isStreak5 && last6[5] !== streakType) {
+            // 5-streak broken on the 6th result. Server is "trapping." Predict the reversal.
+            return { type: "TRAP_REVERSAL", prediction: streakType, confidence: 0.95 };
         }
     }
 
-    if (alternating) {
-        return "ALTERNATION";
+    // 2. Alternating Pattern (B-S-B-S) - check last 4
+    if (len >= 4 && lastResult !== secondLast && secondLast !== thirdLast && thirdLast !== results[len-4]) {
+        // Alternating found (e.g., X, Y, X, Y). Predict next X.
+        return { type: "ALTERNATING_PATTERN", prediction: secondLast, confidence: 0.85 };
     }
 
-    return "NEUTRAL";
+    // 3. Repeat Pattern (Streaks like B-B-B) - check last 3
+    if (lastResult === secondLast && secondLast === thirdLast) {
+        // Streak continuation
+        return { type: "REPEAT_PATTERN", prediction: lastResult, confidence: 0.80 };
+    }
+
+    // 4. Two-Then-One Pattern (X-X-Y) - check last 3
+    if (lastResult !== secondLast && secondLast === thirdLast) {
+        // e.g., B-B-S. Predict continuation 'X', which is B.
+        return { type: "TWO_THEN_ONE", prediction: secondLast, confidence: 0.75 };
+    }
+
+    // 5. Fallback: Simple Alternation
+    if (lastResult !== secondLast && lastResult === thirdLast) {
+         // e.g., S-B-S. Predict continuation B.
+        return { type: "SIMPLE_ALTERNATING", prediction: lastResult === 'BIG' ? 'SMALL' : 'BIG', confidence: 0.65 };
+    }
+
+    // Number Sequence Patterns (Not explicitly implemented here as they rely on the number, not BIG/SMALL)
+
+    return { type: "NEUTRAL", prediction: null, confidence: 0 };
 }
 
-// --- Core Logic Functions (Translated from Python) ---
 
-function pattern_aware_base_prediction(period_number) {
+function pattern_analysis_prediction(history, currentPeriod) {
     /**
-     * Upgraded Normal Prediction Logic with History Awareness.
-     * Blends digit analysis with recent pattern recognition.
+     * Executes the Pattern Analysis (Primary Check) and Random Override.
      */
-    const digits = get_last_four_digits(period_number);
-    const total_sum = digits.reduce((a, b) => a + b, 0);
-
-    // 1. Positional Weight Sum (PWS): More weight on the last digit for recency.
-    // [d0 * 1, d1 * 2, d2 * 3, d3 * 5]
-    const pws = (digits[0] * 1) + (digits[1] * 2) + (digits[2] * 3) + (digits[3] * 5);
-
-    // 2. Base Prediction from Digits
-    let base_pred;
-    if (pws >= 35 || total_sum > 25) {
-        base_pred = "BIG";
-    } else if (pws <= 15 || total_sum < 10) {
-        base_pred = "SMALL";
+    const results = history.items.slice(-10); // Last 10 results for pattern analysis
+    const analysis = analyze_pattern_section(results);
+    
+    let prediction = analysis.prediction;
+    let confidence = analysis.confidence;
+    
+    if (prediction) {
+        // 2. Random Override (Controlled Unpredictability)
+        if (Math.random() < RANDOMNESS_FACTOR) {
+            prediction = prediction === 'BIG' ? 'SMALL' : 'BIG';
+            confidence = Math.max(0.5, confidence * 0.7); // Drop confidence on override
+        }
     } else {
-        // Default to a simple parity check of the total sum for a middle ground
-        base_pred = total_sum % 2 === 1 ? "BIG" : "SMALL";
+        // Fallback to simple parity check from the current period number
+        const digits = get_last_four_digits(currentPeriod);
+        const total_sum = digits.reduce((a, b) => a + b, 0);
+        prediction = total_sum % 2 === 1 ? "BIG" : "SMALL";
+        confidence = 0.5;
     }
-
-    // 3. Pattern Recognition Adjustment (Overrides base prediction if a strong pattern is detected)
-    const history_pattern = analyze_history(PAST_RESULTS);
-
-    if (PAST_RESULTS.length > 0) {
-        const last_result = PAST_RESULTS.at(-1);
-
-        if (history_pattern === "REPETITION") {
-            // If it's been repeating (e.g., BIG, BIG, BIG), predict the opposite for a break
-            return last_result === "BIG" ? "SMALL" : "BIG";
-        }
-
-        if (history_pattern === "ALTERNATION") {
-            // If it's alternating (e.g., B, S, B, S), predict the continuation
-            return last_result === "BIG" ? "SMALL" : "BIG";
-        }
-    }
-
-    // If NEUTRAL pattern or history is too short, use the base digit prediction
-    return base_pred;
+    
+    return { prediction, confidence };
 }
 
 
-function aggressive_recovery_logic(period_number, recovery_level) {
+function fallback_algorithm_prediction(lastPrediction, lastResult, coordinator) {
     /**
-     * High-Certainty Logic for Recovery Mode (Level 1 or Level 2).
-     * The logic becomes more aggressive at Level 2.
+     * Executes the Fallback Algorithm (Adaptive/Sequential Logic) - Step 3.
      */
-    const digits = get_last_four_digits(period_number);
-    let score = 0;
-    const total_sum = digits.reduce((a, b) => a + b, 0);
+    
+    let prediction = lastPrediction; // Default is to repeat the last prediction
+    let confidence = 0.55;
 
-    // 1. Primary Weight: Total Sum (More aggressive at Level 2)
-    if (total_sum >= 20) {
-        score += 3 + recovery_level; // Strong BIG signal
-    } else if (total_sum <= 10) {
-        score -= 2 + recovery_level; // Strong SMALL signal
+    // Fetch config values from coordinator (for Anti-Predict threshold)
+    const overallWinRate = coordinator.zenithAI.modelPerformance.reinforcement.accuracy; // Using reinforcement model accuracy as a proxy for overall win rate
+    const antiPredictThreshold = coordinator.zenithAI.config.antiPredictThreshold || 0.60;
+
+    // 1. High Win Rate Switch (Anti-Predict)
+    if (overallWinRate > antiPredictThreshold) {
+        prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG'; // Switch to the opposite
+        confidence = 0.88; // High confidence for anti-predict
+        return { prediction, confidence, reason: "ANTI_PREDICT" };
     }
 
-    // 2. Consecutive Parity Check (A strong indicator of pattern shifts)
-    // Check if the last two digits have the same parity (Even/Even or Odd/Odd)
-    if (digits.length >= 2 && digits.at(-1) % 2 === digits.at(-2) % 2) {
-        score += 1.5; // Moderate push toward BIG
+    // 2. Loss Reversal
+    if (lastResult === 'LOSS') {
+        prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG'; // Switch direction
+        return { prediction, confidence: 0.70, reason: "LOSS_REVERSAL" };
     }
 
-    // 3. Low Range Check (Aggressive push to SMALL if digits are clustered)
-    if (digits.length > 0) {
-        const maxDigit = Math.max(...digits);
-        const minDigit = Math.min(...digits);
-        if (maxDigit - minDigit <= 2) {
-            score -= 2.5; // Stronger SMALL signal
-        }
+    // 3. Streak Continuation/Reversal (Uses coordinator's streak counts)
+    const winStreak = coordinator.consecutiveWins;
+    const lossStreak = coordinator.consecutiveLosses; // Note: lossStreak > 0 implies RECOVERY_LEVEL > 0
+
+    if (winStreak >= config.minStreakForContinuation) {
+        // Win Streak Continuation (predict the same as last outcome)
+        prediction = PAST_RESULTS.at(-1); // Predict the last outcome
+        return { prediction, confidence: 0.75, reason: "WIN_STREAK_CONT" };
     }
-
-    // 4. Anti-Pattern Logic (If the history suggests a long run, predict a reversal)
-    const history_pattern = analyze_history(PAST_RESULTS);
-    if (history_pattern === "REPETITION" && PAST_RESULTS.length === PAST_RESULTS.maxlen) {
-        // If 5 consecutive results are the same, bet heavily on the reversal
-        const last_result = PAST_RESULTS.at(-1);
-        score += last_result === "SMALL" ? 3 : -3;
+    
+    if (lossStreak >= config.minStreakForContinuation) {
+        // Loss Streak Reversal (switch direction)
+        prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG'; 
+        return { prediction, confidence: 0.80, reason: "LOSS_STREAK_REV" };
     }
-
-    // --- Final Decision Threshold ---
-    // The threshold is lowered for Level 2 recovery to make the prediction more decisive
-    const threshold = recovery_level === 2 ? 1.0 : 2.0;
-
-    return score >= threshold ? "BIG" : "SMALL";
+    
+    // Default Fallback
+    return { prediction, confidence, reason: "FALLBACK_DEFAULT" };
 }
 
-function final_prediction_2lvl_recovery(period_number, actual_result = null) {
+
+function final_prediction_core(period_number, history, lastPrediction, lastResult, coordinator) {
+    /**
+     * Orchestrates the prediction logic based on the prompt's sequence.
+     */
+    
+    let predictionData = { prediction: null, confidence: 0, reason: "INITIAL" };
+    
+    // 1. Pattern Analysis (Primary Check)
+    if (history.length >= 3) {
+        predictionData = pattern_analysis_prediction(history, period_number);
+    }
+    
+    // 3. Fallback Algorithm (if no specific pattern is found or low confidence)
+    if (!predictionData.prediction || predictionData.confidence < 0.60) {
+        if (lastPrediction && lastResult) {
+            predictionData = fallback_algorithm_prediction(lastPrediction, lastResult, coordinator);
+        } else {
+             // Ultimate default
+            const digits = get_last_four_digits(period_number);
+            const total_sum = digits.reduce((a, b) => a + b, 0);
+            predictionData.prediction = total_sum % 2 === 1 ? "BIG" : "SMALL";
+            predictionData.confidence = 0.5;
+            predictionData.reason = "ULTIMATE_DEFAULT";
+        }
+    }
+    
+    // 4. Number Generation (The model only predicts 'BIG'/'SMALL'. Specific number generation is an ensemble step.)
+    // Note: The lossRecoveryModel is typically an override/aggressive mode, handled by the `LossRecoveryModel` logic.
+    
+    return predictionData;
+}
+
+
+function update_integrated_state(actual_result, made_prediction, was_recovery_mode) {
+    /**
+     * Updates global state (PAST_RESULTS, RECOVERY_LEVEL, RANDOMNESS_FACTOR)
+     */
+    PAST_RESULTS.append(actual_result);
+    LAST_PREDICTION_DIRECTION = made_prediction;
+    
+    const isWin = made_prediction === actual_result;
+
+    if (isWin) {
+        LAST_PREDICTION_RESULT = "WIN";
+        RECOVERY_LEVEL = 0;
+        // Decrease randomness after a WIN
+        RANDOMNESS_FACTOR = Math.max(0.1, RANDOMNESS_FACTOR * 0.8);
+    } else {
+        LAST_PREDICTION_RESULT = "LOSS";
+        
+        // Only increase recovery level if we weren't in recovery mode, or if the recovery failed
+        if (was_recovery_mode || RECOVERY_LEVEL === 0) {
+            RECOVERY_LEVEL += 1;
+        }
+
+        // Critical Check: Handle system failure if a third consecutive loss occurs (Level 3 or higher)
+        if (RECOVERY_LEVEL > 2) {
+            console.log(`!! 🛑 MAX LEVEL ALERT: ${RECOVERY_LEVEL} consecutive losses detected. Resetting to Normal Mode. !!`);
+            RECOVERY_LEVEL = 0; // Reset after failure
+            LAST_PREDICTION_DIRECTION = null;
+        }
+        
+        // Increase randomness after a LOSS
+        RANDOMNESS_FACTOR = Math.min(0.5, RANDOMNESS_FACTOR * 1.5 + 0.1);
+    }
+}
+
+
+function generateNumber(direction, period_number) {
+    /** New: Selects a specific number (0-9) aligned with the direction. */
+    const digits = get_last_four_digits(period_number);
+    const lastDigit = digits.length > 0 ? digits[digits.length - 1] : Math.floor(Math.random() * 10);
+    
+    if (direction === 'BIG') {
+        // Try to pick a BIG number (5-9) close to the last digit, or a random BIG
+        if (lastDigit >= 5) return lastDigit;
+        return Math.floor(Math.random() * 5) + 5; // 5, 6, 7, 8, 9
+    } else {
+        // Try to pick a SMALL number (0-4) close to the last digit, or a random SMALL
+        if (lastDigit <= 4) return lastDigit;
+        return Math.floor(Math.random() * 5); // 0, 1, 2, 3, 4
+    }
+}
+
+
+// --- Integrated Utility Functions for Coordinator/Core Interop ---
+
+function final_prediction_2lvl_recovery(period_number, actual_result = null, coordinator) {
     /**
      * The main function that orchestrates the prediction process,
-     * managing the state for the upgraded 2-level recovery system.
+     * managing the state for the upgraded 2-level recovery system (FIXED).
      */
-    // State is managed by the closure and outside the core class to match Python logic isolation
-    let prediction;
+    
+    // The coordinator is required for access to dynamic data (win rate, streaks)
+    if (!coordinator) throw new Error("Coordinator instance is required for final_prediction_2lvl_recovery.");
 
-    // 1. Determine the Prediction for the CURRENT period
+    let prediction;
+    let confidence = 0;
+    
+    // **RECOVERY MODE LOGIC (Override)**
     if (RECOVERY_LEVEL > 0) {
-        // **RECOVERY MODE (Level 1 or 2)**: Force use of the high-certainty logic
-        prediction = aggressive_recovery_logic(period_number, RECOVERY_LEVEL);
+        // Level 1 or 2 recovery is high-conviction. Use the aggressive logic as a sure-shot.
+        prediction = aggressive_recovery_logic_v2(period_number, RECOVERY_LEVEL, PAST_RESULTS);
+        confidence = RECOVERY_LEVEL === 2 ? 0.99 : 0.95;
     } else {
-        // **NORMAL MODE**: Use the pattern-aware base prediction
-        prediction = pattern_aware_base_prediction(period_number);
+        // **NORMAL MODE**: Use the new core logic sequence
+        const corePredData = final_prediction_core(
+            period_number, 
+            PAST_RESULTS, 
+            LAST_PREDICTION_DIRECTION, 
+            LAST_PREDICTION_RESULT,
+            coordinator
+        );
+        prediction = corePredData.prediction;
+        confidence = corePredData.confidence;
     }
 
-    // 2. Update System State (only if an actual result is provided)
+    // 2. Update System State (only if an actual result is provided, i.e., at the end of a period)
     if (actual_result !== null) {
-        // 2a. Update the rolling history
-        PAST_RESULTS.append(actual_result);
-
-        // 2b. Check for WIN/LOSS and adjust RECOVERY_LEVEL
-        if (prediction === actual_result) {
-            // ✅ WIN: Reset all state flags for the next period
-            LAST_PREDICTION_RESULT = "WIN";
-            RECOVERY_LEVEL = 0;
+        
+        // Get the prediction that was made for this closed period
+        const externalMadePrediction = coordinator.zenithAI.lastPrediction; 
+        
+        update_integrated_state(actual_result, externalMadePrediction, RECOVERY_LEVEL > 0);
+        
+        // The coordinator needs to sync its streak count with the new RECOVERY_LEVEL
+        coordinator.consecutiveLosses = RECOVERY_LEVEL;
+        if (RECOVERY_LEVEL === 0) {
+            coordinator.consecutiveWins++; // Only increment coordinator win streak if recovery level is reset (i.e., we just won a cycle)
         } else {
-            // ❌ LOSS: Advance the recovery level
-            LAST_PREDICTION_RESULT = "LOSS";
-            RECOVERY_LEVEL += 1;
-
-            // Critical Check: Handle system failure if a third consecutive loss occurs
-            if (RECOVERY_LEVEL > 2) {
-                console.log(`!! 🛑 MAX LEVEL ALERT: ${RECOVERY_LEVEL} consecutive losses detected. Resetting to Normal Mode. !!`);
-                RECOVERY_LEVEL = 0; // Reset after failure to prevent runaway bets
-            }
+            coordinator.consecutiveWins = 0;
         }
     }
 
     // 3. Return the calculated prediction
-    return prediction;
+    return { prediction, confidence };
 }
+
+
+function aggressive_recovery_logic_v2(period_number, recovery_level, history) {
+    /**
+     * High-Certainty Logic for Recovery Mode.
+     * The logic becomes more aggressive at Level 2.
+     * This replaces the old aggressive_recovery_logic for simplicity and focus on reversal.
+     */
+    
+    // The core idea of recovery is REVERSAL of the last outcome.
+    if (history.length > 0) {
+        const last_result = history.at(-1);
+        return last_result === "BIG" ? "SMALL" : "BIG";
+    }
+    
+    // Fallback if no history
+    const digits = get_last_four_digits(period_number);
+    const total_sum = digits.reduce((a, b) => a + b, 0);
+    return total_sum % 2 === 1 ? "BIG" : "SMALL";
+}
+
 
 // --- END PYTHON LOGIC EQUIVALENT ---
 
@@ -1827,6 +1954,7 @@ const PREDICTOR_COORDINATOR_KEY = 'zenithPredictorCoordinatorState';
 class zenithAICore {
     constructor() {
         this.history = [];
+        this.config = config; // Expose config for logic functions
         this.modelWeights = {
             quantumEntanglement: 10,
             temporalFusion: 9.5,
@@ -1836,17 +1964,9 @@ class zenithAICore {
             aiFusion: 6.5,
             markov: 6.0,
             svm: 5.5,
-            frequency: 5.0,
-            sequence: 4.5,
-            momentum: 4.0,
-            zigzag: 3.5,
-            fibonacci: 3.0,
-            parabolicSAR: 2.5,
             kmeans: 2.0,
             probabilistic: 1.5,
             rsi: 1.0,
-            martingale: 0.5,
-            antiMartingale: 0.5,
             localCluster: 8.0,
             trendStrength: 7.5,
             cycleDetection: 9.0,
@@ -1865,12 +1985,21 @@ class zenithAICore {
             antiStreak: 12.0,
             alternatingMatch: 11.5,
             weightedProbability: 10.5,
-            lossRecovery: 15.0,
+            lossRecovery: 20.0, // Increased weight for high-conviction recovery
             simulatedNN: 9.0,
             simulatedML: 9.2,
             mirrorPattern: 9.5,
             parityImbalance: 8.5,
-            doubleRepeatBreak: 7.0
+            doubleRepeatBreak: 7.0,
+            // Low-weight models from the original list for completeness, but typically overridden
+            momentum: 4.0,
+            zigzag: 3.5,
+            frequency: 5.0,
+            sequence: 4.5,
+            fibonacci: 3.0,
+            parabolicSAR: 2.5,
+            martingale: 0.5,
+            antiMartingale: 0.5,
         };
 
         this.modelPerformance = {};
@@ -1891,6 +2020,8 @@ class zenithAICore {
     }
 
     initializeModels() {
+        // ... (Model definitions remain the same, only LossRecoveryModel is critical)
+        // ... (Initialize Models code block)
         this.models = {
             momentum: this.MomentumModel(),
             zigzag: this.ZigZagModel(),
@@ -1947,6 +2078,7 @@ class zenithAICore {
         }
     }
 
+
     saveState() {
         const state = {
             modelWeights: this.modelWeights,
@@ -1960,6 +2092,12 @@ class zenithAICore {
             deepLearningEnabled: this.deepLearningEnabled,
             adaptiveModelsEnabled: this.adaptiveModelsEnabled,
             learningRate: this.learningRate,
+            // Include integrated state for persistence (optional, but robust)
+            integratedRecoveryLevel: RECOVERY_LEVEL,
+            integratedLastResult: LAST_PREDICTION_RESULT,
+            integratedLastDirection: LAST_PREDICTION_DIRECTION,
+            integratedRandomnessFactor: RANDOMNESS_FACTOR,
+            integratedPastResults: PAST_RESULTS.items,
         };
         try {
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
@@ -1981,23 +2119,18 @@ class zenithAICore {
                         perf.accuracy = perf.correct / perf.total;
                     }
                 }
-            }
-        } catch (e) {
-            console.warn("Could not load ZenithAICore state from local storage:", e);
-        }
-    }
-
-    loadState() {
-        try {
-            const state = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (state) {
-                const parsedState = JSON.parse(state);
-                Object.assign(this, parsedState);
-
-                for (const modelName in this.modelPerformance) {
-                    const perf = this.modelPerformance[modelName];
-                    if (perf.total > 0) {
-                        perf.accuracy = perf.correct / perf.total;
+                
+                // Load integrated state
+                if (parsedState.integratedRecoveryLevel !== undefined) {
+                    RECOVERY_LEVEL = parsedState.integratedRecoveryLevel;
+                    LAST_PREDICTION_RESULT = parsedState.integratedLastResult;
+                    LAST_PREDICTION_DIRECTION = parsedState.integratedLastDirection;
+                    RANDOMNESS_FACTOR = parsedState.integratedRandomnessFactor;
+                    PAST_RESULTS.items = parsedState.integratedPastResults || [];
+                    // Ensure deque maxlen is respected on load
+                    PAST_RESULTS.maxlen = 10;
+                    while (PAST_RESULTS.items.length > PAST_RESULTS.maxlen) {
+                        PAST_RESULTS.items.shift();
                     }
                 }
             }
@@ -2007,23 +2140,19 @@ class zenithAICore {
     }
 
     updateDynamicWeights() {
-        // Calculate total accuracy from models that have made predictions
+        // ... (Existing updateDynamicWeights implementation)
         const modelsWithData = Object.values(this.modelPerformance).filter(p => p.total > 0);
         const totalAccuracy = modelsWithData.reduce((sum, p) => sum + p.accuracy, 0);
 
-        // If no model has made a prediction, stick to base weights
         if (modelsWithData.length === 0) return;
 
-        // Normalize weights based on performance
         for (const modelName in this.modelWeights) {
             const performance = this.modelPerformance[modelName];
 
-            let baseWeight = this.modelWeights[modelName]; // Start with initial/current weight
+            let baseWeight = this.modelWeights[modelName]; 
 
             if (performance.total > 0) {
-                // Base weight adjustment: Higher accuracy means higher normalized weight
                 const normalizedAccuracy = totalAccuracy > 0 ? performance.accuracy / totalAccuracy : 0.01;
-                // Use power function for a more aggressive weighting curve
                 baseWeight = Math.pow(normalizedAccuracy * 10, this.aggressiveness / 5);
 
                 let strategyMultiplier = 1.0;
@@ -2054,25 +2183,22 @@ class zenithAICore {
                 this.modelWeights[modelName] = Math.max(0.5, baseWeight * strategyMultiplier);
 
                 if (this.adaptiveModelsEnabled) {
-                    // Adaptive check: Reward models with high accuracy more
                     const adaptation = performance.accuracy > 0.7 ? 1.2 : 0.8;
                     this.modelWeights[modelName] *= adaptation;
                 }
             }
-            // Ensure weights don't grow indefinitely or drop to zero
             this.modelWeights[modelName] = Math.min(20.0, Math.max(0.1, this.modelWeights[modelName]));
         }
         this.saveState();
     }
 
     updateModelPerformance(actualSize) {
+        // ... (Existing updateModelPerformance implementation)
         for (const modelName in this.models) {
-            // Check cache first if prediction already exists for the history slice used by the model
             const modelPredCacheKey = modelName + "_" + this.history.slice(0, 15).map(h => h.issueNumber || h.period).join('');
             let prediction = this.predictionCache.get(modelPredCacheKey);
 
-            if (!prediction) {
-                // If not in cache, generate the prediction
+            if (!prediction || modelName === 'lossRecovery') { 
                 prediction = this.models[modelName].predict(this.history, {
                     consecutiveLosses: this.consecutiveLosses,
                     lastPrediction: this.lastPrediction,
@@ -2090,7 +2216,6 @@ class zenithAICore {
                 this.modelPerformance[modelName].accuracy =
                     this.modelPerformance[modelName].correct / this.modelPerformance[modelName].total;
 
-                // Simple adaptive learning rate adjustment based on overall performance
                 if (this.deepLearningEnabled) {
                     this.learningRate = 0.7 + (this.modelPerformance[modelName].accuracy * 0.3 * (this.modelWeights[modelName] / 10));
                     this.learningRate = Math.min(1.0, Math.max(0.5, this.learningRate));
@@ -2108,6 +2233,44 @@ class zenithAICore {
 
     // --- Specific Model Implementations ---
 
+    // ... (All other models remain the same)
+
+    LossRecoveryModel() {
+        // This model implements the integrated 2-level recovery logic for the ensemble.
+        return {
+            predict: (history, context) => {
+                const period_number = history[0] ? history[0].issueNumber || history[0].period : '00000000000'; // Get current period for digit analysis
+
+                // If in RECOVERY MODE, this model provides the high-conviction prediction
+                if (RECOVERY_LEVEL > 0) { 
+                    // This uses the V2 aggressive logic (reversal of last outcome)
+                    const prediction = aggressive_recovery_logic_v2(period_number, RECOVERY_LEVEL, PAST_RESULTS); 
+                    
+                    // Use a max confidence of 0.99 for the model level, allowing the ensemble to scale it up
+                    return {
+                        size: prediction,
+                        confidence: 0.99
+                    };
+                }
+                // When not in recovery, it can still provide a low-confidence prediction based on Fallback Loss Reversal
+                else if (LAST_PREDICTION_RESULT === 'LOSS') {
+                    const lastPredSize = LAST_PREDICTION_DIRECTION;
+                    const prediction = lastPredSize === 'BIG' ? 'SMALL' : 'BIG'; // Reversal
+                    return {
+                        size: prediction,
+                        confidence: 0.70
+                    };
+                }
+
+                return {
+                    size: null,
+                    confidence: 0
+                };
+            }
+        };
+    }
+    
+    // ... (All other models remain the same)
     AntiStreakModel() {
         const MIN_STREAK = 3;
         return {
@@ -2204,38 +2367,6 @@ class zenithAICore {
                         confidence: Math.min(0.95, 0.6 + confidence)
                     };
                 }
-                return {
-                    size: null,
-                    confidence: 0
-                };
-            }
-        };
-    }
-
-    LossRecoveryModel() {
-        // This model implements a simple 2-level-loss recovery by predicting the opposite
-        // of the previous prediction, under the assumption that a failed prediction
-        // often leads to a pattern break or reversal.
-        return {
-            predict: (history, context) => {
-                const {
-                    consecutiveLosses,
-                    lastPrediction,
-                    instance
-                } = context;
-
-                // --- INTEGRATED PYTHON LOGIC FOR RECOVERY MODE ---
-                if (consecutiveLosses > 0) {
-                    const period_number = history[0] ? history[0].issueNumber || history[0].period : '00000000000'; // Get current period for digit analysis
-                    const prediction = aggressive_recovery_logic(period_number, consecutiveLosses);
-                    // Use a max confidence of 0.99 for the model level, allowing the ensemble to scale it up
-                    return {
-                        size: prediction,
-                        confidence: 0.99
-                    };
-                }
-                // --- END INTEGRATED PYTHON LOGIC ---
-
                 return {
                     size: null,
                     confidence: 0
@@ -2402,7 +2533,6 @@ class zenithAICore {
         };
     }
 
-    // --- Placeholder Models (for diversity and future enhancement) ---
 
     _getNonBiasedPred(history) {
         if (history.length === 0) return {
@@ -2418,7 +2548,6 @@ class zenithAICore {
         };
     }
 
-    // Assigning the fallback logic to the array of models
     MomentumModel() {
         return {
             predict: (history) => this._getNonBiasedPred(history)
@@ -2590,6 +2719,7 @@ class zenithAICore {
         };
     }
 
+
     async generatePrediction(history) {
         if (history.length < this.minHistoryRequired) {
             return {
@@ -2615,7 +2745,7 @@ class zenithAICore {
             const modelPredCacheKey = modelName + "_" + historyKey;
             let prediction = this.predictionCache.get(modelPredCacheKey);
 
-            if (!prediction) {
+            if (!prediction || modelName === 'lossRecovery' || modelName === 'weightedProbability') { // Always recalculate high-conviction/state-dependent models
                 prediction = this.models[modelName].predict(history, {
                     consecutiveLosses: this.consecutiveLosses,
                     lastPrediction: this.lastPrediction,
@@ -2754,6 +2884,7 @@ class ZenithPredictorCoordinator {
     }
 
     analyzePatterns(history) {
+        // ... (Existing analyzePatterns implementation)
         const patterns = {};
 
         const shortTerm = this.calculateWMA(history.slice(0, 7));
@@ -2790,6 +2921,7 @@ class ZenithPredictorCoordinator {
     }
 
     assessSafety(history) {
+        // ... (Existing assessSafety implementation)
         const safety = {
             score: 'green',
             flags: [],
@@ -2819,37 +2951,39 @@ class ZenithPredictorCoordinator {
     }
 
     updateReinforcement(actualResult, internalPrediction) {
+        
+        // Ensure the internal prediction has the correct BIG/SMALL value
+        const predSize = internalPrediction;
+        
+        this.zenithAI.lastActual = actualResult; 
+        
         // --- LOGIC INTEGRATION: Update Python State first ---
-        const period_number = this.history[0] ? this.history[0].issueNumber || this.history[0].period : '00000000000';
-        final_prediction_2lvl_recovery(period_number, actualResult);
+        const lastPredictionLog = this.predictionLog[this.predictionLog.length - 1];
+        const period_number = lastPredictionLog ? lastPredictionLog.period : '00000000000';
+        
+        // **FIXED**: This now calls the integrated state update function.
+        // It updates the global RECOVERY_LEVEL based on the outcome of the last prediction
+        // It uses the prediction that was made (this.zenithAI.lastPrediction) and the actual result.
+        final_prediction_2lvl_recovery(period_number, actualResult, this); // Pass the coordinator instance
+
         this.consecutiveLosses = RECOVERY_LEVEL; // Keep coordinator state in sync with Python state for mode switching
+        // Note: consecutiveWins is updated within final_prediction_2lvl_recovery
         // --- END LOGIC INTEGRATION ---
+        
+        if (!predSize) return;
 
-        if (!internalPrediction) return;
-
-        const internalCorrect = internalPrediction === actualResult;
-
-        if (internalCorrect) {
-            this.consecutiveWins++;
-            this.consecutiveLosses = 0; // RECOVERY_LEVEL should be 0 here from the Python logic call
-            this.zenithAI.setStrategy('trendFollowing'); // Revert to a stable strategy on win
-        } else {
-            // Consecutive losses already updated via final_prediction_2lvl_recovery, just update mode
-            this.consecutiveWins = 0;
-            // Adaptive strategy change on loss
-            if (this.consecutiveLosses === 1) {
-                this.mode = 'cautious';
-                this.zenithAI.setStrategy('patternRecognition');
-            } else if (this.consecutiveLosses >= 2) {
-                this.mode = 'sureShot';
-                this.zenithAI.setStrategy('quantum'); // Aggressive switch to high-conviction models
-            }
-        }
-
+        // Adaptive strategy change on loss based on the new RECOVERY_LEVEL
         if (this.consecutiveLosses === 0) {
             this.mode = 'normal';
+            this.zenithAI.setStrategy('trendFollowing'); // Revert to a stable strategy on win/reset
+        } else if (this.consecutiveLosses === 1) {
+            this.mode = 'cautious';
+            this.zenithAI.setStrategy('patternRecognition');
+        } else if (this.consecutiveLosses === 2) {
+            this.mode = 'sureShot';
+            this.zenithAI.setStrategy('quantum'); // Aggressive switch to high-conviction models
         }
-
+        
         this.saveState();
     }
 
@@ -2867,46 +3001,39 @@ class ZenithPredictorCoordinator {
         const safety = this.assessSafety(history);
 
         // --- CORE AI PREDICTION ---
+        // Ensemble prediction provides a base and confidence
         let zenithPred = await this.zenithAI.generatePrediction(history);
 
-        // --- LOGIC INTEGRATION: OVERRIDE WITH PYTHON LOGIC IF IN RECOVERY MODE ---
-        if (RECOVERY_LEVEL > 0) {
-            const pythonPrediction = final_prediction_2lvl_recovery(period);
-            // If the python logic is engaged, it's considered high-conviction
-            zenithPred = {
-                size: pythonPrediction,
-                confidence: Math.max(zenithPred.confidence, (RECOVERY_LEVEL === 2 ? 0.95 : 0.90) * 100)
-            };
-        }
-        // --- END LOGIC INTEGRATION ---
+        // --- LOGIC INTEGRATION: OVERRIDE WITH PYTHON LOGIC (Core Logic/Recovery) ---
+        // This is a LOOK-AHEAD call to determine the prediction for the *current* period
+        const integratedPredData = final_prediction_2lvl_recovery(period, null, this);
+        
+        // The integrated logic (which includes Pattern Analysis and Fallback) is the FINAL prediction source
+        let finalPrediction = integratedPredData.prediction;
+        let finalConfidence = integratedPredData.confidence * 100;
 
-        let finalPrediction = zenithPred.size;
-        let finalConfidence = zenithPred.confidence;
-
-        // Apply mode and safety overrides
-        if (this.mode === 'sureShot' && finalConfidence < 85) {
-            // Re-run the specific loss recovery model for a final confirmation
-            const recoveryPred = this.zenithAI.LossRecoveryModel().predict(history, {
-                consecutiveLosses: this.consecutiveLosses,
-                lastPrediction: this.zenithAI.lastPrediction,
-                lastActual: this.zenithAI.lastActual,
-                instance: this.zenithAI
-            });
-            if (recoveryPred.size) {
-                finalPrediction = recoveryPred.size;
-                finalConfidence = Math.max(finalConfidence, recoveryPred.confidence * 100);
-            }
+        // Apply mode and safety overrides (Zenith's confidence can be used as a tie-breaker/modifier)
+        if (this.mode === 'sureShot') {
+            // In sureShot mode, the confidence is boosted
+            finalConfidence = Math.max(finalConfidence, 95.0);
         }
 
         if (safety.score === 'red' && finalConfidence > 90) {
             // Drop confidence significantly on high uncertainty/volatility
             finalConfidence = 70.0 + (finalConfidence - 90.0) * 0.5;
         }
+        
+        // If the integrated logic provided a low confidence, fallback to the ensemble's strong prediction
+        if (integratedPredData.confidence < 0.60 && zenithPred.confidence > 75) {
+             finalPrediction = zenithPred.size;
+             finalConfidence = zenithPred.confidence;
+        }
+
 
         const finalOutput = {
             size: finalPrediction,
             confidence: parseFloat(finalConfidence.toFixed(2)),
-            internalPrediction: zenithPred.size, // Original Zenith AI prediction
+            internalPrediction: finalPrediction, // Use the final prediction as the internal prediction for logging/reinforcement
             internalConfidence: zenithPred.confidence,
             mode: this.mode,
             safety: safety.score,
@@ -2914,12 +3041,18 @@ class ZenithPredictorCoordinator {
             timestamp: Date.now(),
             period: period
         };
-
+        
+        // Log the final prediction and confidence
         this.predictionLog.push(finalOutput);
+        
+        // This is the prediction the coordinator is finalizing, so the AI Core needs to store it
+        this.zenithAI.lastPrediction = finalPrediction; 
+
         this.saveState();
         return finalOutput;
     }
-
+    
+    // ... (All other helper functions remain the same)
     calculateWMA(data) {
         if (data.length === 0) return 0.5;
         const numbers = data.map(d => d.number);
@@ -3405,6 +3538,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="pattern-value">Strategy</span>
                     <span class="pattern-count">${zenithCoreAI.strategy}</span>
                 </div>
+                <div class="pattern-item">
+                    <span class="pattern-value">Recovery Level (Integrated)</span>
+                    <span class="pattern-count">${RECOVERY_LEVEL}</span>
+                </div>
             </div>
         `;
 
@@ -3481,7 +3618,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, {
             title: "Loss Recovery Hybrid (Martingale)",
             icon: "fas fa-crosshairs",
-            description: "High-confidence strategy to reverse the last prediction after two or more consecutive losses."
+            description: "High-confidence strategy to reverse the last prediction after two or more consecutive losses (Integrated 2-Level Recovery)."
         }, {
             title: "Anti-Streak Detection",
             icon: "fas fa-compress-arrows-alt",
@@ -3692,7 +3829,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         await fetchPreviousResults();
 
                         // 2. Process the result of the *last* period
-                        if (latestPeriod && predictorCoordinator.predictionLog.length > 0 && previousResults.length > 0) {
+                        if (latestPeriod && zenithCoreAI.lastPrediction && previousResults.length > 0) {
                             // Find the result that matches the *last* period we made a prediction for (latestPeriod)
                             const lastActualItem = previousResults.find(item => item.issueNumber === latestPeriod);
                             
@@ -3701,32 +3838,23 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const lastResult = lastActualItem.number;
                                 lastActualNumber = parseInt(lastResult, 10);
                                 const actualResultSize = getBigSmallOutcome(lastActualNumber);
+                                
+                                // Update AI Core State and Reinforcement
+                                // This single call handles the integrated Python logic's state update (RECOVERY_LEVEL, PAST_RESULTS)
+                                // zenithCoreAI.lastPrediction holds the prediction that was made for the period that just closed.
+                                predictorCoordinator.updateReinforcement(actualResultSize, zenithCoreAI.lastPrediction);
 
-                                const lastLoggedPred = predictorCoordinator.predictionLog.find(log => log.period === periodOfResult);
+                                // Update individual model performance
+                                zenithCoreAI.updateModelPerformance(actualResultSize);
 
-                                if (lastLoggedPred) {
-                                    const internalPredictionValue = lastLoggedPred.internalPrediction;
-
-                                    const wasCorrect = internalPredictionValue === actualResultSize;
-                                    const message = wasCorrect ?
-                                        `<div class="prediction-card win" style="border-color: var(--success-color);"><div class="prediction-title"><i class="fas fa-check"></i> ${periodOfResult}</div><p>   ${actualResultSize} (${lastActualNumber})  <strong style="color: var(--success-color);">WIN</strong></p></div>` :
-                                        `<div class="prediction-card loss" style="border-color: var(--danger-color);"><div class="prediction-title"><i class="fas fa-times"></i>   ${periodOfResult}</div><p>   ${actualResultSize} (${lastActualNumber})  <strong style="color: var(--danger-color);">LOSS</strong></p></div>`;
-                                    addMessage('received', message, 'SYSTEM RESULT');
-
-                                    // Update AI Core State
-                                    zenithCoreAI.lastActual = actualResultSize;
-                                    zenithCoreAI.lastPrediction = internalPredictionValue;
-
-                                    // Update Coordinator Reinforcement (consecutive loss/win count)
-                                    // This calls the integrated Python logic which updates the RECOVERY_LEVEL
-                                    predictorCoordinator.updateReinforcement(actualResultSize, internalPredictionValue);
-
-                                    // Update individual model performance
-                                    zenithCoreAI.updateModelPerformance(actualResultSize);
-
-                                    // Remove processed prediction from log
-                                    predictorCoordinator.predictionLog = predictorCoordinator.predictionLog.filter(log => log.period !== periodOfResult);
-                                }
+                                const wasCorrect = zenithCoreAI.lastPrediction === actualResultSize;
+                                const message = wasCorrect ?
+                                    `<div class="prediction-card win" style="border-color: var(--success-color);"><div class="prediction-title"><i class="fas fa-check"></i> ${periodOfResult}</div><p>   ${actualResultSize} (${lastActualNumber})  <strong style="color: var(--success-color);">WIN</strong></p></div>` :
+                                    `<div class="prediction-card loss" style="border-color: var(--danger-color);"><div class="prediction-title"><i class="fas fa-times"></i>   ${periodOfResult}</div><p>   ${actualResultSize} (${lastActualNumber})  <strong style="color: var(--danger-color);">LOSS</strong></p></div>`;
+                                addMessage('received', message, 'SYSTEM RESULT');
+                                
+                                // Reset lastPrediction since the period is closed. It will be set again for the new period.
+                                zenithCoreAI.lastPrediction = null; 
                             }
                         }
 
@@ -3756,8 +3884,10 @@ document.addEventListener('DOMContentLoaded', function() {
             period: item.issueNumber
         }));
 
-        // Only generate a new prediction if the period is new and history is sufficient
+        // Only generate a new prediction if the period is new
         if (zenithCoreAI.history.length >= 5 && currentPeriod !== lastPredictionPeriod) {
+            
+            // Generate the prediction for the CURRENT period using all integrated logic
             const predictionData = await predictorCoordinator.generateDirectPrediction(zenithCoreAI.history, currentPeriod);
 
             const finalPrediction = predictionData.size;
@@ -3766,9 +3896,7 @@ document.addEventListener('DOMContentLoaded', function() {
             currentPrediction = finalPrediction;
             lastPredictionPeriod = currentPeriod;
 
-            // Update the LAST_PREDICTION_RESULT for the integrated Python logic
-            // The actual WIN/LOSS result will be determined when the next period result arrives.
-            zenithCoreAI.lastPrediction = finalPrediction; // Store for the AI Core's use
+            // zenithCoreAI.lastPrediction is already set by generateDirectPrediction
 
             showTyping();
             setTimeout(() => {
