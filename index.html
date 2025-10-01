@@ -417,6 +417,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: 100%;
+            overflow-y: auto;
         }
         
         .game-selection-title {
@@ -824,7 +826,7 @@
             100% { opacity: 0.5; }
         }
 
-        /* Game Frame */
+        /* Game Frame - FIXED POSITIONING */
         .game-selection, .fullscreen-iframe { 
             z-index: 9999999; 
         }
@@ -834,8 +836,9 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: calc(100% - var(--tab-height));
             border: none;
+            z-index: 9999;
         }
 
         .hidden {
@@ -1188,6 +1191,306 @@
     </div>
 
     <script>
+        // --- PATTERN LOGIC ---
+        const patterns = {
+          'BBBS': 'BIG',
+          'SSSB': 'SMALL',
+          'BBSB': 'SMALL',
+          'SSBS': 'BIG',
+          'BSBS': 'BIG',
+          'SBSB': 'SMALL',
+          'BSSB': 'BIG',
+          'SBBS': 'SMALL',
+          'BBBBS': 'BIG',
+          'SSSSB': 'SMALL',
+          'BBSBB': 'SMALL',
+          'SSBSS': 'BIG',
+          'BBSBS': 'BIG',
+          'SSBSB': 'SMALL',
+          'BSBBS': 'SMALL',
+          'SBSSB': 'BIG',
+          'BBSSB': 'BIG',
+          'SSBBS': 'SMALL',
+          'BSSSB': 'SMALL',
+          'BSBSB': 'BIG',
+          'SBSBS': 'SMALL',
+          'BSSBS': 'BIG',
+          'SBSBB': 'SMALL',
+          'BBBBBS': 'BIG',
+          'SSSSSB': 'SMALL',
+          'BBBSSS': 'BIG',
+          'SSSBBB': 'SMALL',
+          'BBSBBS': 'SMALL',
+          'SSBSSB': 'BIG',
+          'BSSBSB': 'BIG',
+          'SBSSBS': 'SMALL',
+          'BSBSSB': 'SMALL',
+          'SBSBSS': 'BIG',
+          'BBBBBBB': 'SMALL',
+          'SSSSSSS': 'BIG',
+          'BBBBBBS': 'BIG',
+          'SSSSSSB': 'SMALL',
+          'BBBBBSB': 'SMALL',
+          'SSSSBSB': 'BIG',
+          'BBBBSBB': 'SMALL',
+          'SSSBSSS': 'BIG',
+          'BBBSBBB': 'SMALL',
+          'SSBSSSS': 'BIG',
+          'BBSBSBB': 'BIG',
+          'SSBSBSS': 'SMALL',
+          'BBBBBBBB': 'SMALL',
+          'SSSSSSSS': 'BIG',
+          'BBBBBBBS': 'BIG',
+          'SSSSSSSB': 'SMALL',
+          'BBBBBBSB': 'SMALL',
+          'SSSSSSBS': 'BIG',
+          'BBBBBSBB': 'SMALL',
+          'SSSSSBSS': 'BIG',
+          'BBBBSBBB': 'SMALL',
+          'SSSBSSSS': 'BIG',
+          'BBBSBBBB': 'SMALL',
+          'SSBSSSSS': 'BIG',
+          'BBSBBBBB': 'SMALL',
+          'SBSSSSSS': 'BIG',
+          'BBBBBBBBB': 'SMALL',
+          'SSSSSSSSS': 'BIG',
+          'BBBBBBBBS': 'BIG',
+          'SSSSSSSSB': 'SMALL',
+          'BBBBBBBSB': 'SMALL',
+          'SSSSSSSBS': 'BIG',
+          'BBBBBBSBB': 'SMALL',
+          'SSSSSSBSS': 'BIG',
+          'BBBBBSBBB': 'SMALL',
+          'SSSSSBSSS': 'BIG',
+          'BBBBSBBBB': 'SMALL',
+          'SSSSBSSSS': 'BIG',
+          'BBBSBBBBB': 'SMALL',
+          'SSSBSSSSS': 'BIG',
+          'BBBBBBBBBB': 'SMALL',
+          'SSSSSSSSSS': 'BIG',
+          'BBBBBBBBBS': 'BIG',
+          'SSSSSSSSSB': 'SMALL',
+          'BBBBBBBBSB': 'SMALL',
+          'SSSSSSSSBS': 'BIG',
+          'BBBBBBBSBB': 'SMALL',
+          'SSSSSSSBSS': 'BIG',
+          'BBBBBBSBBB': 'SMALL',
+          'SSSSSSBSSS': 'BIG',
+          'BBBBBSBBBB': 'SMALL',
+          'SSSSSBSSSS': 'BIG',
+          'BBBBSBBBBB': 'SMALL',
+          'SSSSBSSSSS': 'BIG',
+          'BBBSBBBBBB': 'SMALL',
+          'SSSBSSSSSS': 'BIG',
+          'BBSBBBBBBB': 'SMALL',
+          'SSBSSSSSSS': 'BIG',
+          'BSBBBBBBBB': 'SMALL',
+          'SBSSSSSSSS': 'BIG',
+          'BBBBBBBBSS': 'BIG',
+          'BBBBBBBSBS': 'BIG',
+          'BBBBBBBSSB': 'SMALL',
+          'BBBBBBBSSS': 'BIG',
+          'BBBBBBSBBB': 'SMALL',
+          'BBBBBBSBBS': 'BIG',
+          'BBBBBBSBSB': 'SMALL',
+          'BBBBBBSBSS': 'BIG',
+          'BBBBBBSSBB': 'SMALL',
+          'BBBBBBSSBS': 'BIG',
+          'BBBBBBSSSB': 'SMALL',
+          'BBBBBBSSSS': 'BIG',
+          'BBBBBSBBBB': 'SMALL',
+          'BBBBBSBBBS': 'BIG',
+          'BBBBBSBBSB': 'SMALL',
+          'BBBBBSBBSS': 'BIG',
+          'SSSSSSSSBB': 'SMALL',
+          'SSSSSSSBSB': 'BIG',
+          'SSSSSSSBSS': 'SMALL',
+          'SSSSSSSBBS': 'SMALL'
+        };
+
+        // === 7-digit patterns (added 2 more) ===
+        const trendMap7 = {
+          'BBBBBBB': 'S',
+          'SSSSSSS': 'B',
+          'BBBBBBS': 'S',
+          'SSSSSSB': 'B',
+          'BBBBSBB': 'S',
+          'SSSBSSS': 'B',
+          'BBBSBBB': 'S',
+          'BBSBBBB': 'S',
+          'BSBBBBB': 'B',
+          'SSBBSSB': 'B',
+          'SBSSBBS': 'B',
+          'SSBBSBS': 'B',
+          'BBSBBSB': 'B',
+          'SBSBSBS': 'B',
+          'BSSBSSB': 'S',
+          'SSBBSSS': 'S',
+          'BBSSSSS': 'S',
+          'SSBBBSS': 'B',
+          'BSSBBBS': 'S', // NEW 1
+          'SSBSSBB': 'B'  // NEW 2
+        };
+
+        // === 6-digit patterns (added 7 more) ===
+        const trendMap6 = {
+          'BBBBBB': 'B',
+          'SSSSSS': 'S',
+          'BBBSSB': 'S',
+          'SSBBSS': 'B',
+          'BBSBSB': 'B',
+          'SBBSBB': 'S',
+          'BSBSBS': 'S',
+          'SBSBSB': 'B',
+          'BBSSBB': 'S',
+          'SSBBSS': 'B',
+          'BSSBSS': 'S',
+          'SBBSSB': 'B',
+          'BBSSBS': 'B', // NEW 1
+          'SBSSBB': 'S', // NEW 2
+          'BSSBBB': 'S', // NEW 3
+          'SBBSBS': 'B', // NEW 4
+          'SSSBBS': 'B', // NEW 5
+          'BBSSSB': 'S', // NEW 6
+          'SBBBSB': 'B'  // NEW 7
+        };
+
+        // === 5-digit patterns (added 4 NEW) ===
+        const trendMap5 = {
+          'BBSSB': 'S',
+          'SSBBS': 'B',
+          'BSBBS': 'S',
+          'SBSBB': 'B',
+          'BBBSS': 'S',
+          'SSSBB': 'B',
+          'SBSSB': 'B', // NEW 1
+          'BSSSB': 'S', // NEW 2
+          'SBBSB': 'B', // NEW 3
+          'SSBSS': 'S'  // NEW 4
+        };
+
+        // Global variables for prediction logic
+        let totalBets = 0;
+        let bsWins = 0;
+        let bsLosses = 0;
+        let lastIssue = '';
+        let pendingPrediction = null;
+        const api = 'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json';
+
+        function getType(num) {
+          return num >= 5 ? "B" : "S";
+        }
+
+        function updateStats() {
+          document.getElementById("totalBets").textContent = totalBets;
+          document.getElementById("bs_win").textContent = bsWins;
+          document.getElementById("bs_loss").textContent = bsLosses;
+          const rate = bsWins + bsLosses ? Math.round((bsWins / (bsWins + bsLosses)) * 100) : 0;
+          document.getElementById("bs_rate").textContent = rate + "%";
+        }
+
+        function updateLastUpdateTime() {
+          const now = new Date();
+          const timeString = now.toLocaleTimeString();
+          document.getElementById("lastUpdate").textContent = timeString;
+        }
+
+        function showPredictionAfterDelay(prediction, usedPattern) {
+          const el = document.getElementById("bs_result");
+          el.textContent = "FETCHING";
+          document.getElementById("patternInfo").textContent = "Pattern Used: WAITING";
+          setTimeout(() => {
+            if (prediction.type === "SKIP") {
+              el.textContent = "SKIP";
+              document.getElementById("confBar").style.width = "0%";
+              document.getElementById("patternInfo").textContent = "No valid pattern found, skipping prediction";
+            } else {
+              el.textContent = prediction.type === "B" ? "BIG" : "SMALL";
+              document.getElementById("confBar").style.width = prediction.bsConf + "%";
+              document.getElementById("patternInfo").textContent = "Pattern Used: " + usedPattern;
+            }
+          }, 10000);
+        }
+
+        function updateHistory(issue, pred, actual) {
+          if (pred.type === "SKIP") return;
+          const actualType = getType(actual);
+          const win = pred.type === actualType;
+          if (document.getElementById("noHistory")) document.getElementById("noHistory").remove();
+          const item = document.createElement("div");
+          item.className = "history-item";
+          item.style.borderLeftColor = win ? "#2ecc71" : "#e74c3c";
+
+          const content = document.createElement("div");
+          content.className = "history-item-content";
+          content.innerHTML = `
+            <strong>Period:</strong> ${issue}<br>
+            Predicted: <span class="${win ? 'green' : 'red'}">${pred.type === "B" ? "BIG" : "SMALL"}</span><br>
+            Actual: <span>${actual}</span> – <span class="${win ? 'green' : 'red'}">${actualType === "B" ? "BIG" : "SMALL"}</span>
+            <small>${new Date().toLocaleTimeString()}</small>
+          `;
+
+          const deleteIcon = document.createElement("i");
+          deleteIcon.className = "fas fa-trash delete-icon";
+          deleteIcon.title = "Delete";
+          deleteIcon.onclick = () => item.remove();
+
+          item.appendChild(content);
+          item.appendChild(deleteIcon);
+          document.getElementById("history").prepend(item);
+
+          if (document.getElementById("history").children.length > 30) {
+            document.getElementById("history").removeChild(document.getElementById("history").lastChild);
+          }
+
+          totalBets++;
+          win ? bsWins++ : bsLosses++;
+          updateStats();
+        }
+
+        async function fetchData() {
+          try {
+            const res = await fetch(api);
+            const json = await res.json();
+            const list = json.data.list;
+            const latest = list[0];
+            const actual = parseInt(latest.number);
+
+            if (latest.issueNumber !== lastIssue) {
+              if (pendingPrediction) updateHistory(latest.issueNumber, pendingPrediction, actual);
+
+              const bsSeq = list.slice(0, 50).map(x => getType(parseInt(x.number))).reverse();
+              const pattern7 = bsSeq.slice(-7).join('');
+              const pattern6 = bsSeq.slice(-6).join('');
+              const pattern5 = bsSeq.slice(-5).join('');
+
+              let prediction = { type: "SKIP", bsConf: 0 };
+              let usedPattern = "N/A";
+
+              if (trendMap7[pattern7]) {
+                prediction = { type: trendMap7[pattern7], bsConf: 90 };
+                usedPattern = "7D: " + pattern7;
+              } else if (trendMap6[pattern6]) {
+                prediction = { type: trendMap6[pattern6], bsConf: 80 };
+                usedPattern = "6D: " + pattern6;
+              } else if (trendMap5[pattern5]) {
+                prediction = { type: trendMap5[pattern5], bsConf: 70 };
+                usedPattern = "5D: " + pattern5;
+              } else if (patterns[pattern5]) {
+                prediction = { type: patterns[pattern5], bsConf: 70 };
+                usedPattern = "5D: " + pattern5;
+              }
+
+              pendingPrediction = prediction;
+              showPredictionAfterDelay(prediction, usedPattern);
+              lastIssue = latest.issueNumber;
+              updateLastUpdateTime();
+            }
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
+        }
+
         // --- JS LOGIC ---
         // Tab Navigation Logic with Dynamic Indicator
         const tabs = document.querySelectorAll('.tab');
@@ -1322,7 +1625,7 @@
         });
 
         // FIX: Enhanced History Data Fetching and Display with Real API
-        async function fetchData() {
+        async function fetchHistoryData() {
             try {
                 const historyContent = document.getElementById('historyContent');
                 if (!historyContent) return;
@@ -1735,7 +2038,7 @@
                 this.engine = this.ui.engine;
                 this.engine.loadStats();
                 // Initial data load for home/history pages
-                fetchData(); 
+                fetchHistoryData(); 
             }
 
             async fetchGameData() {
@@ -1754,7 +2057,7 @@
                 // Set up history auto-refresh every 5 seconds
                 setInterval(() => {
                     if (document.getElementById('history-section').classList.contains('active')) {
-                        fetchData();
+                        fetchHistoryData();
                     }
                 }, 5000);
             }
