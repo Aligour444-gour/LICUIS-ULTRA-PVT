@@ -930,33 +930,6 @@
 </head>
 
 <body>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const createParticles = () => {
-                const colors = ['rgba(79, 70, 229, 0.3)', 'rgba(99, 102, 241, 0.3)', 'rgba(129, 140, 248, 0.3)'];
-                for (let i = 0; i < 20; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    const size = Math.random() * 8 + 2;
-                    const posX = Math.random() * window.innerWidth;
-                    const posY = Math.random() * window.innerHeight;
-                    const color = colors[Math.floor(Math.random() * colors.length)];
-                    const duration = Math.random() * 20 + 10;
-                    const delay = Math.random() * 5;
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.left = `${posX}px`;
-                    particle.style.top = `${posY}px`;
-                    particle.style.background = color;
-                    particle.style.opacity = Math.random() * 0.5 + 0.1;
-                    particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
-                    document.body.appendChild(particle);
-                }
-            };
-            createParticles();
-        });
-    </script>
-
     <div class="logo">
         <div class="logo-icon">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -1190,7 +1163,7 @@
         </div>
     </div>
 
-     <script>
+    <script>
         // === ENHANCED PREDICTION ENGINE WITH ML FRAMEWORK ===
         
         // --- PATTERN LOGIC ---
@@ -2054,6 +2027,44 @@
         // Initialize the application
         const app = new LicuisUltraApp();
         app.initialize();
+
+        // PHP Backend Integration
+        async function fetchQuantumPrediction() {
+            try {
+                const response = await fetch('quantum_predictor.php');
+                const data = await response.json();
+                
+                if (data.status === 'quantum_success') {
+                    const prediction = data.quantum_prediction;
+                    const period = data.quantum_period;
+                    
+                    // Update the UI with quantum prediction
+                    document.getElementById('predictionPeriod').textContent = `PERIOD ${period}`;
+                    document.getElementById('predictionResult').innerHTML = `
+                        <span class="prediction-value">${prediction.number}</span>
+                    `;
+                    document.getElementById('confidenceLevel').style.width = `${prediction.confidence}%`;
+                    document.getElementById('confidenceLevel').setAttribute('data-confidence', `${prediction.confidence}%`);
+                    
+                    // Update home stats with quantum metrics
+                    document.getElementById('accuracyRate').textContent = `${Math.round(prediction.confidence)}%`;
+                    document.getElementById('currentStreak').textContent = '+Q';
+                    
+                    console.log('Quantum Prediction:', prediction);
+                    console.log('Quantum Metrics:', data.quantum_metrics);
+                }
+            } catch (error) {
+                console.error('Error fetching quantum prediction:', error);
+            }
+        }
+
+        // Add quantum prediction option to refresh button
+        document.getElementById('refreshData').addEventListener('click', () => {
+            fetchQuantumPrediction();
+        });
+
+        // Fetch quantum predictions every 10 seconds
+        setInterval(fetchQuantumPrediction, 10000);
     </script>
 </body>
 </html>
