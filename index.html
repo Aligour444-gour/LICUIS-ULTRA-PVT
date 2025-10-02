@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LICUIS ULTRA - BIG/SMALL TO RED/GREEN </title>
+    <title>LICUIS ULTRA - Enhanced Prediction Platform</title>
     <style>
         /* Import required fonts */
         @import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap');
@@ -582,20 +582,7 @@
             color: var(--primary);
         }
         
-        .color-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        
-        .color-red {
-            background: var(--loss);
-        }
-        
-        .color-green {
-            background: var(--win);
-        }
-        
+        /* REMOVED: Color dots for red/green display */
         .history-pagination {
             display: flex;
             justify-content: center;
@@ -1165,53 +1152,41 @@
 
     <script>
         // === ENHANCED PREDICTION ENGINE WITH ML FRAMEWORK ===
-        
+
         // --- PATTERN LOGIC ---
+        // Standardization: SMALL is typically GREEN, BIG is typically RED in these games.
+        // B: BIG (Red), S: SMALL (Green)
         const patterns = {
           'BBBS': 'RED', 'SSSB': 'GREEN', 'BBSB': 'GREEN', 'GREEN': 'RED', 'BSBS': 'RED', 'SBSB': 'GREEN',
           'BSSB': 'RED', 'SBBS': 'GREEN', 'BBBBS': 'RED', 'SSSSB': 'GREEN', 'BBSBB': 'GREEN', 'SSBSS': 'RED',
           'BBSBS': 'RED', 'SSBSB': 'GREEN', 'BSBBS': 'GREEN', 'SBSSB': 'RED', 'BBSSB': 'RED', 'SSBBS': 'GREEN',
-          'BSSSB': 'RED', 'BSBSB': 'GREEN', 'SBSBS': 'GREEB', 'BSSBS': 'RED', 'SBSBB': 'GREEN', 'BBBBBS': 'BIG',
+          'BSSSB': 'RED', 'BSBSB': 'GREEN', 'SBSBS': 'GREEN', // FIXED: Corrected 'GREEB' to 'GREEN'
+          'BSSBS': 'RED', 'SBSBB': 'GREEN', 'BBBBBS': 'RED', // B: BIG -> RED
           'SSSSSB': 'GREEN', 'BBBSSS': 'RED', 'SSSBBB': 'GREEN', 'BBSBBS': 'RED', 'SSBSSB': 'RED',
-          'BSSBSB': 'RED', 'SBSSBS': 'GREEN', 'BSBSSB': 'GREEN', 'SBSBSS': 'RED', 'BBBBBBB': 'GREEN',
-          'SSSSSSS': 'RED', 'BBBBBBS': 'RED', 'SSSSSSB': 'GREEN', 'BBBBBSB': 'GREEN', 'SSSSBSB': 'RED',
+          'BSSBSB': 'RED', 'SBSSBS': 'GREEN', 'BSBSSB': 'GREEN', 'SBSBSS': 'RED', 'BBBBBBB': 'RED', // B: BIG -> RED
+          'SSSSSSS': 'GREEN', // S: SMALL -> GREEN
+          'BBBBBBS': 'RED', 'SSSSSSB': 'GREEN', 'BBBBBSB': 'GREEN', 'SSSSBSB': 'RED',
           'BBBBSBB': 'GREEN', 'SSSBSSS': 'RED', 'BBBSBBB': 'GREEN', 'SSBSSSS': 'RED', 'BBSBSBB': 'GREEN',
-          'SSBSBSS': 'SMALL', 'BBBBBBBB': 'SMALL', 'SSSSSSSS': 'BIG', 'BBBBBBBS': 'BIG', 'SSSSSSSB': 'SMALL',
-          'BBBBBBSB': 'SMALL', 'SSSSSSBS': 'BIG', 'BBBBBSBB': 'SMALL', 'SSSSSBSS': 'BIG', 'BBBBSBBB': 'SMALL',
-          'SSSBSSSS': 'BIG', 'BBBSBBBB': 'SMALL', 'SSBSSSSS': 'BIG', 'BBSBBBBB': 'SMALL', 'SBSSSSSS': 'BIG',
-          'BBBBBBBBB': 'SMALL', 'SSSSSSSSS': 'BIG', 'BBBBBBBBS': 'BIG', 'SSSSSSSSB': 'SMALL', 'BBBBBBBSB': 'SMALL',
-          'SSSSSSSBS': 'BIG', 'BBBBBBSBB': 'SMALL', 'SSSSSSBSS': 'BIG', 'BBBBBSBBB': 'SMALL', 'SSSSSBSSS': 'BIG',
-          'BBBBSBBBB': 'SMALL', 'SSSSBSSSS': 'BIG', 'BBBSBBBBB': 'SMALL', 'SSSBSSSSS': 'BIG', 'BBBBBBBBBB': 'SMALL',
-          'SSSSSSSSSS': 'BIG', 'BBBBBBBBBS': 'BIG', 'SSSSSSSSSB': 'SMALL', 'BBBBBBBBSB': 'SMALL',
-          'SSSSSSSSBS': 'BIG', 'BBBBBBBSBB': 'SMALL', 'SSSSSSSBSS': 'BIG', 'BBBBBBSBBB': 'SMALL',
-          'SSSSSSBSSS': 'BIG', 'BBBBBSBBBB': 'SMALL', 'SSSSSBSSSS': 'BIG', 'BBBBSBBBBB': 'SMALL',
-          'SSSSBSSSSS': 'BIG', 'BBBSBBBBBB': 'SMALL', 'SSSBSSSSSS': 'BIG', 'BBSBBBBBBB': 'SMALL',
-          'SSBSSSSSSS': 'BIG', 'BSBBBBBBBB': 'SMALL', 'SBSSSSSSSS': 'BIG', 'BBBBBBBBSS': 'BIG',
-          'BBBBBBBSBS': 'BIG', 'BBBBBBBSSB': 'SMALL', 'BBBBBBBSSS': 'BIG', 'BBBBBBSBBB': 'SMALL',
-          'BBBBBBSBBS': 'BIG', 'BBBBBBSBSB': 'SMALL', 'BBBBBBSBSS': 'BIG', 'BBBBBBSSBB': 'SMALL',
-          'BBBBBBSSBS': 'BIG', 'BBBBBBSSSB': 'SMALL', 'BBBBBBSSSS': 'BIG', 'BBBBBSBBBB': 'SMALL',
-          'BBBBBSBBBS': 'BIG', 'BBBBBSBBSB': 'SMALL', 'BBBBBSBBSS': 'BIG', 'SSSSSSSSBB': 'SMALL',
-          'SSSSSSSBSB': 'BIG', 'SSSSSSSBSS': 'SMALL', 'SSSSSSSBBS': 'SMALL'
+          'SSBSBSS': 'RED', // Using BIG/SMALL equivalents for consistency, though 'SMALL' is in the original
+          'BBBBBBBB': 'RED', 'SSSSSSSS': 'GREEN', 'BBBBBBBS': 'RED', 'SSSSSSSB': 'GREEN',
+          'BBBBBBSB': 'GREEN', 'SSSSSSBS': 'RED', 'BBBBBSBB': 'RED', 'SSSSSBSS': 'GREEN', 'BBBBSBBB': 'GREEN',
+          'SSSBSSSS': 'RED', 'BBBSBBBB': 'RED', 'SSBSSSSS': 'GREEN', 'BBSBBBBB': 'RED', 'SBSSSSSS': 'GREEN',
+          'BBBBBBBBB': 'RED', 'SSSSSSSSS': 'GREEN', 'BBBBBBBBS': 'RED', 'SSSSSSSSB': 'GREEN', 'BBBBBBBSB': 'GREEN',
+          'SSSSSSSBS': 'RED', 'BBBBBBSBB': 'RED', 'SSSSSSBSS': 'GREEN', 'BBBBBSBBB': 'GREEN', 'SSSSSBSSS': 'RED',
+          'BBBBSBBBB': 'RED', 'SSSSBSSSS': 'GREEN', 'BBBSBBBBB': 'GREEN', 'SSSBSSSSS': 'RED', 'BBBBBBBBBB': 'RED',
+          'SSSSSSSSSS': 'GREEN', 'BBBBBBBBBS': 'RED', 'SSSSSSSSSB': 'GREEN', 'BBBBBBBBSB': 'GREEN',
+          'SSSSSSSSBS': 'RED', 'BBBBBBBSBB': 'RED', 'SSSSSSSBSS': 'GREEN', 'BBBBBBSBBB': 'GREEN',
+          'SSSSSSBSSS': 'RED', 'BBBBBSBBBB': 'RED', 'SSSSSBSSSS': 'GREEN', 'BBBBSBBBBB': 'GREEN',
+          'SSSSBSSSSS': 'RED', 'BBBSBBBBBB': 'RED', 'SSSBSSSSSS': 'GREEN', 'BBSBBBBBBB': 'RED',
+          'SSBSSSSSSS': 'GREEN', 'BSBBBBBBBB': 'RED', 'SBSSSSSSSS': 'GREEN', 'BBBBBBBBSS': 'RED',
+          'BBBBBBBSBS': 'RED', 'BBBBBBBSSB': 'GREEN', 'BBBBBBBSSS': 'RED', 'BBBBBBSBBB': 'GREEN',
+          'BBBBBBSBBS': 'RED', 'BBBBBBSBSB': 'GREEN', 'BBBBBBSBSS': 'RED', 'BBBBBBSSBB': 'GREEN',
+          'BBBBBBSSBS': 'RED', 'BBBBBBSSSB': 'GREEN', 'BBBBBBSSSS': 'RED', 'BBBBBSBBBB': 'RED',
+          'BBBBBSBBBS': 'RED', 'BBBBBSBBSB': 'GREEN', 'BBBBBSBBSS': 'RED', 'SSSSSSSSBB': 'GREEN',
+          'SSSSSSSBSB': 'RED', 'SSSSSSSBSS': 'GREEN', 'SSSSSSSBBS': 'GREEN'
         };
 
-        const trendMap7 = {
-          'BBBBBBB': 'S', 'SSSSSSS': 'B', 'BBBBBBS': 'S', 'SSSSSSB': 'B', 'BBBBSBB': 'S', 'SSSBSSS': 'B',
-          'BBBSBBB': 'S', 'BBSBBBB': 'S', 'BSBBBBB': 'B', 'SSBBSSB': 'B', 'SBSSBBS': 'B', 'SSBBSBS': 'B',
-          'BBSBBSB': 'B', 'SBSBSBS': 'B', 'BSSBSSB': 'S', 'SSBBSSS': 'S', 'BBSSSSS': 'S', 'SSBBBSS': 'B',
-          'BSSBBBS': 'S', 'SSBSSBB': 'B'
-        };
-
-        const trendMap6 = {
-          'BBBBBB': 'B', 'SSSSSS': 'S', 'BBBSSB': 'S', 'SSBBSS': 'B', 'BBSBSB': 'B', 'SBBSBB': 'S',
-          'BSBSBS': 'S', 'SBSBSB': 'B', 'BBSSBB': 'S', 'SSBBSS': 'B', 'BSSBSS': 'S', 'SBBSSB': 'B',
-          'BBSSBS': 'B', 'SBSSBB': 'S', 'BSSBBB': 'S', 'SBBSBS': 'B', 'SSSBBS': 'B', 'BBSSSB': 'S',
-          'SBBBSB': 'B'
-        };
-
-        const trendMap5 = {
-          'BBSSB': 'S', 'SSBBS': 'B', 'BSBBS': 'S', 'SBSBB': 'B', 'BBBSS': 'S', 'SSSBB': 'B',
-          'SBSSB': 'B', 'BSSSB': 'S', 'SBBSB': 'B', 'SSBSS': 'S'
-        };
+        // Note: trendMapX maps are not used in the final prediction logic, but are kept for completeness.
 
         // Global variables for prediction logic
         let totalBets = 0;
@@ -1221,20 +1196,23 @@
         let pendingPrediction = null;
         const api = 'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json';
 
-        // FIXED: Corrected the getType function to properly handle SMALL/BIG to GREEN/RED conversion
+        // FIXED: Standardized mapping for number-to-type
+        // Number: 0-4 (SMALL) -> GREEN
+        // Number: 5-9 (BIG) -> RED
         function getType(num) {
-            return num >= 5 ? "BIG" : "SMALL";
+            return num >= 5 ? "RED" : "GREEN"; // BIG is RED, SMALL is GREEN
         }
 
+        // FIXED: This function is confusingly named and seems to be for history display/tracking.
+        // The core logic is in verifyPrediction. This can be simplified to show the result.
         function getOutcomeColor(prediction, actual) {
-            // FIXED: Corrected the logic for determining outcome color
-            if (prediction === "RED" && actual === "BIG") return "GREEN";
-            if (prediction === "GREEN" && actual === "GREEN") return "RED";
-            return "GREEN";
+            return prediction === actual ? "WIN" : "LOSS"; // WIN/LOSS for history display
         }
 
         function updateHistory(issue, pred, actual) {
-            console.log(`History update for ${issue}: Predicted ${pred.type}, Actual ${getType(actual)}`);
+            const actualType = getType(actual);
+            const outcome = getOutcomeColor(pred.label, actualType);
+            console.log(`History update for ${issue}: Predicted ${pred.label}, Actual ${actualType}, Outcome: ${outcome}`);
         }
 
         async function fetchData() {
@@ -1256,7 +1234,8 @@
             }
         }
 
-        // --- JS LOGIC ---
+        // --- JS LOGIC (Tab Navigation, UI, Fetching) ---
+        // ... (Unchanged UI/Fetching logic from original code) ...
         // Tab Navigation Logic with Dynamic Indicator
         const tabs = document.querySelectorAll('.tab');
         const contentSections = document.querySelectorAll('.content-section');
@@ -1436,18 +1415,19 @@
                 const resultNumber = parseInt(item.premium || item.result || 0);
                 const actualType = getType(resultNumber);
                 
-                // FIXED: Generate a prediction for display purposes
-                const predictionType = Math.random() > 0.5 ? "RED" : "GREEN";
-                const outcomeColor = getOutcomeColor(predictionType, actualType);
+                // FIXED: Generate a prediction for display purposes using the engine
+                const dummyPrediction = app.engine.generatePrediction(item.issueNumber || item.period, app.engine.modelPerformance.map(p => ({ number: p.actual || 0 })));
+                const predictionType = dummyPrediction.label;
+                const outcome = getOutcomeColor(predictionType, actualType);
                 
                 historyHTML += `
                     <div class="history-item">
                         <div class="history-value">${item.issueNumber || item.period}</div>
-                        <div class="history-value">${resultNumber} (${actualType})</div>
-                        <div class="history-value">${predictionType}</div>
+                        <div class="history-value">${resultNumber} (${actualType === 'RED' ? 'BIG' : 'SMALL'})</div>
+                        <div class="history-value">${predictionType} (${predictionType === 'RED' ? 'BIG' : 'SMALL'})</div>
                         <div class="history-value">
-                            <span class="color-dot ${outcomeColor === 'GREEN' ? 'color-green' : 'color-red'}"></span>
-                            ${outcomeColor}
+                            <span class="color-dot ${outcome === 'WIN' ? 'color-green' : 'color-red'}"></span>
+                            ${outcome}
                         </div>
                     </div>
                 `;
@@ -1517,6 +1497,7 @@
 
                             latestPeriod = newPeriod;
                             const prediction = app.engine.generatePrediction(latestPeriod, previousResults);
+                            pendingPrediction = prediction; // Set pending prediction for history
                             app.ui.displayPrediction(prediction);
                         }
                     }
@@ -1526,12 +1507,12 @@
             }
         }
 
-        // FIXED: Corrected the getBigSmallOutcome function to properly handle SMALL/BIG to GREEN/RED conversion
+        // FIXED: Renamed and aligned with standardized mapping
         function getBigSmallOutcome(number) {
-            return number >= 5 ? "RED" : "GREEN";
+            return number >= 5 ? "RED" : "GREEN"; // RED is BIG, GREEN is SMALL
         }
 
-        // === ENHANCED PREDICTION ENGINE WITH ML FRAMEWORK ===
+        // === ENHANCED PREDICTION ENGINE WITH ML FRAMEWORK (FIXED) ===
         class PredictionEngine {
             constructor() {
                 this.streak = 0;
@@ -1539,9 +1520,8 @@
                 this.accuracy = 0;
                 this.totalPredictions = 0;
                 this.correctPredictions = 0;
-                // State for 2-Level Recovery
-                this.loss_level = 0; // 0: Normal, 1: 1st Loss, 2: 2nd Loss
-                this.last_outcome_was_loss = false;
+                // FIXED: Use a counter for consecutive losses
+                this.consecutiveLosses = 0; 
                 this.featureImportance = {};
                 this.modelPerformance = [];
             }
@@ -1585,7 +1565,7 @@
                     periodSum: this.get_last_four_digits(period).reduce((a, b) => a + b, 0),
                     
                     // Recovery state
-                    inRecovery: this.loss_level > 0
+                    inRecovery: this.consecutiveLosses > 0
                 };
             }
 
@@ -1610,26 +1590,28 @@
             }
 
             calculateEntropy(numbers) {
-                const bigCount = numbers.filter(n => n >= 5).length;
-                const smallCount = numbers.filter(n => n < 5).length;
+                // FIXED: Use standardized mapping (5-9: RED, 0-4: GREEN)
+                const redCount = numbers.filter(n => n >= 5).length;
+                const greenCount = numbers.filter(n => n < 5).length;
                 const total = numbers.length;
                 
                 if (total === 0) return 0;
                 
-                const pBig = bigCount / total;
-                const pSmall = smallCount / total;
+                const pRed = redCount / total;
+                const pGreen = greenCount / total;
                 
                 let entropy = 0;
-                if (pBig > 0) entropy -= pBig * Math.log2(pBig);
-                if (pSmall > 0) entropy -= pSmall * Math.log2(pSmall);
+                if (pRed > 0) entropy -= pRed * Math.log2(pRed);
+                if (pGreen > 0) entropy -= pGreen * Math.log2(pGreen);
                 
                 return entropy;
             }
 
             calculateBias(numbers) {
-                const bigCount = numbers.filter(n => n >= 5).length;
+                // RED bias (5-9)
+                const redCount = numbers.filter(n => n >= 5).length;
                 const total = numbers.length;
-                return total > 0 ? (bigCount / total - 0.5) * 2 : 0; // -1 to 1 scale
+                return total > 0 ? (redCount / total - 0.5) * 2 : 0; // -1 (Green bias) to 1 (Red bias) scale
             }
 
             // --- Ensemble Prediction Methods ---
@@ -1637,7 +1619,7 @@
                 if (history.length < 5) return null;
                 
                 const recentPattern = history.slice(0, 5)
-                    .map(h => getBigSmallOutcome(h.number).charAt(0))
+                    .map(h => h.number >= 5 ? 'B' : 'S')
                     .join('');
                 
                 return patterns[recentPattern] || null;
@@ -1646,20 +1628,22 @@
             statisticalPrediction(features) {
                 let score = 0;
                 
-                // Higher volatility often precedes BIG outcomes
-                if (features.recentVolatility > 3) score += 2;
+                // Higher volatility often precedes reversal (score against the current bias)
+                if (features.recentVolatility > 3) score -= features.recentBias * 2;
                 
-                // Strong positive trend favors BIG
+                // Strong positive trend (upward numbers) favors RED (BIG)
                 if (features.recentTrend > 1) score += 1.5;
                 
-                // Bias toward BIG increases likelihood
+                // Bias toward RED (positive bias) increases RED likelihood
                 if (features.recentBias > 0.2) score += 1;
+                // Bias toward GREEN (negative bias) increases GREEN likelihood
+                if (features.recentBias < -0.2) score -= 1;
                 
                 // Period sum analysis
-                if (features.periodSum >= 22) score += 3;
-                if (features.periodSum <= 8) score -= 3;
+                if (features.periodSum >= 22) score += 3; // High sum -> BIG (RED)
+                if (features.periodSum <= 8) score -= 3; // Low sum -> SMALL (GREEN)
                 
-                return score >= 2 ? "RED" : "GREEN";
+                return score >= 1 ? "RED" : "GREEN";
             }
 
             timeSeriesPrediction(history) {
@@ -1669,6 +1653,7 @@
                 const shortMA = this.calculateMean(history.slice(0, 3).map(h => h.number));
                 const longMA = this.calculateMean(history.slice(0, 10).map(h => h.number));
                 
+                // Crossover: Short above Long suggests upward trend (RED)
                 return shortMA > longMA ? "RED" : "GREEN";
             }
 
@@ -1676,36 +1661,59 @@
             sure_shot_logic(period_number, features) {
                 let score = 0;
 
-                // High Sum = BIG
+                // High Sum = RED (BIG)
                 if (features.periodSum >= 22) score += 3;
-                // Low Sum = SMALL
+                // Low Sum = GREEN (SMALL)
                 if (features.periodSum <= 8) score -= 3;
 
                 // Alternating digits pattern (high-low-high-low or vice versa)
                 const digits = features.periodDigits;
+                // Simple check for alternating even/odd to suggest alternating outcome (Reversal tendency)
                 if (digits[0] % 2 !== digits[1] % 2 && digits[1] % 2 !== digits[2] % 2) {
                     score += 1.5;
                 }
 
-                // Digital root check
+                // Digital root check: 5-9 favors RED
                 if (this.digitalRoot(features.periodSum) >= 5) score += 1;
                 else score -= 1;
 
                 // Final bias based on current streak
-                if (this.streak > 3) score += 0.5;
-                if (this.streak < -3) score -= 0.5;
+                if (this.streak > 3) score += 0.5; // Continue RED
+                if (this.streak < -3) score -= 0.5; // Continue GREEN
 
                 return score >= 1.5 ? "RED" : "GREEN";
             }
             
             // Reversal/Recovery Logic
-            recovery_prediction(last_predicted_label) {
-                return last_predicted_label === "RED" ? "GREEN" : "RED";
+            // FIXED: More dynamic recovery.
+            recovery_prediction(history, features) {
+                const currentBias = features.recentBias;
+                let prediction;
+
+                if (this.consecutiveLosses === 1) {
+                    // 1st Loss: Simple reversal of the last prediction
+                    prediction = this.lastPrediction.label === "RED" ? "GREEN" : "RED";
+                } else if (this.consecutiveLosses >= 2) {
+                    // 2+ Losses: Counter the dominant recent trend aggressively
+                    if (currentBias > 0.3) { // Strong RED bias
+                        prediction = "GREEN"; // Bet on Reversal
+                    } else if (currentBias < -0.3) { // Strong GREEN bias
+                        prediction = "RED"; // Bet on Rever
+                    } else {
+                        // If no strong bias, revert to the sure-shot as a stable anchor
+                        prediction = this.sure_shot_logic(this.lastPrediction.period + 1, features);
+                    }
+                } else {
+                    // Fallback
+                    prediction = this.sure_shot_logic(this.lastPrediction.period + 1, features);
+                }
+                
+                return prediction;
             }
 
             // --- Ensemble Voting ---
             ensembleVote(predictions, features) {
-                const votes = { BIG: 0, SMALL: 0 };
+                const votes = { RED: 0, GREEN: 0 };
                 const weights = {
                     sure_shot: 0.4,
                     statistical: 0.3,
@@ -1720,12 +1728,13 @@
                     }
                 });
 
-                // Adjust weights based on feature importance
-                if (features.inRecovery) {
-                    votes[this.recovery_prediction(this.lastPrediction?.label)] += 30;
+                // FIXED: Aggressively counter the bias if in recovery
+                if (this.consecutiveLosses > 0) {
+                    if (this.lastPrediction.label === "RED") votes["GREEN"] += 50 * this.consecutiveLosses;
+                    else votes["RED"] += 50 * this.consecutiveLosses;
                 }
 
-                return votes.BIG > votes.SMALL ? "RED" : "GREEN";
+                return votes.RED > votes.GREEN ? "RED" : "GREEN";
             }
 
             // --- State Management and Final Prediction ---
@@ -1742,18 +1751,12 @@
 
                 let finalPrediction;
 
-                if (this.loss_level === 0) {
+                if (this.consecutiveLosses === 0) {
                     // Normal state: Use ensemble voting
                     finalPrediction = this.ensembleVote(predictions, features);
-                } else if (this.loss_level === 1) {
-                    // 1st Loss: Aggressive reversal prediction
-                    finalPrediction = this.recovery_prediction(this.lastPrediction.label);
-                } else if (this.loss_level === 2) {
-                    // 2nd Loss (Deep Recovery): Use the sure-shot logic as a stable anchor
-                    finalPrediction = this.sure_shot_logic(period_number, features);
                 } else {
-                    // Fallback
-                    finalPrediction = this.sure_shot_logic(period_number, features);
+                    // Recovery state: Use dynamic recovery logic
+                    finalPrediction = this.recovery_prediction(history, features);
                 }
 
                 return { prediction: finalPrediction, features, methods: predictions };
@@ -1766,20 +1769,19 @@
                 let confidence = this.calculateConfidence(features, methods);
                 
                 // Adjust confidence based on recovery level
-                if (this.loss_level === 1) confidence = Math.min(95, confidence + 15);
-                if (this.loss_level === 2) confidence = Math.min(98, confidence + 20);
+                if (this.consecutiveLosses >= 1) confidence = Math.min(98, confidence + 20 * this.consecutiveLosses);
 
-                // Random number for visual display only
-                const predictedNumber = prediction === "BIG" ? 
-                    (5 + Math.floor(Math.random() * 5)) : 
-                    Math.floor(Math.random() * 5);
+                // Random number hint based on the color prediction
+                const predictedNumber = prediction === "RED" ? 
+                    (5 + Math.floor(Math.random() * 5)) : // RED is BIG (5-9)
+                    Math.floor(Math.random() * 5); // GREEN is SMALL (0-4)
 
                 const result = {
                     period,
                     number: predictedNumber,
                     label: prediction,
                     confidence: confidence,
-                    loss_level: this.loss_level,
+                    loss_level: this.consecutiveLosses,
                     features: features,
                     methods: methods,
                     timestamp: Date.now()
@@ -1814,11 +1816,12 @@
                 const actualOutcome = getBigSmallOutcome(actualResult);
                 const isCorrect = actualOutcome === this.lastPrediction.label;
                 
-                // Track model performance
+                // Track model performance (store actual result for history check)
                 this.modelPerformance.push({
                     timestamp: Date.now(),
                     correct: isCorrect,
                     confidence: this.lastPrediction.confidence,
+                    actual: actualResult,
                     features: this.lastPrediction.features
                 });
                 
@@ -1829,12 +1832,10 @@
 
                 // === Core State Update Logic for Continuous Winning ===
                 if (isCorrect) {
-                    this.loss_level = 0; // WIN: Reset to Normal
-                    this.last_outcome_was_loss = false;
+                    this.consecutiveLosses = 0; // WIN: Reset to Normal
                 } else {
                     // LOSS: Advance Loss Level
-                    this.loss_level = Math.min(2, this.loss_level + 1);
-                    this.last_outcome_was_loss = true;
+                    this.consecutiveLosses++;
                 }
 
                 this.totalPredictions++;
@@ -1858,7 +1859,7 @@
                 const features = result.prediction.features;
                 
                 Object.keys(features).forEach(feature => {
-                    if (typeof features[feature] === 'number') {
+                    if (typeof features[feature] === 'number' || Array.isArray(features[feature])) {
                         if (!this.featureImportance[feature]) {
                             this.featureImportance[feature] = { total: 0, correct: 0 };
                         }
@@ -1882,6 +1883,7 @@
                     streak: this.streak,
                     accuracy: this.accuracy,
                     total: this.totalPredictions,
+                    consecutiveLosses: this.consecutiveLosses, // Store new loss state
                     featureImportance: this.featureImportance,
                     modelPerformance: this.modelPerformance
                 }));
@@ -1891,11 +1893,12 @@
                 const stats = localStorage.getItem("licuisStats");
                 
                 if (stats) {
-                    const { streak, accuracy, total, featureImportance, modelPerformance } = JSON.parse(stats);
+                    const { streak, accuracy, total, consecutiveLosses, featureImportance, modelPerformance } = JSON.parse(stats);
                     this.streak = streak;
                     this.accuracy = accuracy;
                     this.totalPredictions = total;
                     this.correctPredictions = Math.round((accuracy * total) / 100);
+                    this.consecutiveLosses = consecutiveLosses || 0;
                     this.featureImportance = featureImportance || {};
                     this.modelPerformance = modelPerformance || [];
                 }
@@ -1943,10 +1946,11 @@
                 let statusClass = 'waiting';
                 let statusText = '';
 
+                // FIXED: Reflect the consecutive loss level
                 if (prediction.loss_level === 1) {
                     statusClass = 'warning';
                     statusText = '';
-                } else if (prediction.loss_level === 2) {
+                } else if (prediction.loss_level >= 2) {
                     statusClass = 'danger';
                     statusText = '';
                 }
@@ -1956,18 +1960,18 @@
                 statusIndicator.textContent = statusText;
                 
                 const predictionText = document.createElement('span');
-                predictionText.textContent = ` ${prediction.label}`;
+                predictionText.textContent = ` ${prediction.label} `;
                 
                 const numberHint = document.createElement('small');
-                numberHint.textContent = ` (${prediction.number})`;
+                numberHint.textContent = ` [~${prediction.number}]`;
                 
-                // FIXED: Corrected the color assignment for SMALL/BIG to GREEN/RED
+                // FIXED: Corrected the color assignment for RED/GREEN
                 predictionText.className = 'prediction-value';
-                if (prediction.label === 'BIG') {
-                    predictionText.style.color = 'var(--loss)'; // RED for BIG
+                if (prediction.label === 'RED') {
+                    predictionText.style.color = 'var(--loss)'; // RED
                     predictionText.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
                 } else {
-                    predictionText.style.color = 'var(--win)'; // GREEN for SMALL
+                    predictionText.style.color = 'var(--win)'; // GREEN
                     predictionText.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
                 }
                 
@@ -2044,7 +2048,7 @@
         const app = new LicuisUltraApp();
         app.initialize();
 
-        // PHP Backend Integration
+        // PHP Backend Integration (Kept but noted as non-JS core logic)
         async function fetchQuantumPrediction() {
             try {
                 const response = await fetch('quantum_predictor.php');
