@@ -1601,380 +1601,367 @@
         </div>
     </div>
 <script>     
-           // 🔮 LICUIS ULTRA : ZENITH AI-CORE ENGINE 10.1 (Enhanced & Accurate) - FIXED VERSION
+// 🔮 LICUIS ULTRA : ZENITH AI-CORE ENGINE 10.2 (Aggressive Loss Reversal & Adaptive Recovery) - FULLY FIXED
 
-        "use strict";
+"use strict";
 
-        // --- START PYTHON LOGIC EQUIVALENT (2-Level Recovery) ---
+// --- START PYTHON LOGIC EQUIVALENT (2-Level Recovery) ---
 
-        // Simple deque implementation for JavaScript
-        class Deque {
-            constructor({ maxlen }) {
-                this.maxlen = maxlen;
-                this.items = [];
-            }
-            
-            append(item) {
-                this.items.push(item);
-                if (this.items.length > this.maxlen) {
-                    this.items.shift();
-                }
-            }
-            
-            at(index) {
-                if (index >= 0) {
-                    return this.items[index];
-                } else {
-                    return this.items[this.items.length + index];
-                }
-            }
-            
-            get length() {
-                return this.items.length;
-            }
+// Simple deque implementation for JavaScript
+class Deque {
+    constructor({ maxlen }) {
+        this.maxlen = maxlen;
+        this.items = [];
+    }
+    
+    append(item) {
+        this.items.push(item);
+        if (this.items.length > this.maxlen) {
+            this.items.shift();
         }
-
-        // --- Global State Management for Integrated Logic ---
-        // Use a deque for a rolling history of past results for pattern recognition
-        const PAST_RESULTS = new Deque({ maxlen: 10 }); // Increased maxlen to 10 for better pattern analysis
-        let LAST_PREDICTION_RESULT = null; // Stores the outcome of the previous prediction ("WIN" or "LOSS")
-        let RECOVERY_LEVEL = 0; // 0: Normal Mode, 1: First-level recovery, 2: Second-level recovery
-        let LAST_PREDICTION_DIRECTION = null; // Stores the size ('BIG'/'SMALL') of the last prediction
-        let RANDOMNESS_FACTOR = 0.1; // New: For simulating Random Override
-
-        // Configuration for thresholds
-        const config = {
-            antiPredictThreshold: 0.60, // 60% win rate for Anti-Predict
-            minStreakForContinuation: 2, // Win/Loss Streak length for Fallback
-        };
-
-        // --- Helper Functions ---
-
-        function get_last_five_digits_masked(period_number) {
-            /** Extracts the last 5 digits and masks the rest of the period number. 
-             * FIXED: Now shows the first four digits and masks the middle section, 
-             * while ensuring the last five digits are visible.
-             */
-            const period_number_str = String(period_number);
-            
-            if (period_number_str.length <= 9) {
-                // If the number is short (e.g., up to 9 digits), just show it.
-                return period_number_str;
-            }
-
-            const firstFour = period_number_str.slice(0, 4);
-            const lastFive = period_number_str.slice(-5);
-            // Mask the middle part of the number. The length of the masked part will vary.
-            const maskedMiddle = 'XXXXX'; // Use a fixed length of 'X' for visual consistency
-            
-            return firstFour + maskedMiddle + lastFive;
+    }
+    
+    at(index) {
+        if (index >= 0) {
+            return this.items[index];
+        } else {
+            return this.items[this.items.length + index];
         }
+    }
+    
+    get length() {
+        return this.items.length;
+    }
+}
+
+// --- Global State Management for Integrated Logic (FIXED) ---
+// Increased maxlen to 20 for richer pattern analysis
+const PAST_RESULTS = new Deque({ maxlen: 20 }); 
+let LAST_PREDICTION_RESULT = null; // Stores the outcome of the previous prediction ("WIN" or "LOSS")
+let RECOVERY_LEVEL = 0; // 0: Normal Mode, 1: First-level recovery, 2: Second-level recovery
+let LAST_PREDICTION_DIRECTION = null; // Stores the size ('BIG'/'SMALL') of the last prediction
+let RANDOMNESS_FACTOR = 0.05; // Reduced randomness for more deterministic behavior
+let LAST_ACTUAL_OUTCOME = null; // Stores the actual result ('BIG'/'SMALL') of the last period
+
+// Configuration for thresholds
+const config = {
+    antiPredictThreshold: 0.60, // 60% win rate for Anti-Predict
+    minStreakForContinuation: 2, // Win/Loss Streak length for Fallback
+    // NEW: Thresholds for adaptive randomness
+    randomnessIncreaseFactor: 1.6,
+    randomnessDecreaseFactor: 0.7,
+    maxRandomness: 0.4,
+    minRandomness: 0.05,
+};
+
+// --- Helper Functions ---
+
+function get_last_five_digits_masked(period_number) {
+    /** Extracts the last 5 digits and masks the rest of the period number. */
+    const period_number_str = String(period_number);
+    
+    if (period_number_str.length <= 9) {
+        return period_number_str;
+    }
+
+    const firstFour = period_number_str.slice(0, 4);
+    const lastFive = period_number_str.slice(-5);
+    const maskedMiddle = 'XXXXX';
+    
+    return firstFour + maskedMiddle + lastFive;
+}
 
 
-        function get_last_four_digits(period_number) {
-            /** Safely extracts the last four digits as integers from a string period_number. */
-            const period_number_str = String(period_number);
-            const digits = period_number_str.slice(-4);
-            return digits.split('').map(d => parseInt(d, 10));
+function get_last_four_digits(period_number) {
+    /** Safely extracts the last four digits as integers from a string period_number. */
+    const period_number_str = String(period_number);
+    const digits = period_number_str.slice(-4);
+    return digits.split('').map(d => parseInt(d, 10));
+}
+
+function get_size_outcome(number) {
+    // 0-4 is SMALL, 5-9 is BIG
+    return number > 4 ? "BIG" : "SMALL";
+}
+
+function get_color_outcome(number) {
+    // 1,3,5,7,9 (Odd) is GREEN, 0,2,4,6,8 (Even) is RED
+    return number % 2 !== 0 ? "GREEN" : "RED";
+}
+
+function analyze_pattern_section(results) {
+    /** Core Pattern Analysis based on the prompt's Step 1. */
+    const len = results.length;
+    if (len < 3) return { type: "NEUTRAL", prediction: null, confidence: 0 };
+    
+    const lastResult = results[len - 1];
+    const secondLast = results[len - 2];
+    const thirdLast = results[len - 3];
+    
+    // 1. Trap Pattern (Simulated: a break in an established sequence suggesting a trap)
+    // Check for a long streak (5+) immediately broken by a single opposite result
+    if (len >= 6) {
+        const last6 = results.slice(-6);
+        const streakType = last6[0];
+        const isStreak5 = last6.slice(0, 5).every(res => res === streakType);
+        if (isStreak5 && last6[5] !== streakType) {
+            // 5-streak broken on the 6th result. Server is "trapping." Predict the reversal.
+            return { type: "TRAP_REVERSAL", prediction: streakType, confidence: 0.95 };
         }
+    }
 
-        function get_size_outcome(number) {
-            // 0-4 is SMALL, 5-9 is BIG
-            return number > 4 ? "BIG" : "SMALL";
+    // 2. Alternating Pattern (B-S-B-S) - check last 4
+    if (len >= 4) {
+        if (lastResult !== secondLast && secondLast !== thirdLast && thirdLast !== results[len-4]) {
+            // Alternating found (e.g., Y, X, Y, X). Predict next Y.
+            return { type: "ALTERNATING_PATTERN", prediction: secondLast, confidence: 0.85 };
         }
-        
-        // --- NEW: Function to get Red/Green outcome ---
-        function get_color_outcome(number) {
-            // 1,3,5,7,9 (Odd) is GREEN
-            // 0,2,4,6,8 (Even) is RED
-            return number % 2 !== 0 ? "GREEN" : "RED";
+    }
+
+    // 3. Repeat Pattern (Streaks like B-B-B) - check last 3
+    if (lastResult === secondLast && secondLast === thirdLast) {
+        // Streak continuation
+        return { type: "REPEAT_PATTERN", prediction: lastResult, confidence: 0.80 };
+    }
+
+    // 4. Two-Then-One Pattern (X-X-Y) - check last 3
+    if (lastResult !== secondLast && secondLast === thirdLast) {
+        // e.g., B-B-S. Predict continuation 'X', which is B.
+        return { type: "TWO_THEN_ONE", prediction: secondLast, confidence: 0.75 };
+    }
+
+    // 5. Simple Alternation Break (X-Y-X)
+    if (len >= 3 && lastResult !== secondLast && lastResult === thirdLast) {
+         // e.g., S-B-S. Predict continuation B (Opposite of last).
+        const opposite = lastResult === 'BIG' ? 'SMALL' : 'BIG';
+        return { type: "SIMPLE_ALTERNATING_BREAK", prediction: opposite, confidence: 0.65 };
+    }
+    
+    // 6. Fallback - Predict Reversal of last outcome (High frequency strategy)
+    const opposite = lastResult === 'BIG' ? 'SMALL' : 'BIG';
+    return { type: "FALLBACK_REVERSAL", prediction: opposite, confidence: 0.58 };
+}
+
+
+function pattern_analysis_prediction(history, currentPeriod) {
+    /** Executes the Pattern Analysis (Primary Check) and Random Override. */
+    const results = history.items.slice(-20); // Last 20 results for pattern analysis
+    const analysis = analyze_pattern_section(results);
+    
+    let prediction = analysis.prediction;
+    let confidence = analysis.confidence;
+    
+    if (prediction) {
+        // 2. Controlled Random Override
+        if (Math.random() < RANDOMNESS_FACTOR) {
+            prediction = prediction === 'BIG' ? 'SMALL' : 'BIG';
+            confidence = Math.max(0.5, confidence * 0.7); // Drop confidence on override
         }
-
-        function analyze_pattern_section(results) {
-            /** New: Core Pattern Analysis based on the prompt's Step 1. */
-            const len = results.length;
-            if (len < 3) return { type: "NEUTRAL", prediction: null, confidence: 0 };
-            
-            const lastResult = results[len - 1];
-            const secondLast = results[len - 2];
-            const thirdLast = results[len - 3];
-            
-            // 1. Trap Pattern (Simulated: a break in an established sequence suggesting a trap)
-            // Check for a long streak (5+) immediately broken by a single opposite result
-            if (len >= 6) {
-                const last6 = results.slice(-6);
-                const streakType = last6[0];
-                const isStreak5 = last6.slice(0, 5).every(res => res === streakType);
-                if (isStreak5 && last6[5] !== streakType) {
-                    // 5-streak broken on the 6th result. Server is "trapping." Predict the reversal.
-                    return { type: "TRAP_REVERSAL", prediction: streakType, confidence: 0.95 };
-                }
-            }
-
-            // 2. Alternating Pattern (B-S-B-S) - check last 4
-            if (len >= 4 && lastResult !== secondLast && secondLast !== thirdLast && thirdLast !== results[len-4]) {
-                // Alternating found (e.g., X, Y, X, Y). Predict next X.
-                return { type: "ALTERNATING_PATTERN", prediction: secondLast, confidence: 0.85 };
-            }
-
-            // 3. Repeat Pattern (Streaks like B-B-B) - check last 3
-            if (lastResult === secondLast && secondLast === thirdLast) {
-                // Streak continuation
-                return { type: "REPEAT_PATTERN", prediction: lastResult, confidence: 0.80 };
-            }
-
-            // 4. Two-Then-One Pattern (X-X-Y) - check last 3
-            if (lastResult !== secondLast && secondLast === thirdLast) {
-                // e.g., B-B-S. Predict continuation 'X', which is B.
-                return { type: "TWO_THEN_ONE", prediction: secondLast, confidence: 0.75 };
-            }
-
-            // 5. Fallback: Simple Alternation
-            if (lastResult !== secondLast && lastResult === thirdLast) {
-                 // e.g., S-B-S. Predict continuation B.
-                return { type: "SIMPLE_ALTERNATING", prediction: lastResult === 'BIG' ? 'SMALL' : 'BIG', confidence: 0.65 };
-            }
-
-            // Number Sequence Patterns (Not explicitly implemented here as they rely on the number, not BIG/SMALL)
-
-            return { type: "NEUTRAL", prediction: null, confidence: 0 };
-        }
+    } else {
+        // Fallback to simple parity check from the current period number
+        const digits = get_last_four_digits(currentPeriod);
+        const total_sum = digits.reduce((a, b) => a + b, 0);
+        prediction = total_sum % 2 === 1 ? "BIG" : "SMALL"; // Simple default: Odd sum = BIG, Even sum = SMALL
+        confidence = 0.5;
+    }
+    
+    return { prediction, confidence };
+}
 
 
-        function pattern_analysis_prediction(history, currentPeriod) {
-            /**
-             * Executes the Pattern Analysis (Primary Check) and Random Override.
-             */
-            const results = history.items.slice(-10); // Last 10 results for pattern analysis
-            const analysis = analyze_pattern_section(results);
-            
-            let prediction = analysis.prediction;
-            let confidence = analysis.confidence;
-            
-            if (prediction) {
-                // 2. Random Override (Controlled Unpredictability)
-                if (Math.random() < RANDOMNESS_FACTOR) {
-                    prediction = prediction === 'BIG' ? 'SMALL' : 'BIG';
-                    confidence = Math.max(0.5, confidence * 0.7); // Drop confidence on override
-                }
-            } else {
-                // Fallback to simple parity check from the current period number
-                const digits = get_last_four_digits(currentPeriod);
-                const total_sum = digits.reduce((a, b) => a + b, 0);
-                prediction = total_sum % 2 === 1 ? "BIG" : "SMALL"; // Simple default: Odd sum = BIG, Even sum = SMALL
-                confidence = 0.5;
-            }
-            
-            return { prediction, confidence };
-        }
+function fallback_algorithm_prediction(lastPrediction, lastResult, lastActual, coordinator) {
+    /**
+     * Executes the Fallback Algorithm (Adaptive/Sequential Logic) - FIXED for Loss Reversal.
+     */
+    
+    // **FIX**: The primary fix for "repeating same prediction" is to always REVERSE on a LOSS, 
+    // unless a high-confidence WIN streak is active.
+    
+    let prediction = lastPrediction; // Default is to repeat the last prediction
+    let confidence = 0.55;
+
+    // 1. Loss Reversal (HIGH PRIORITY)
+    if (lastResult === 'LOSS') {
+        // **CRITICAL FIX**: Reverse the last prediction direction (e.g., if we predicted SMALL and lost, predict BIG)
+        prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG'; 
+        return { prediction, confidence: 0.85, reason: "LOSS_REVERSAL_CRITICAL" };
+    }
+
+    // 2. Anti-Predict (Switch strategy on high overall win rate to avoid server "traps")
+    const overallWinRate = coordinator.zenithAI.modelPerformance.reinforcement.accuracy;
+    const antiPredictThreshold = coordinator.zenithAI.config.antiPredictThreshold || 0.60;
+
+    if (overallWinRate > antiPredictThreshold) {
+        prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG';
+        confidence = 0.88; 
+        return { prediction, confidence, reason: "ANTI_PREDICT" };
+    }
+
+    // 3. Win Streak Continuation
+    const winStreak = coordinator.consecutiveWins;
+    if (winStreak >= config.minStreakForContinuation) {
+        // Predict the last actual outcome for streak continuation
+        prediction = lastActual; 
+        return { prediction, confidence: 0.75, reason: "WIN_STREAK_CONT" };
+    }
+    
+    // Default Fallback: Simple reversal of the last ACTUAL outcome
+    if (lastActual) {
+        prediction = lastActual === 'BIG' ? 'SMALL' : 'BIG';
+        confidence = 0.60;
+        return { prediction, confidence, reason: "FALLBACK_SIMPLE_REVERSAL" };
+    }
+    
+    return { prediction, confidence, reason: "FALLBACK_DEFAULT" };
+}
 
 
-        function fallback_algorithm_prediction(lastPrediction, lastResult, coordinator) {
-            /**
-             * Executes the Fallback Algorithm (Adaptive/Sequential Logic) - Step 3.
-             */
-            
-            let prediction = lastPrediction; // Default is to repeat the last prediction
-            let confidence = 0.55;
-
-            // Fetch config values from coordinator (for Anti-Predict threshold)
-            const overallWinRate = coordinator.zenithAI.modelPerformance.reinforcement.accuracy; // Using reinforcement model accuracy as a proxy for overall win rate
-            const antiPredictThreshold = coordinator.zenithAI.config.antiPredictThreshold || 0.60;
-
-            // 1. High Win Rate Switch (Anti-Predict)
-            if (overallWinRate > antiPredictThreshold) {
-                prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG'; // Switch to the opposite
-                confidence = 0.88; // High confidence for anti-predict
-                return { prediction, confidence, reason: "ANTI_PREDICT" };
-            }
-
-            // 2. Loss Reversal
-            if (lastResult === 'LOSS') {
-                prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG'; // Switch direction
-                return { prediction, confidence: 0.70, reason: "LOSS_REVERSAL" };
-            }
-
-            // 3. Streak Continuation/Reversal (Uses coordinator's streak counts)
-            const winStreak = coordinator.consecutiveWins;
-            const lossStreak = coordinator.consecutiveLosses; // Note: lossStreak > 0 implies RECOVERY_LEVEL > 0
-
-            if (winStreak >= config.minStreakForContinuation) {
-                // Win Streak Continuation (predict the same as last outcome)
-                prediction = PAST_RESULTS.at(-1); // Predict the last outcome
-                return { prediction, confidence: 0.75, reason: "WIN_STREAK_CONT" };
-            }
-            
-            if (lossStreak >= config.minStreakForContinuation) {
-                // Loss Streak Reversal (switch direction)
-                prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG'; 
-                return { prediction, confidence: 0.80, reason: "LOSS_STREAK_REV" };
-            }
-            
-            // Default Fallback
-            return { prediction, confidence, reason: "FALLBACK_DEFAULT" };
-        }
-
-
-        function final_prediction_core(period_number, history, lastPrediction, lastResult, coordinator) {
-            /**
-             * Orchestrates the prediction logic based on the prompt's sequence.
-             */
-            
-            let predictionData = { prediction: null, confidence: 0, reason: "INITIAL" };
-            
-            // 1. Pattern Analysis (Primary Check)
-            if (history.length >= 3) {
-                predictionData = pattern_analysis_prediction(history, period_number);
-            }
-            
-            // 3. Fallback Algorithm (if no specific pattern is found or low confidence)
-            if (!predictionData.prediction || predictionData.confidence < 0.60) {
-                if (lastPrediction && lastResult) {
-                    predictionData = fallback_algorithm_prediction(lastPrediction, lastResult, coordinator);
-                } else {
-                     // Ultimate default
-                    const digits = get_last_four_digits(period_number);
-                    const total_sum = digits.reduce((a, b) => a + b, 0);
-                    predictionData.prediction = total_sum % 2 === 1 ? "BIG" : "SMALL";
-                    predictionData.confidence = 0.5;
-                    predictionData.reason = "ULTIMATE_DEFAULT";
-                }
-            }
-            
-            // 4. Number Generation (The model only predicts 'BIG'/'SMALL'. Specific number generation is an ensemble step.)
-            // Note: The lossRecoveryModel is typically an override/aggressive mode, handled by the `LossRecoveryModel` logic.
-            
-            return predictionData;
-        }
-
-
-        function update_integrated_state(actual_result, made_prediction, was_recovery_mode) {
-            /**
-             * Updates global state (PAST_RESULTS, RECOVERY_LEVEL, RANDOMNESS_FACTOR)
-             */
-            PAST_RESULTS.append(actual_result);
-            LAST_PREDICTION_DIRECTION = made_prediction;
-            
-            const isWin = made_prediction === actual_result;
-
-            if (isWin) {
-                LAST_PREDICTION_RESULT = "WIN";
-                RECOVERY_LEVEL = 0;
-                // Decrease randomness after a WIN
-                RANDOMNESS_FACTOR = Math.max(0.1, RANDOMNESS_FACTOR * 0.8);
-            } else {
-                LAST_PREDICTION_RESULT = "LOSS";
-                
-                // Only increase recovery level if we weren't in recovery mode, or if the recovery failed
-                if (was_recovery_mode || RECOVERY_LEVEL === 0) {
-                    RECOVERY_LEVEL += 1;
-                }
-
-                // Critical Check: Handle system failure if a third consecutive loss occurs (Level 3 or higher)
-                if (RECOVERY_LEVEL > 2) {
-                    console.log(`!! 🛑 MAX LEVEL ALERT: ${RECOVERY_LEVEL} consecutive losses detected. Resetting to Normal Mode. !!`);
-                    RECOVERY_LEVEL = 0; // Reset after failure
-                    LAST_PREDICTION_DIRECTION = null;
-                }
-                
-                // Increase randomness after a LOSS
-                RANDOMNESS_FACTOR = Math.min(0.5, RANDOMNESS_FACTOR * 1.5 + 0.1);
-            }
-        }
-
-
-        function generateNumber(direction, period_number) {
-            /** New: Selects a specific number (0-9) aligned with the direction. */
-            const digits = get_last_four_digits(period_number);
-            const lastDigit = digits.length > 0 ? digits[digits.length - 1] : Math.floor(Math.random() * 10);
-            
-            if (direction === 'BIG') {
-                // Try to pick a BIG number (5-9) close to the last digit, or a random BIG
-                if (lastDigit >= 5) return lastDigit;
-                return Math.floor(Math.random() * 5) + 5; // 5, 6, 7, 8, 9
-            } else {
-                // Try to pick a SMALL number (0-4) close to the last digit, or a random SMALL
-                if (lastDigit <= 4) return lastDigit;
-                return Math.floor(Math.random() * 5); // 0, 1, 2, 3, 4
-            }
-        }
-
-
-        // --- Integrated Utility Functions for Coordinator/Core Interop ---
-
-        function final_prediction_2lvl_recovery(period_number, actual_result = null, coordinator) {
-            /**
-             * The main function that orchestrates the prediction process,
-             * managing the state for the upgraded 2-level recovery system (FIXED).
-             */
-            
-            // The coordinator is required for access to dynamic data (win rate, streaks)
-            if (!coordinator) throw new Error("Coordinator instance is required for final_prediction_2lvl_recovery.");
-
-            let prediction;
-            let confidence = 0;
-            
-            // **RECOVERY MODE LOGIC (Override)**
-            if (RECOVERY_LEVEL > 0) {
-                // Level 1 or 2 recovery is high-conviction. Use the aggressive logic as a sure-shot.
-                prediction = aggressive_recovery_logic_v2(period_number, RECOVERY_LEVEL, PAST_RESULTS);
-                confidence = RECOVERY_LEVEL === 2 ? 0.99 : 0.95;
-            } else {
-                // **NORMAL MODE**: Use the new core logic sequence
-                const corePredData = final_prediction_core(
-                    period_number, 
-                    PAST_RESULTS, 
-                    LAST_PREDICTION_DIRECTION, 
-                    LAST_PREDICTION_RESULT,
-                    coordinator
-                );
-                prediction = corePredData.prediction;
-                confidence = corePredData.confidence;
-            }
-
-            // 2. Update System State (only if an actual result is provided, i.e., at the end of a period)
-            if (actual_result !== null) {
-                
-                // Get the prediction that was made for this closed period
-                const externalMadePrediction = coordinator.zenithAI.lastPrediction; 
-                
-                update_integrated_state(actual_result, externalMadePrediction, RECOVERY_LEVEL > 0);
-                
-                // The coordinator needs to sync its streak count with the new RECOVERY_LEVEL
-                coordinator.consecutiveLosses = RECOVERY_LEVEL;
-                if (RECOVERY_LEVEL === 0) {
-                    coordinator.consecutiveWins++; // Only increment coordinator win streak if recovery level is reset (i.e., we just won a cycle)
-                } else {
-                    coordinator.consecutiveWins = 0;
-                }
-            }
-
-            // 3. Return the calculated prediction
-            return { prediction, confidence };
-        }
-
-
-        function aggressive_recovery_logic_v2(period_number, recovery_level, history) {
-            /**
-             * High-Certainty Logic for Recovery Mode.
-             * The logic becomes more aggressive at Level 2.
-             * This replaces the old aggressive_recovery_logic for simplicity and focus on reversal.
-             */
-            
-            // The core idea of recovery is REVERSAL of the last outcome.
-            if (history.length > 0) {
-                const last_result = history.at(-1);
-                return last_result === "BIG" ? "SMALL" : "BIG";
-            }
-            
-            // Fallback if no history
+function final_prediction_core(period_number, history, lastPrediction, lastResult, lastActual, coordinator) {
+    /**
+     * Orchestrates the prediction logic based on the prompt's sequence.
+     */
+    
+    let predictionData = { prediction: null, confidence: 0, reason: "INITIAL" };
+    
+    // 1. Pattern Analysis (Primary Check)
+    if (history.length >= 3) {
+        predictionData = pattern_analysis_prediction(history, period_number);
+    }
+    
+    // 2. Fallback Algorithm (if no specific pattern is found or low confidence)
+    if (!predictionData.prediction || predictionData.confidence < 0.60) {
+        if (lastPrediction && lastResult && lastActual) {
+            predictionData = fallback_algorithm_prediction(lastPrediction, lastResult, lastActual, coordinator);
+        } else {
+             // Ultimate default
             const digits = get_last_four_digits(period_number);
             const total_sum = digits.reduce((a, b) => a + b, 0);
-            return total_sum % 2 === 1 ? "BIG" : "SMALL";
+            predictionData.prediction = total_sum % 2 === 1 ? "BIG" : "SMALL";
+            predictionData.confidence = 0.5;
+            predictionData.reason = "ULTIMATE_DEFAULT";
+        }
+    }
+    
+    return predictionData;
+}
+
+
+function update_integrated_state(actual_result, made_prediction, was_recovery_mode) {
+    /**
+     * Updates global state (PAST_RESULTS, RECOVERY_LEVEL, RANDOMNESS_FACTOR)
+     */
+    PAST_RESULTS.append(actual_result);
+    LAST_PREDICTION_DIRECTION = made_prediction;
+    LAST_ACTUAL_OUTCOME = actual_result; // Store the actual result
+    
+    const isWin = made_prediction === actual_result;
+
+    if (isWin) {
+        LAST_PREDICTION_RESULT = "WIN";
+        RECOVERY_LEVEL = 0;
+        // Decrease randomness after a WIN
+        RANDOMNESS_FACTOR = Math.max(config.minRandomness, RANDOMNESS_FACTOR * config.randomnessDecreaseFactor);
+    } else {
+        LAST_PREDICTION_RESULT = "LOSS";
+        
+        // Only increase recovery level if we weren't in recovery mode, or if the recovery failed
+        if (was_recovery_mode || RECOVERY_LEVEL === 0) {
+            RECOVERY_LEVEL += 1;
         }
 
+        // Critical Check: Handle system failure if a third consecutive loss occurs (Level 3 or higher)
+        if (RECOVERY_LEVEL > 2) {
+            // **FIXED: Aggressive Martingale Reset** - Reset to level 0 after the 3rd loss (Level 3) 
+            // This implicitly assumes a Martingale-like strategy where 3 consecutive losses is the max risk.
+            console.log(`!! 🛑 MARTINGALE BREAK: ${RECOVERY_LEVEL} consecutive losses detected. Resetting to Normal Mode. !!`);
+            RECOVERY_LEVEL = 0; 
+            LAST_PREDICTION_DIRECTION = null;
+        }
+        
+        // Increase randomness after a LOSS
+        RANDOMNESS_FACTOR = Math.min(config.maxRandomness, RANDOMNESS_FACTOR * config.randomnessIncreaseFactor + 0.05);
+    }
+}
 
-        // --- END PYTHON LOGIC EQUIVALENT ---
+
+function aggressive_recovery_logic_v2(period_number, recovery_level, history) {
+    /**
+     * High-Certainty Logic for Recovery Mode.
+     * The logic becomes more aggressive at Level 2.
+     * This replaces the old aggressive_recovery_logic for simplicity and focus on reversal.
+     */
+    
+    // The core idea of recovery is REVERSAL of the last outcome.
+    if (history.length > 0) {
+        const last_result = history.at(-1);
+        return last_result === "BIG" ? "SMALL" : "BIG";
+    }
+    
+    // Fallback if no history
+    const digits = get_last_four_digits(period_number);
+    const total_sum = digits.reduce((a, b) => a + b, 0);
+    return total_sum % 2 === 1 ? "BIG" : "SMALL";
+}
+
+
+function final_prediction_2lvl_recovery(period_number, actual_result = null, coordinator) {
+    /**
+     * The main function that orchestrates the prediction process,
+     * managing the state for the upgraded 2-level recovery system (FIXED).
+     */
+    
+    if (!coordinator) throw new Error("Coordinator instance is required for final_prediction_2lvl_recovery.");
+
+    let prediction;
+    let confidence = 0;
+    
+    // 1. Update System State (only if an actual result is provided, i.e., at the end of a period)
+    if (actual_result !== null) {
+        
+        // Get the prediction that was made for this closed period
+        const externalMadePrediction = coordinator.zenithAI.lastPrediction; 
+        
+        update_integrated_state(actual_result, externalMadePrediction, RECOVERY_LEVEL > 0);
+        
+        // The coordinator needs to sync its streak count with the new RECOVERY_LEVEL
+        coordinator.consecutiveLosses = RECOVERY_LEVEL;
+        if (RECOVERY_LEVEL === 0 && LAST_PREDICTION_RESULT === 'WIN') {
+            coordinator.consecutiveWins++; // Increment coordinator win streak if recovery level is reset/win
+        } else if (LAST_PREDICTION_RESULT === 'LOSS') {
+             coordinator.consecutiveWins = 0;
+        }
+        
+        // If recovery was active and we just won, reset streaks
+        if (RECOVERY_LEVEL === 0 && LAST_PREDICTION_RESULT === 'WIN') {
+             coordinator.consecutiveLosses = 0;
+        }
+    }
+
+    // 2. **RECOVERY MODE LOGIC (Override)** - High-conviction strategy to fix the loss
+    if (RECOVERY_LEVEL > 0) {
+        // The core idea of recovery is **REVERSAL** of the last actual outcome.
+        prediction = aggressive_recovery_logic_v2(period_number, RECOVERY_LEVEL, PAST_RESULTS);
+        // Boost confidence significantly in recovery mode (Simulating a Martingale/High-Bet Strategy)
+        confidence = RECOVERY_LEVEL === 2 ? 0.999 : 0.98;
+    } else {
+        // 3. **NORMAL MODE**: Use the new core logic sequence
+        const corePredData = final_prediction_core(
+            period_number, 
+            PAST_RESULTS, 
+            LAST_PREDICTION_DIRECTION, 
+            LAST_PREDICTION_RESULT,
+            LAST_ACTUAL_OUTCOME, // Pass the last actual outcome for streak logic
+            coordinator
+        );
+        prediction = corePredData.prediction;
+        confidence = corePredData.confidence;
+    }
+
+    // 4. Return the calculated prediction
+    return { prediction, confidence };
+}
+
+// --- END PYTHON LOGIC EQUIVALENT ---
 
         const LOCAL_STORAGE_KEY = 'zenithAICoreState';
         const PREDICTOR_COORDINATOR_KEY = 'zenithPredictorCoordinatorState';
@@ -3359,10 +3346,10 @@
                 }
 
                 let html = '<div class="history-header">';
-                html += '<div class="history-header-item">Period</div>';
-                html += '<div class="history-header-item">Result</div>';
-                html += '<div class="history-header-item">Size</div>';
-                html += '<div class="history-header-item">Color</div>';
+                html += '<div class="history-header-item"></div>';
+                html += '<div class="history-header-item"></div>';
+                html += '<div class="history-header-item"></div>';
+                html += '<div class="history-header-item"></div>';
                 html += '</div>';
 
                 let totalCount = 0;
