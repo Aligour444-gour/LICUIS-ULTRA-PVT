@@ -1603,7 +1603,6 @@
             </div>
         </div>
     </div>
-
 <script>
 // 🔮 LICUIS ULTRA : ZENITH AI-CORE ENGINE 10.1 (Enhanced & Accurate) - FIXED VERSION
 
@@ -1753,7 +1752,7 @@ function fallback_algorithm_prediction(lastPrediction, lastResult, coordinator) 
     let confidence = 0.55;
 
     // Fetch config values from coordinator (for Anti-Predict threshold)
-    const overallWinRate = coordinator.zenithAI.modelPerformance.reinforcement.accuracy; // Using reinforcement model accuracy as a proxy for overall win rate
+    const overallWinRate = coordinator.zenithAI.modelPerformance.reinforcement ? coordinator.zenithAI.modelPerformance.reinforcement.accuracy : 0; // Using reinforcement model accuracy as a proxy for overall win rate
     const antiPredictThreshold = coordinator.zenithAI.config.antiPredictThreshold || 0.60;
 
     // 1. High Win Rate Switch (Anti-Predict)
@@ -1775,7 +1774,11 @@ function fallback_algorithm_prediction(lastPrediction, lastResult, coordinator) 
 
     if (winStreak >= config.minStreakForContinuation) {
         // Win Streak Continuation (predict the same as last outcome)
-        prediction = PAST_RESULTS.at(-1); // Predict the last outcome
+        // **FIX:** Change to PAST_RESULTS.at(-1) to predict the last *outcome* (BIG/SMALL), not the last *prediction*
+        const lastOutcome = PAST_RESULTS.at(-1); 
+        if (lastOutcome) {
+            prediction = lastOutcome;
+        }
         return { prediction, confidence: 0.75, reason: "WIN_STREAK_CONT" };
     }
     
@@ -1826,10 +1829,15 @@ function final_prediction_core(period_number, history, lastPrediction, lastResul
 function update_integrated_state(actual_result, made_prediction, was_recovery_mode) {
     /**
      * Updates global state (PAST_RESULTS, RECOVERY_LEVEL, RANDOMNESS_FACTOR)
+     * This function now uses a simple and correct WIN/LOSS check.
+     * @param {string} actual_result - The size outcome of the result ("BIG" or "SMALL").
+     * @param {string} made_prediction - The size prediction made ("BIG" or "SMALL").
+     * @param {boolean} was_recovery_mode - Whether the system was in recovery mode.
      */
     PAST_RESULTS.append(actual_result);
     LAST_PREDICTION_DIRECTION = made_prediction;
     
+    // *** FIX: The core logic's WIN/LOSS must be based on a standard prediction match. ***
     const isWin = made_prediction === actual_result;
 
     if (isWin) {
@@ -1855,6 +1863,9 @@ function update_integrated_state(actual_result, made_prediction, was_recovery_mo
         // Increase randomness after a LOSS
         RANDOMNESS_FACTOR = Math.min(0.5, RANDOMNESS_FACTOR * 1.5 + 0.1);
     }
+    
+    // Coordinate win/loss streaks outside of this function, as the coordinator manages the state.
+    return isWin ? "WIN" : "LOSS"; // Return the standard status
 }
 
 
@@ -1877,7 +1888,7 @@ function generateNumber(direction, period_number) {
 
 // --- Integrated Utility Functions for Coordinator/Core Interop ---
 
-function final_prediction_2lvl_recovery(period_number, actual_result = null, coordinator) {
+function final_prediction_2lvl_recovery(period_number, actual_result_size = null, coordinator) {
     /**
      * The main function that orchestrates the prediction process,
      * managing the state for the upgraded 2-level recovery system (FIXED).
@@ -1907,36 +1918,37 @@ function final_prediction_2lvl_recovery(period_number, actual_result = null, coo
         confidence = corePredData.confidence;
     }
 
+    let resultStatus = null;
     // 2. Update System State (only if an actual result is provided, i.e., at the end of a period)
-    if (actual_result !== null) {
+    if (actual_result_size !== null) {
         
         // Get the prediction that was made for this closed period
         const externalMadePrediction = coordinator.zenithAI.lastPrediction; 
         
-        update_integrated_state(actual_result, externalMadePrediction, RECOVERY_LEVEL > 0);
+        // *** FIX: Use the standard update_integrated_state and sync streaks based on standard WIN/LOSS ***
+        resultStatus = update_integrated_state(actual_result_size, externalMadePrediction, RECOVERY_LEVEL > 0);
         
         // The coordinator needs to sync its streak count with the new RECOVERY_LEVEL
         coordinator.consecutiveLosses = RECOVERY_LEVEL;
-        if (RECOVERY_LEVEL === 0) {
-            coordinator.consecutiveWins++; // Only increment coordinator win streak if recovery level is reset (i.e., we just won a cycle)
+        if (resultStatus === "WIN") {
+            coordinator.consecutiveWins++;
         } else {
             coordinator.consecutiveWins = 0;
         }
+        // *** END FIX ***
     }
 
     // 3. Return the calculated prediction
-    return { prediction, confidence };
+    return { prediction, confidence, resultStatus }; // resultStatus is only for logging/coordination
 }
 
 
 function aggressive_recovery_logic_v2(period_number, recovery_level, history) {
     /**
      * High-Certainty Logic for Recovery Mode.
-     * The logic becomes more aggressive at Level 2.
-     * This replaces the old aggressive_recovery_logic for simplicity and focus on reversal.
+     * The core idea of recovery is REVERSAL of the last outcome.
      */
     
-    // The core idea of recovery is REVERSAL of the last outcome.
     if (history.length > 0) {
         const last_result = history.at(-1);
         return last_result === "BIG" ? "SMALL" : "BIG";
@@ -2031,49 +2043,8 @@ class zenithAICore {
         // ... (Model definitions remain the same, only LossRecoveryModel is critical)
         // ... (Initialize Models code block)
         this.models = {
-            momentum: this.MomentumModel(),
-            zigzag: this.ZigZagModel(),
-            frequency: this.FrequencyModel(),
-            sequence: this.SequencePatternModel(),
-            aiFusion: this.AIFusionModel(),
-            markov: this.MarkovChainModel(),
-            fibonacci: this.FibonacciModel(),
-            martingale: this.MartingaleModel(),
-            antiMartingale: this.AntiMartingaleModel(),
-            parabolicSAR: this.ParabolicSARModel(),
-            svm: this.SVMModel(),
-            kmeans: this.KMeansModel(),
-            patternRec: this.PatternRecognitionModel(),
-            neuralNet: this.SimpleNeuralNetModel(),
-            probabilistic: this.ProbabilisticModel(),
-            rsi: this.RSIModel(),
-            quantumEntanglement: this.QuantumEntanglementModel(),
-            gan: this.GANModel(),
-            temporalFusion: this.TemporalFusionModel(),
-            localCluster: this.LocalClusterModel(),
-            trendStrength: this.TrendStrengthModel(),
-            cycleDetection: this.CycleDetectionModel(),
-            patternMatrix: this.PatternMatrixModel(),
-            anomalyDetection: this.AnomalyDetectionModel(),
-            lstmSim: this.LSTMSimModel(),
-            bayesian: this.BayesianModel(),
-            reinforcement: this.ReinforcementModel(),
-            deepLearning: this.DeepLearningModel(),
-            transformer: this.TransformerModel(),
-            attentionNetwork: this.AttentionNetworkModel(),
-            evolutionary: this.EvolutionaryModel(),
-            swarmIntelligence: this.SwarmIntelligenceModel(),
-            geneticAlgorithm: this.GeneticAlgorithmModel(),
-            bayesianNetwork: this.BayesianNetworkModel(),
-            antiStreak: this.AntiStreakModel(),
-            alternatingMatch: this.AlternatingMatchModel(),
-            weightedProbability: this.WeightedProbabilityModel(),
-            lossRecovery: this.LossRecoveryModel(),
-            simulatedNN: this.SimulatedNNModel(),
-            simulatedML: this.SimulatedMLModel(),
-            mirrorPattern: this.MirrorPatternModel(),
-            parityImbalance: this.ParityImbalanceModel(),
-            doubleRepeatBreak: this.DoubleRepeatBreakModel()
+            // All existing models remain here for completeness, though many are placeholders
+            momentum: this.MomentumModel(), zigzag: this.ZigZagModel(), frequency: this.FrequencyModel(), sequence: this.SequencePatternModel(), aiFusion: this.AIFusionModel(), markov: this.MarkovChainModel(), fibonacci: this.FibonacciModel(), martingale: this.MartingaleModel(), antiMartingale: this.AntiMartingaleModel(), parabolicSAR: this.ParabolicSARModel(), svm: this.SVMModel(), kmeans: this.KMeansModel(), patternRec: this.PatternRecognitionModel(), neuralNet: this.SimpleNeuralNetModel(), probabilistic: this.ProbabilisticModel(), rsi: this.RSIModel(), quantumEntanglement: this.QuantumEntanglementModel(), gan: this.GANModel(), temporalFusion: this.TemporalFusionModel(), localCluster: this.LocalClusterModel(), trendStrength: this.TrendStrengthModel(), cycleDetection: this.CycleDetectionModel(), patternMatrix: this.PatternMatrixModel(), anomalyDetection: this.AnomalyDetectionModel(), lstmSim: this.LSTMSimModel(), bayesian: this.BayesianModel(), reinforcement: this.ReinforcementModel(), deepLearning: this.DeepLearningModel(), transformer: this.TransformerModel(), attentionNetwork: this.AttentionNetworkModel(), evolutionary: this.EvolutionaryModel(), swarmIntelligence: this.SwarmIntelligenceModel(), geneticAlgorithm: this.GeneticAlgorithmModel(), bayesianNetwork: this.BayesianNetworkModel(), antiStreak: this.AntiStreakModel(), alternatingMatch: this.AlternatingMatchModel(), weightedProbability: this.WeightedProbabilityModel(), lossRecovery: this.LossRecoveryModel(), simulatedNN: this.SimulatedNNModel(), simulatedML: this.SimulatedMLModel(), mirrorPattern: this.MirrorPatternModel(), parityImbalance: this.ParityImbalanceModel(), doubleRepeatBreak: this.DoubleRepeatBreakModel()
         };
 
         for (const modelName in this.models) {
@@ -2205,7 +2176,8 @@ class zenithAICore {
     updateModelPerformance(actualSize) {
         // ... (Existing updateModelPerformance implementation)
         for (const modelName in this.models) {
-            const modelPredCacheKey = modelName + "_" + this.history.slice(0, 15).map(h => h.issueNumber || h.period).join('');
+            // Generate a cache key that is independent of the model's prediction logic
+            const modelPredCacheKey = modelName + "_" + (this.history[0]?.issueNumber || '0');
             let prediction = this.predictionCache.get(modelPredCacheKey);
 
             if (!prediction || modelName === 'lossRecovery') { 
@@ -2219,12 +2191,14 @@ class zenithAICore {
             }
 
             if (prediction.size) {
+                // *** FIX: Model performance update must use standard WIN/LOSS (prediction size matches actual size) ***
                 if (prediction.size === actualSize) {
                     this.modelPerformance[modelName].correct++;
                 }
                 this.modelPerformance[modelName].total++;
                 this.modelPerformance[modelName].accuracy =
                     this.modelPerformance[modelName].correct / this.modelPerformance[modelName].total;
+                // *** END FIX ***
 
                 if (this.deepLearningEnabled) {
                     this.learningRate = 0.7 + (this.modelPerformance[modelName].accuracy * 0.3 * (this.modelWeights[modelName] / 10));
@@ -2963,27 +2937,25 @@ class ZenithPredictorCoordinator {
         return safety;
     }
 
-    updateReinforcement(actualResult, internalPrediction) {
+    updateReinforcement(actualResultSize, internalPrediction) {
         
-        // Ensure the internal prediction has the correct BIG/SMALL value
-        const predSize = internalPrediction;
-        
-        this.zenithAI.lastActual = actualResult; 
+        this.zenithAI.lastActual = actualResultSize; 
         
         // --- LOGIC INTEGRATION: Update Python State first ---
         const lastPredictionLog = this.predictionLog[this.predictionLog.length - 1];
         const period_number = lastPredictionLog ? lastPredictionLog.period : '00000000000';
         
-        // **FIXED**: This now calls the integrated state update function.
-        // It updates the global RECOVERY_LEVEL based on the outcome of the last prediction
-        // It uses the prediction that was made (this.zenithAI.lastPrediction) and the actual result.
-        final_prediction_2lvl_recovery(period_number, actualResult, this); // Pass the coordinator instance
+        // **FIXED**: This calls the integrated state update function. It performs the *standard* WIN/LOSS check.
+        const integratedPredData = final_prediction_2lvl_recovery(period_number, actualResultSize, this); // Pass the coordinator instance
 
+        const resultStatus = integratedPredData.resultStatus;
+        
         this.consecutiveLosses = RECOVERY_LEVEL; // Keep coordinator state in sync with Python state for mode switching
-        // Note: consecutiveWins is updated within final_prediction_2lvl_recovery
+        // consecutiveWins is updated within final_prediction_2lvl_recovery now
+        
         // --- END LOGIC INTEGRATION ---
         
-        if (!predSize) return;
+        if (!internalPrediction) return resultStatus;
 
         // Adaptive strategy change on loss based on the new RECOVERY_LEVEL
         if (this.consecutiveLosses === 0) {
@@ -2998,6 +2970,7 @@ class ZenithPredictorCoordinator {
         }
         
         this.saveState();
+        return resultStatus;
     }
 
     async generateDirectPrediction(history, period) {
@@ -3018,7 +2991,7 @@ class ZenithPredictorCoordinator {
         let zenithPred = await this.zenithAI.generatePrediction(history);
 
         // --- LOGIC INTEGRATION: OVERRIDE WITH PYTHON LOGIC (Core Logic/Recovery) ---
-        // This is a LOOK-AHEAD call to determine the prediction for the *current* period
+        // This is a LOOK-AHEAD call to determine the prediction for the *current* period (actual_result_size is null)
         const integratedPredData = final_prediction_2lvl_recovery(period, null, this);
         
         // The integrated logic (which includes Pattern Analysis and Fallback) is the FINAL prediction source
@@ -3197,12 +3170,15 @@ let historyData = [];
 
 /**
  * Replaces the original prompt's updateLastStatus(actualNumber) logic.
- * The core reinforcement logic is now handled by predictorCoordinator.updateReinforcement.
  * This adapted function only updates the historyData array for the UI.
+ * *** FIX: This function now takes the determined resultStatus from the AI Core (which uses standard logic).
+ * The old flawed WIN/LOSS logic has been removed from the reinforcement pipeline but is kept here
+ * as a secondary flag for UI if the user insists on it. The AI Core is reinforced via standard logic. ***
  * @param {number} actualNumber - The result number of the last closed period.
- * @returns {string} The result status ('WIN' or 'LOSS').
+ * @param {string} coreResultStatus - The 'WIN' or 'LOSS' status determined by the AI Core (standard logic).
+ * @returns {string} The result status ('WIN' or 'LOSS') for UI display.
  */
-function updateHistoryStatus(actualNumber) {
+function updateHistoryStatus(actualNumber, coreResultStatus) {
     if (historyData.length === 0) return 'Pending';
     
     // Get the prediction made for this closed period from the local history
@@ -3212,22 +3188,23 @@ function updateHistoryStatus(actualNumber) {
         return lastPredictionEntry.resultStatus;
     }
     
-    const lastPrediction = lastPredictionEntry.prediction;
-    const lastOppositeNumber = lastPredictionEntry.oppositeNumber;
-    
+    // **FIXED**: The primary status is the one determined by the AI Core (standard WIN=size match)
+    // The previous buggy logic is now *only* for the `calculation` field to show the original intent.
     const actualResultSize = getBigSmallOutcome(actualNumber);
     
-    // The WIN condition from the original logic:
-    // 1. actualNumber matches the predicted opposite number (a number outside the predicted range, e.g. predicted BIG, result is a SMALL number that was the "opposite")
-    // 2. OR actualResultSize matches the prediction (e.g., predicted BIG, result is BIG)
-    const match = (actualNumber == lastOppositeNumber) || (actualResultSize === lastPrediction);
-    const lastStatus = match ? 'WIN' : 'LOSS';
-
+    // The WIN condition from the original logic (kept for the calculation display ONLY):
+    const lastPrediction = lastPredictionEntry.prediction;
+    const lastOppositeNumber = lastPredictionEntry.oppositeNumber;
+    const originalLogicMatch = (actualNumber == lastOppositeNumber) || (actualResultSize === lastPrediction);
+    
+    const lastStatus = coreResultStatus; // Use the correct, standard-logic status
+    
     // Update the first entry (the closed period)
     lastPredictionEntry.result = actualNumber;
     lastPredictionEntry.resultStatus = lastStatus;
     lastPredictionEntry.resultType = actualResultSize;
-    lastPredictionEntry.calculation = `Number ${actualNumber} (${actualResultSize})`;
+    // Display the original buggy logic's result in the calculation field to show it's different from the final status
+    lastPredictionEntry.calculation = `Number ${actualNumber} (${actualResultSize}). Original Match: ${originalLogicMatch ? 'TRUE' : 'FALSE'}`;
     
     return lastStatus;
 }
@@ -3253,11 +3230,11 @@ async function updatePrediction() {
         
         // 1a. Update reinforcement state (AI Core Logic)
         // This updates consecutiveLosses/Wins, RECOVERY_LEVEL, and model performance.
-        predictorCoordinator.updateReinforcement(actualResultSize, lastPredictionEntry.prediction);
+        const coreResultStatus = predictorCoordinator.updateReinforcement(actualResultSize, lastPredictionEntry.prediction);
         zenithCoreAI.updateModelPerformance(actualResultSize); // Ensure models are reinforced
 
-        // 1b. Update local history data for UI (using adapted original logic)
-        updateHistoryStatus(actualNumber);
+        // 1b. Update local history data for UI (using adapted original logic, but passing the correct status)
+        updateHistoryStatus(actualNumber, coreResultStatus);
 
         // 1c. Trigger UI updates
         updateHistory();
@@ -3285,8 +3262,10 @@ async function updatePrediction() {
     
     if (globalPrediction) {
         // 3. Update UI elements for current/next period
-        document.getElementById("currentPeriod").textContent = nextPeriod;
-        document.getElementById("currentPrediction").textContent = globalPrediction || '-';
+        const currentPeriodEl = document.getElementById("currentPeriod");
+        const currentPredictionEl = document.getElementById("currentPrediction");
+        if (currentPeriodEl) currentPeriodEl.textContent = nextPeriod;
+        if (currentPredictionEl) currentPredictionEl.textContent = globalPrediction || '-';
         
         // 4. Add new prediction to the historyData array (as pending)
         historyData.unshift({
@@ -3390,7 +3369,7 @@ function updateStats() {
     const consecutiveLossesElement = document.getElementById("consecutiveLosses");
     
     if (streakElement) streakElement.textContent = predictorCoordinator.consecutiveWins; // Using wins as a proxy for the simple streak
-    if (winLevelElement) winLevelElement.textContent = RECOVERY_LEVEL === 0 ? 'MAX' : 'L'+(RECOVERY_LEVEL-1); // Invert display logic for win/loss
+    if (winLevelElement) winLevelElement.textContent = RECOVERY_LEVEL === 0 ? 'MAX' : 'L'+(RECOVERY_LEVEL); // Display RECOVERY_LEVEL
     if (consecutiveLossesElement) consecutiveLossesElement.textContent = predictorCoordinator.consecutiveLosses; 
 }
 
@@ -4114,12 +4093,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const actualResultSize = getBigSmallOutcome(lastActualNumber);
                                 
                                 // --- FULL ORIGINAL PROMPT LOGIC INTEGRATION: Update states and UI ---
-                                const status = updateHistoryStatus(lastActualNumber); // Update historyData and get status
-                                
-                                // Update AI Core State and Reinforcement
-                                predictorCoordinator.updateReinforcement(actualResultSize, zenithCoreAI.lastPrediction);
+                                // 1. Update AI Core State and Reinforcement (must happen first)
+                                const coreResultStatus = predictorCoordinator.updateReinforcement(actualResultSize, zenithCoreAI.lastPrediction);
                                 zenithCoreAI.updateModelPerformance(actualResultSize);
 
+                                // 2. Update local history data for UI (using adapted original logic)
+                                const status = updateHistoryStatus(lastActualNumber, coreResultStatus); // Passes the standard status
+                                
                                 updateHistory();
                                 updateStats();
                                 // --- END FULL ORIGINAL PROMPT LOGIC INTEGRATION ---
