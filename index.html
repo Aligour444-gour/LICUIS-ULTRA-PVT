@@ -1641,7 +1641,7 @@ class Deque {
 // Use a deque for a rolling history of past results for pattern recognition
 const PAST_RESULTS = new Deque({ maxlen: 10 }); // Increased maxlen to 10 for better pattern analysis
 let LAST_PREDICTION_RESULT = null; // Stores the outcome of the previous prediction ("WIN" or "LOSS")
-let RECOVERY_LEVEL = 0; // 0: Normal Mode, 1: First-level recovery, 2: Second-level recovery
+let RECOVERY_LEVEL = 0; // 0: Normal Mode, 1: First-level recovery, 2: Second-level recovery (Equivalent to original consecutiveLosses)
 let LAST_PREDICTION_DIRECTION = null; // Stores the size ('BIG'/'SMALL') of the last prediction
 let RANDOMNESS_FACTOR = 0.1; // New: For simulating Random Override
 
@@ -1826,13 +1826,13 @@ function final_prediction_core(period_number, history, lastPrediction, lastResul
 }
 
 
-function update_integrated_state(actual_result, made_prediction, was_recovery_mode) {
+function update_integrated_state(actual_result, made_prediction) {
     /**
      * Updates global state (PAST_RESULTS, RECOVERY_LEVEL, RANDOMNESS_FACTOR)
      * This function now uses a simple and correct WIN/LOSS check.
      * @param {string} actual_result - The size outcome of the result ("BIG" or "SMALL").
      * @param {string} made_prediction - The size prediction made ("BIG" or "SMALL").
-     * @param {boolean} was_recovery_mode - Whether the system was in recovery mode.
+     * **The original logic's opposite number check is explicitly removed here.**
      */
     PAST_RESULTS.append(actual_result);
     LAST_PREDICTION_DIRECTION = made_prediction;
@@ -1842,16 +1842,14 @@ function update_integrated_state(actual_result, made_prediction, was_recovery_mo
 
     if (isWin) {
         LAST_PREDICTION_RESULT = "WIN";
-        RECOVERY_LEVEL = 0;
+        RECOVERY_LEVEL = 0; // Reset consecutiveLosses/WinLevel
         // Decrease randomness after a WIN
         RANDOMNESS_FACTOR = Math.max(0.1, RANDOMNESS_FACTOR * 0.8);
     } else {
         LAST_PREDICTION_RESULT = "LOSS";
         
-        // Only increase recovery level if we weren't in recovery mode, or if the recovery failed
-        if (was_recovery_mode || RECOVERY_LEVEL === 0) {
-            RECOVERY_LEVEL += 1;
-        }
+        // Increase recovery level after a loss
+        RECOVERY_LEVEL += 1;
 
         // Critical Check: Handle system failure if a third consecutive loss occurs (Level 3 or higher)
         if (RECOVERY_LEVEL > 2) {
@@ -1926,14 +1924,16 @@ function final_prediction_2lvl_recovery(period_number, actual_result_size = null
         const externalMadePrediction = coordinator.zenithAI.lastPrediction; 
         
         // *** FIX: Use the standard update_integrated_state and sync streaks based on standard WIN/LOSS ***
-        resultStatus = update_integrated_state(actual_result_size, externalMadePrediction, RECOVERY_LEVEL > 0);
+        resultStatus = update_integrated_state(actual_result_size, externalMadePrediction); // Call standard WIN/LOSS update
         
         // The coordinator needs to sync its streak count with the new RECOVERY_LEVEL
         coordinator.consecutiveLosses = RECOVERY_LEVEL;
         if (resultStatus === "WIN") {
             coordinator.consecutiveWins++;
+            coordinator.zenithAI.streak = (coordinator.zenithAI.streak || 0) + 1; // Sync original streak
         } else {
             coordinator.consecutiveWins = 0;
+            coordinator.zenithAI.streak = 0; // Reset original streak
         }
         // *** END FIX ***
     }
@@ -2020,13 +2020,17 @@ class zenithAICore {
         this.modelPerformance = {};
         this.predictionCache = new Map();
         
-        // The original logic's state variables are mapped here for synchronization with the coordinator.
-        this.consecutiveWins = 0;
-        this.consecutiveLosses = 0;
+        // --- ORIGINAL PROMPT STATE MAPPING ---
+        this.streak = 0; // Original streak
+        this.winLevel = 0; // Original winLevel (now proxied by RECOVERY_LEVEL)
+        this.consecutiveLosses = 0; // Original consecutiveLosses (now proxied by RECOVERY_LEVEL)
+        const MAX_WIN_LEVEL = 3; // Kept for reference
+        // --- END ORIGINAL PROMPT STATE MAPPING ---
+
         this.lastPrediction = null; // lastPrediction in the original prompt
         this.lastActual = null;
-        this.lastOppositeNumber = null; // New, for the core logic compatibility
-        this.globalPrediction = null; // New, for the core logic compatibility
+        this.lastOppositeNumber = null; // Original lastOppositeNumber
+        this.globalPrediction = null; // Original globalPrediction
 
         this.aggressiveness = 10;
         this.strategy = 'trendFollowing';
@@ -2062,12 +2066,15 @@ class zenithAICore {
         const state = {
             modelWeights: this.modelWeights,
             modelPerformance: this.modelPerformance,
-            consecutiveWins: this.consecutiveWins,
+            // Sync original prompt variables
+            streak: this.streak,
+            winLevel: this.winLevel,
             consecutiveLosses: this.consecutiveLosses,
+            // End sync original prompt variables
             lastPrediction: this.lastPrediction,
             lastActual: this.lastActual,
-            lastOppositeNumber: this.lastOppositeNumber, // Save new variables
-            globalPrediction: this.globalPrediction, // Save new variables
+            lastOppositeNumber: this.lastOppositeNumber, 
+            globalPrediction: this.globalPrediction, 
             aggressiveness: this.aggressiveness,
             strategy: this.strategy,
             deepLearningEnabled: this.deepLearningEnabled,
@@ -2827,8 +2834,8 @@ class ZenithPredictorCoordinator {
             clusterTrap: 0.7
         };
 
-        this.consecutiveLosses = 0;
-        this.consecutiveWins = 0;
+        this.consecutiveLosses = 0; // The state synced with RECOVERY_LEVEL
+        this.consecutiveWins = 0; // The state synced with zenithAI.streak
         this.mode = 'normal';
 
         this.zenithAI = new zenithAICore();
@@ -2950,9 +2957,9 @@ class ZenithPredictorCoordinator {
 
         const resultStatus = integratedPredData.resultStatus;
         
-        this.consecutiveLosses = RECOVERY_LEVEL; // Keep coordinator state in sync with Python state for mode switching
-        // consecutiveWins is updated within final_prediction_2lvl_recovery now
-        
+        // consecutiveLosses and consecutiveWins are synced inside final_prediction_2lvl_recovery now
+        this.zenithAI.consecutiveLosses = RECOVERY_LEVEL; // Sync back to the AI Core
+
         // --- END LOGIC INTEGRATION ---
         
         if (!internalPrediction) return resultStatus;
@@ -3155,12 +3162,16 @@ const getRedGreenOutcome = (num) => (num % 2 === 0) ? 'RED' : 'GREEN'; // Assumi
 function getOppositeNumber(prediction, period_number) {
     const small = [0, 1, 2, 3, 4];
     const big = [5, 6, 7, 8, 9];
-    let arr = prediction === "BIG" ? small : big;
-    // We use the Python-equivalent generateNumber for a slightly more intelligent opposite number
-    // but fall back to the random picker from the original prompt if needed.
-    const specificNumber = generateNumber(prediction === 'BIG' ? 'SMALL' : 'BIG', period_number);
-    if (arr.includes(specificNumber)) return specificNumber;
+    // Use the Python-equivalent generateNumber for a slightly more intelligent opposite number
+    // The opposite number logic is to predict a number that is the *opposite* size
+    const oppositeSize = prediction === 'BIG' ? 'SMALL' : 'BIG';
+    const specificNumber = generateNumber(oppositeSize, period_number); 
     
+    if (oppositeSize === 'SMALL' && small.includes(specificNumber)) return specificNumber;
+    if (oppositeSize === 'BIG' && big.includes(specificNumber)) return specificNumber;
+
+    // Fall back to random picker from the correct range if generateNumber didn't work as expected
+    let arr = prediction === "BIG" ? small : big;
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
@@ -3171,9 +3182,6 @@ let historyData = [];
 /**
  * Replaces the original prompt's updateLastStatus(actualNumber) logic.
  * This adapted function only updates the historyData array for the UI.
- * *** FIX: This function now takes the determined resultStatus from the AI Core (which uses standard logic).
- * The old flawed WIN/LOSS logic has been removed from the reinforcement pipeline but is kept here
- * as a secondary flag for UI if the user insists on it. The AI Core is reinforced via standard logic. ***
  * @param {number} actualNumber - The result number of the last closed period.
  * @param {string} coreResultStatus - The 'WIN' or 'LOSS' status determined by the AI Core (standard logic).
  * @returns {string} The result status ('WIN' or 'LOSS') for UI display.
@@ -3189,13 +3197,14 @@ function updateHistoryStatus(actualNumber, coreResultStatus) {
     }
     
     // **FIXED**: The primary status is the one determined by the AI Core (standard WIN=size match)
-    // The previous buggy logic is now *only* for the `calculation` field to show the original intent.
     const actualResultSize = getBigSmallOutcome(actualNumber);
     
-    // The WIN condition from the original logic (kept for the calculation display ONLY):
+    // The WIN condition from the *original flawed logic* (kept for the calculation display ONLY):
     const lastPrediction = lastPredictionEntry.prediction;
     const lastOppositeNumber = lastPredictionEntry.oppositeNumber;
-    const originalLogicMatch = (actualNumber == lastOppositeNumber) || (actualResultSize === lastPrediction);
+    // NOTE: The original logic's flaw was that it matched on (actualNumber == lastOppositeNumber) OR (actualResultSize === lastPrediction).
+    // The "opposite" number *was* the anti-prediction number.
+    const originalLogicMatch = (actualNumber == lastOppositeNumber) || (actualResultSize === lastPrediction); 
     
     const lastStatus = coreResultStatus; // Use the correct, standard-logic status
     
@@ -3203,8 +3212,8 @@ function updateHistoryStatus(actualNumber, coreResultStatus) {
     lastPredictionEntry.result = actualNumber;
     lastPredictionEntry.resultStatus = lastStatus;
     lastPredictionEntry.resultType = actualResultSize;
-    // Display the original buggy logic's result in the calculation field to show it's different from the final status
-    lastPredictionEntry.calculation = `Number ${actualNumber} (${actualResultSize}). Original Match: ${originalLogicMatch ? 'TRUE' : 'FALSE'}`;
+    // Display the original flawed logic's result in the calculation field to show it's different from the final status
+    lastPredictionEntry.calculation = `Number ${actualNumber} (${actualResultSize}). Original Logic Match: ${originalLogicMatch ? 'TRUE' : 'FALSE'}`;
     
     return lastStatus;
 }
@@ -3254,7 +3263,7 @@ async function updatePrediction() {
     const nextPeriod = nextPeriodFull.slice(-4);
     
     // Generate the prediction using the integrated coordinator logic
-    const aiDecision = await predictorCoordinator.generateDirectPrediction(historyForAI, nextPeriod);
+    const aiDecision = await predictorCoordinator.generateDirectPrediction(historyForAI, nextPeriodFull); // Use full period for opposite number calculation
     
     // Synchronize global state from the AI Core
     const globalPrediction = zenithCoreAI.globalPrediction;
@@ -3272,7 +3281,7 @@ async function updatePrediction() {
             period: nextPeriod,
             prediction: globalPrediction,
             oppositeNumber: lastOppositeNumber,
-            result: null,
+            result: "-",
             resultStatus: "Pending",
             resultType: "-",
             calculation: "Prediction",
@@ -4163,7 +4172,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 period: nextPeriod,
                 prediction: globalPrediction,
                 oppositeNumber: lastOppositeNumber,
-                result: null,
+                result: "-",
                 resultStatus: "Pending",
                 resultType: "-",
                 calculation: "Prediction",
@@ -4173,6 +4182,12 @@ document.addEventListener('DOMContentLoaded', function() {
                  historyData.pop();
             }
             
+            // Update UI with new prediction
+            const currentPeriodEl = document.getElementById("currentPeriod");
+            const currentPredictionEl = document.getElementById("currentPrediction");
+            if (currentPeriodEl) currentPeriodEl.textContent = nextPeriod;
+            if (currentPredictionEl) currentPredictionEl.textContent = globalPrediction || '-';
+
             updateHistory();
             updateStats();
             // --- END ORIGINAL PROMPT LOGIC ADAPTATION ---
