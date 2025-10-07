@@ -1143,7 +1143,6 @@
           item.addEventListener('click', () => {
             const gameId = item.getAttribute('data-game');
             const url = item.getAttribute('data-url');
-            // const name = item.getAttribute('data-name'); // Name not used in openGame
             openGame(gameId, url);
           });
         });
@@ -1370,6 +1369,7 @@
         }
 
         function updatePredictionStatus(actualNumber) {
+            // Find the most recent PENDING item (at the beginning of the array)
             const lastPendingIndex = historyData.findIndex(item => item.resultStatus === "Pending");
 
             if (lastPendingIndex === -1) return; // Nothing pending to update
@@ -1399,10 +1399,10 @@
             saveToLocalStorage();
         }
         
-        // Fetch data (Unchanged)
+        // Fetch data 
         async function fetchPreviousResults() {
             try {
-                // Using the more reliable endpoint from the original for historical data
+                // Using the more reliable endpoint for historical data
                 const timestamp = Date.now();
                 const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50`);
                 if (!response.ok) {
@@ -1425,7 +1425,6 @@
             const requestData = {
                 typeId: 1, 
                 language: 0,
-                // These random/signature fields might be required by the API, so keep them
                 random: "40079dcba93a48769c6ee9d4d4fae23f",
                 signature: "D12108C4F57C549D82B23A91E0FA20AE",
                 timestamp: Math.floor(Date.now() / 1000)
@@ -1451,6 +1450,7 @@
 
                             // 2. Update status of the LAST pending prediction (if any)
                             if (latestPeriod && historyData.length > 0) {
+                                // Find the result for the period that was just completed (latestPeriod)
                                 const lastActualItem = previousResults.find(item => String(item.issueNumber) === String(latestPeriod));
                                 
                                 if (lastActualItem) {
@@ -1536,6 +1536,7 @@
                 statusIcon = 'fa-times text-red-500';
             }
             
+            // Note: The original provided history HTML was simplified; this is a richer version.
             return `
             <div class="history-item p-4 rounded-lg">
               <div class="flex justify-between items-center">
@@ -1549,7 +1550,7 @@
                   </div>
                 </div>
                 <div class="text-center w-1/3">
-                    <p class="text-xs opacity-80">Predict (Conf)</p>
+                    <p class="text-xs opacity-80">Prediction (Conf)</p>
                     <p class="font-semibold ${predictionColor}">${item.prediction || '-'} (${item.confidence || '--'}%)</p>
                 </div>
                 <div class="flex items-center space-x-3 justify-end w-1/3">
@@ -1601,6 +1602,7 @@
           winLevel = 0;
           lastPrediction = null;
           latestPeriod = null;
+          previousResults = [];
           updateHistory();
           updateStats();
           saveToLocalStorage();
