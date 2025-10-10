@@ -360,45 +360,6 @@
             text-shadow: 0 0 10px rgba(255, 60, 126, 0.4);
         }
         
-        /* Premium Stats Cards */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        
-        .stat-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(8px);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--card-border);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-            background: var(--card-hover);
-        }
-        
-        .stat-title {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        .stat-value {
-            font-size: 18px;
-            font-weight: 700;
-            font-family: 'Orbitron', sans-serif;
-            color: var(--gold);
-        }
-        
         /* Win/Loss Animation Overlays */
         .win-overlay, .loss-overlay {
             position: fixed;
@@ -614,10 +575,6 @@
                 max-width: 200px;
             }
             
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-            
             table {
                 font-size: 11px;
             }
@@ -689,25 +646,6 @@
     <div class="content" id="content" style="opacity: 0.7;">
         <h2>LICUIS ULTRA</h2>
         
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-title">Current Streak</div>
-                <div class="stat-value" id="currentStreak">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Win Rate</div>
-                <div class="stat-value" id="winRate">0%</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Max Streak</div>
-                <div class="stat-value" id="maxStreak">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Total Games</div>
-                <div class="stat-value" id="totalGames">0</div>
-            </div>
-        </div>
-        
         <div class="win-loss-container">
             <div class="win-loss-box win">
                 <div class="win-loss-title">WINS</div>
@@ -732,7 +670,7 @@
             <tbody id="history-table"></tbody>
         </table>
         
-        <div class="footer">Showing latest 10 results</div>
+        <div class="footer"></div>
     </div>
     
     <div class="win-overlay" id="winOverlay">
@@ -754,149 +692,126 @@
     </div>
 
     <script>
-    let latestPeriod = ""; // Stores the current period ID from the API
+    // Performance optimization variables
+    let latestPeriod = "";
     let winCount = 0;
     let lossCount = 0;
-    let lastPrediction = null; // Stores the prediction made for the latestPeriod
-    let currentStreak = 0; // Tracks the current win/loss streak
-    let maxStreak = 0; // Tracks the maximum win streak
-    let previousResults = []; // Stores recent historical results from the API
-    let historyData = []; // Stores results with their corresponding prediction for display
-
-    // --- Core Logic ---
-
-    /**
-     * Calculates the prediction based on the minute part of the period.
-     * The formula is: ((minute * 3) + 7) % 10
-     * @param {number} minutes - The minute part derived from the period number.
-     * @returns {{resultType: "BIG"|"SMALL", number: number}} - The predicted number and type.
-     */
+    let lastPrediction = null;
+    let historyData = [];
+    let previousResults = [];
+    
+    // Cache DOM elements for better performance
+    const domCache = {
+        periodId: null,
+        seconds: null,
+        resultNumber: null,
+        resultType: null,
+        content: null,
+        winCount: null,
+        lossCount: null,
+        historyTable: null
+    };
+    
+    // Initialize DOM cache
+    function initializeDomCache() {
+        domCache.periodId = document.getElementById("periodId");
+        domCache.seconds = document.getElementById("seconds");
+        domCache.resultNumber = document.getElementById("resultNumber");
+        domCache.resultType = document.getElementById("resultType");
+        domCache.content = document.getElementById("content");
+        domCache.winCount = document.getElementById("winCount");
+        domCache.lossCount = document.getElementById("lossCount");
+        domCache.historyTable = document.getElementById("history-table");
+    }
+    
+    // Calculate prediction based on minutes
     function getCalculatedResult(minutes) {
-        // Ensure the minutes part is treated as a number
         const minuteNum = parseInt(minutes, 10);
         const base = (minuteNum * 3 + 7) % 10;
         const isBig = base >= 5;
         return { resultType: isBig ? "BIG" : "SMALL", number: base };
     }
-
-    /**
-     * Animates the update of the result/prediction display.
-     * @param {"BIG"|"SMALL"} resultType - The result type to display.
-     * @param {number} number - The number to display.
-     */
+    
+    // Animate result updates
     function animateResultUpdate(resultType, number) {
-        const resultEl = document.getElementById("resultNumber");
-        const typeEl = document.getElementById("resultType");
-
-        // Simple fade-out effect
-        if (resultEl && typeEl) {
-            resultEl.classList.add("fade-out");
-            typeEl.classList.add("fade-out");
-
+        if (!domCache.resultNumber || !domCache.resultType) return;
+        
+        domCache.resultNumber.classList.add("fade-out");
+        domCache.resultType.classList.add("fade-out");
+        
+        setTimeout(() => {
+            domCache.resultNumber.innerText = number;
+            domCache.resultType.innerText = resultType;
+            
+            domCache.resultNumber.classList.remove("fade-out");
+            domCache.resultType.classList.remove("fade-out");
+            domCache.resultNumber.classList.add("fade-in");
+            domCache.resultType.classList.add("fade-in");
+            
             setTimeout(() => {
-                resultEl.innerText = number;
-                typeEl.innerText = resultType;
-                // Fade-in effect
-                resultEl.classList.remove("fade-out");
-                typeEl.classList.remove("fade-out");
-                resultEl.classList.add("fade-in");
-                typeEl.classList.add("fade-in");
-                setTimeout(() => {
-                    // Clean up the fade-in class after animation
-                    resultEl.classList.remove("fade-in");
-                    typeEl.classList.remove("fade-in");
-                }, 600);
-            }, 300);
-        }
+                domCache.resultNumber.classList.remove("fade-in");
+                domCache.resultType.classList.remove("fade-in");
+            }, 600);
+        }, 300);
     }
-
-    /**
-     * Updates the win/loss status based on the actual result of the previous period.
-     * @param {number} actualNumber - The actual winning number of the *previous* period.
-     */
+    
+    // Update prediction status
     function updatePredictionStatus(actualNumber) {
         if (lastPrediction && latestPeriod) {
             const actualResultType = actualNumber >= 5 ? "BIG" : "SMALL";
             const isWin = lastPrediction.resultType === actualResultType;
-
+            
             if (isWin) {
                 winCount++;
-                currentStreak = currentStreak > 0 ? currentStreak + 1 : 1; // Start/continue win streak
-                maxStreak = Math.max(maxStreak, currentStreak);
                 showWinLossOverlay(true);
             } else {
                 lossCount++;
-                currentStreak = currentStreak < 0 ? currentStreak - 1 : -1; // Start/continue loss streak
                 showWinLossOverlay(false);
             }
+            
             updateWinLossCounters();
-
-            // Add the result with prediction to history
+            
+            // Add result to history
             historyData.unshift({
-                period: latestPeriod, // This is actually the *previous* period being checked
+                period: latestPeriod,
                 number: actualNumber,
                 prediction: lastPrediction
             });
-
-            // Keep only the latest 10 results in history
+            
+            // Keep only latest 10 results
             if (historyData.length > 10) historyData.pop();
             renderHistory();
         }
-        // Clear prediction and period after checking, preparing for the new one
+        
         lastPrediction = null;
     }
-
-    /**
-     * Makes a new prediction for the current period and updates the display.
-     * @param {string} period - The new current period ID.
-     */
+    
+    // Make new prediction
     function makeNewPrediction(period) {
-        // The period ID is typically a long number (e.g., 2025101010001).
-        // The last 4 or 5 digits usually represent the issue number for the day.
-        // We need the minute part for the formula. The issue number is generally 
-        // issueNo - 10001 for 1-minute games if issueNo starts at 10001.
-
-        // Assuming a standard format where the final part is the minute count.
-        // E.g., if period is '2025101010001', the 'minute' part is '10001'.
-        // If the formula is based on the minute from the start of the day's issues (e.g., 1 to 1440)
-        // a common pattern is to subtract the first issue number.
-        const periodNumPart = parseInt(period.slice(-5), 10); // Use the last 5 digits, e.g., 10001
+        const periodNumPart = parseInt(period.slice(-5), 10);
+        const minutes = periodNumPart - 10001 + 1;
         
-        // This is the core logic. Adjust '10001' if the game's daily start issue number is different.
-        const minutes = periodNumPart - 10001 + 1; // +1 to make it 1-indexed
-
         lastPrediction = getCalculatedResult(minutes);
         
-        const periodEl = document.getElementById("periodId");
-        if (periodEl) periodEl.innerText = period;
+        if (domCache.periodId) domCache.periodId.innerText = period;
         
         animateResultUpdate(lastPrediction.resultType, lastPrediction.number);
-
-        // Ensure content is fully visible for the new prediction phase
-        const content = document.getElementById("content");
-        if (content) content.style.opacity = "1";
+        
+        if (domCache.content) domCache.content.style.opacity = "1";
     }
-
-    // --- API & Timer ---
-
-    /**
-     * Fetches historical data to check the result of the previous period.
-     */
+    
+    // Fetch previous results with error handling
     async function fetchPreviousResults() {
         try {
             const timestamp = Date.now();
-            // Using the ar-lottery01 API for historical results as it's cleaner for history
             const response = await fetch(
                 `https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50`
             );
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
+            
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
             const data = await response.json();
             if (data?.data?.list?.length > 0) {
-                // Map the results to a consistent structure
                 previousResults = data.data.list.map((item) => ({
                     number: parseInt(item.premium || item.result || item.number || 0, 10),
                     issueNumber: item.issueNumber || item.period,
@@ -904,72 +819,60 @@
             }
         } catch (error) {
             console.error("Error fetching previous results:", error);
-            // Optionally, try the other history API if the first one fails
-            await fetchGameResult(); 
+            await fetchGameResult();
         }
     }
-
-    /**
-     * Fetches the current game issue, countdown, and manages period rollover.
-     */
+    
+    // Fetch current game issue with performance optimizations
     async function fetchCurrentGameIssue() {
         const apiUrl = "https://api.bdg88zf.com/api/webapi/GetGameIssue";
         const requestData = {
-            typeId: 1, // Type ID for WinGo 1M
+            typeId: 1,
             language: 0,
-            random: "40079dcba93a48769c6ee9d4d4fae23f", // Placeholder random
-            signature: "D12108C4F57C549D82B23A91E0FA20AE", // Placeholder signature
+            random: "40079dcba93a48769c6ee9d4d4fae23f",
+            signature: "D12108C4F57C549D82B23A91E0FA20AE",
             timestamp: Math.floor(Date.now() / 1000),
         };
-
+        
         try {
             const response = await fetch(apiUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json;charset=UTF-8" },
                 body: JSON.stringify(requestData),
             });
-
+            
             if (response.ok) {
                 const data = await response.json();
                 if (data.code === 0 && data.data) {
                     const newPeriod = String(data.data.issueNumber);
                     const remainingSeconds = data.data.remainingSeconds;
-
-                    // --- Period Rollover Logic ---
+                    
                     if (newPeriod !== latestPeriod) {
-                        
-                        // 1. Fetch historical data to find the actual result for the JUST CLOSED period
                         await fetchPreviousResults();
-
+                        
                         if (latestPeriod && previousResults.length > 0) {
-                            // Find the actual result for the period that just closed (latestPeriod)
                             const lastActualItem = previousResults.find(
                                 (item) => String(item.issueNumber) === String(latestPeriod)
                             );
-
-                            if (lastActualItem && lastActualItem.number !== 0) { // Check for valid result
+                            
+                            if (lastActualItem && lastActualItem.number !== 0) {
                                 updatePredictionStatus(lastActualItem.number);
                             } else {
                                 console.warn(`Could not find valid result for period: ${latestPeriod}`);
                             }
                         }
-
-                        // 2. Start the new period countdown and prediction
+                        
                         latestPeriod = newPeriod;
                         makeNewPrediction(newPeriod);
                     }
-
-                    // --- Timer & Visuals Update ---
-                    const secondsEl = document.getElementById("seconds");
-                    if (secondsEl) secondsEl.innerText = remainingSeconds + "s";
                     
-                    const content = document.getElementById("content");
-                    if (content) {
-                        // Dimming logic for the last 5 seconds (betting closed)
+                    if (domCache.seconds) domCache.seconds.innerText = remainingSeconds + "s";
+                    
+                    if (domCache.content) {
                         if (remainingSeconds <= 5) {
-                            content.style.opacity = "0.7";
+                            domCache.content.style.opacity = "0.7";
                         } else {
-                            content.style.opacity = "1";
+                            domCache.content.style.opacity = "1";
                         }
                     }
                 }
@@ -980,18 +883,8 @@
             console.error("Error fetching current game issue:", error);
         }
     }
-
-    // Set up the main polling loop
-    setInterval(fetchCurrentGameIssue, 1000);
-    fetchCurrentGameIssue(); // Initial call to start immediately
-
-    // --- Utility & Display Functions ---
-
-    /**
-     * Gets the color(s) associated with a winning number.
-     * @param {number} number - The winning number (0-9).
-     * @returns {string[]} - Array of color names.
-     */
+    
+    // Get color for number
     function getColor(number) {
         switch (number) {
             case 9: return ["green"];
@@ -1007,39 +900,34 @@
             default: return [];
         }
     }
-
-    /**
-     * Renders the history data table.
-     */
+    
+    // Render history with performance optimizations
     function renderHistory() {
-        const table = document.getElementById("history-table");
-        if (!table) return;
-
-        // Clear existing rows
-        table.innerHTML = '';
-
+        if (!domCache.historyTable) return;
+        
+        // Use DocumentFragment for better performance
+        const fragment = document.createDocumentFragment();
+        
         historyData.forEach((item, index) => {
             const tr = document.createElement("tr");
             const bigSmall = item.number >= 5 ? "Big" : "Small";
             const colors = getColor(item.number);
-
+            
             let resultClass = "";
             let resultText = "";
-
-            // Check if there was a prediction for this historical item
+            
             if (item.prediction) {
                 const wasWin = item.prediction.resultType === (item.number >= 5 ? "BIG" : "SMALL");
                 resultClass = wasWin ? "win" : "loss";
                 resultText = wasWin ? "WIN" : "LOSS";
             } else {
-                resultText = "-"; // For initial history items without a prediction
+                resultText = "-";
             }
-
-            if (index === 0 && item.prediction) tr.classList.add("new-entry"); // Highlight the newest entry with a prediction
             
-            // Format the period to show only the final part for readability
+            if (index === 0 && item.prediction) tr.classList.add("new-entry");
+            
             const shortPeriod = String(item.period).slice(-5);
-
+            
             tr.innerHTML = `
                 <td>${shortPeriod}</td>
                 <td class="number-cell" data-number="${item.number}">${item.number}</td>
@@ -1047,107 +935,84 @@
                 <td>${colors.map(c => `<span class="dot ${c}"></span>`).join("")}</td>
                 <td class="${resultClass}">${resultText}</td>
             `;
-            table.appendChild(tr);
+            fragment.appendChild(tr);
         });
+        
+        // Clear and update in one operation
+        domCache.historyTable.innerHTML = '';
+        domCache.historyTable.appendChild(fragment);
     }
-
-    /**
-     * Creates and runs a confetti animation.
-     */
+    
+    // Create confetti animation
     function createConfetti() {
         const colors = ['#ff3c7e', '#00ff8b', '#a240ff', '#ffd700', '#00b8ff'];
+        const fragment = document.createDocumentFragment();
+        
         for (let i = 0; i < 50; i++) {
             const confetti = document.createElement('div');
             confetti.className = 'confetti';
             confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-            // Random position and size
             confetti.style.left = Math.random() * 100 + 'vw';
             confetti.style.width = Math.random() * 8 + 4 + 'px';
             confetti.style.height = confetti.style.width;
-            // Animation is defined in CSS (not provided, but expected)
             confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
-            document.body.appendChild(confetti);
-
-            // Clean up the element after the animation
+            fragment.appendChild(confetti);
+            
             setTimeout(() => {
-                confetti.remove();
+                if (confetti.parentNode) confetti.remove();
             }, 5000);
         }
+        
+        document.body.appendChild(fragment);
     }
-
-    /**
-     * Shows the win or loss overlay with visual effects.
-     * @param {boolean} isWin - True if it's a win, false for a loss.
-     */
+    
+    // Show win/loss overlay
     function showWinLossOverlay(isWin) {
         const overlayId = isWin ? "winOverlay" : "lossOverlay";
         const overlay = document.getElementById(overlayId);
-
-        if (isWin) {
-            createConfetti();
-        }
+        
+        if (isWin) createConfetti();
         
         if (overlay) {
             overlay.classList.add("active");
-
-            // Auto-close after 3 seconds
+            
             setTimeout(() => {
                 overlay.classList.remove("active");
             }, 3000);
         }
     }
-
-    /**
-     * Closes the overlay.
-     * @param {string} overlayId - The ID of the overlay to close.
-     */
+    
+    // Close overlay
     function closeOverlay(overlayId) {
         const overlay = document.getElementById(overlayId);
-        if (overlay) {
-            overlay.classList.remove("active");
-        }
+        if (overlay) overlay.classList.remove("active");
     }
-
-    /**
-     * Updates the win/loss counters and statistics display.
-     */
+    
+    // Update win/loss counters
     function updateWinLossCounters() {
-        const totalGames = winCount + lossCount;
-        const winRate = totalGames > 0 ? Math.round((winCount / totalGames) * 100) : 0;
-        
-        // Update all relevant display elements
-        document.getElementById("winCount").textContent = winCount;
-        document.getElementById("lossCount").textContent = lossCount;
-        document.getElementById("winRate").textContent = winRate + "%";
-        document.getElementById("currentStreak").textContent = currentStreak;
-        document.getElementById("maxStreak").textContent = maxStreak;
-        document.getElementById("totalGames").textContent = totalGames;
+        if (domCache.winCount) domCache.winCount.textContent = winCount;
+        if (domCache.lossCount) domCache.lossCount.textContent = lossCount;
     }
-
-    /**
-     * Fetches historical data for initial display (separate from the result check).
-     * This function runs once on load.
-     */
+    
+    // Fetch initial game results
     async function fetchGameResult() {
         try {
             const ts = Date.now();
-            // Using the ar-lottery01 history API for initial load
             const url = `https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?pageSize=10&pageNo=1&ts=${ts}`;
-
+            
             const response = await fetch(url);
             if (!response.ok) throw new Error("Initial history fetch failed");
+            
             const data = await response.json();
             const list = data?.data?.list;
-
+            
             if (Array.isArray(list)) {
-                // Populate historyData with initial results (no prediction yet)
                 historyData = list.slice(0, 10).map(item => ({
                     number: parseInt(item.number || item.premium || item.result, 10),
                     period: String(item.issueNumber || item.period),
-                    prediction: null // No prediction for initial historical data
+                    prediction: null
                 }));
                 
-                // Sort by period number (descending) and render
                 historyData.sort((a, b) => b.period - a.period);
                 renderHistory();
             }
@@ -1155,9 +1020,29 @@
             console.error("Initial History Fetch error:", err);
         }
     }
-
-    // Initial fetch for game history
-    fetchGameResult();
+    
+    // Initialize everything
+    function initializeApp() {
+        initializeDomCache();
+        fetchGameResult();
+        
+        // Set up polling with requestAnimationFrame for better performance
+        let lastUpdate = 0;
+        const updateInterval = 1000; // 1 second
+        
+        function updateLoop(timestamp) {
+            if (timestamp - lastUpdate >= updateInterval) {
+                fetchCurrentGameIssue();
+                lastUpdate = timestamp;
+            }
+            requestAnimationFrame(updateLoop);
+        }
+        
+        requestAnimationFrame(updateLoop);
+    }
+    
+    // Start the application
+    initializeApp();
     </script>
 </body>
 </html>
