@@ -699,6 +699,7 @@
     let lastPrediction = null;
     let historyData = [];
     let previousResults = [];
+    let isUpdating = false;
     
     // Cache DOM elements for better performance
     const domCache = {
@@ -724,13 +725,71 @@
         domCache.historyTable = document.getElementById("history-table");
     }
     
-    // Calculate prediction based on minutes
+    // START: BEST CALCULATION LOGIC 🏆
+    // New logic: Minesweeper Pattern Analysis (MPA)
     function getCalculatedResult(minutes) {
+        // Use historyData for pattern analysis (actual results from previous rounds)
+        const recentResults = historyData
+            .filter(item => item.number !== null && item.number !== 0) // Ensure valid numbers
+            .slice(0, 10) // Only look at the last 10 valid results
+            .map(item => item.number >= 5 ? "BIG" : "SMALL");
+
+        // Reverse to have the oldest result at index 0 and the latest at the end
+        recentResults.reverse(); 
+
+        // 1. Check for **Alternating Pattern (1-1-1-...)**
+        // A, B, A, B, A, B where A != B
+        if (recentResults.length >= 4) {
+            const lastThree = recentResults.slice(-3); // Get the last three results: [A, B, C]
+            // If it's a perfect alternation (A != B, B != C, A == C)
+            if (lastThree[0] !== lastThree[1] && lastThree[1] !== lastThree[2]) {
+                // The pattern is [A, B, A]. The next prediction should be B.
+                const prediction = lastThree[1]; // The pattern is A, B, A. Predict B.
+                return { resultType: prediction, number: prediction === "BIG" ? 5 : 4 };
+            }
+        }
+        
+        // 2. Check for **Double-Alternating Pattern (2-2-2-...)**
+        // A, A, B, B, A, A where A != B
+        if (recentResults.length >= 4) {
+            const lastFour = recentResults.slice(-4); // Get the last four results: [A, B, C, D]
+            // If it's a perfect 2-2 alternation (A==B, C==D, A != C)
+            if (lastFour[0] === lastFour[1] && lastFour[2] === lastFour[3] && lastFour[0] !== lastFour[2]) {
+                // The pattern is [A, A, B, B]. The next prediction should be A.
+                const prediction = lastFour[0];
+                return { resultType: prediction, number: prediction === "BIG" ? 5 : 4 };
+            }
+        }
+        
+        // 3. Check for **Triple-Repetition Pattern (3-3-3-...)**
+        // A, A, A, B, B, B where A != B
+        if (recentResults.length >= 3) {
+            const lastThree = recentResults.slice(-3);
+            if (lastThree[0] === lastThree[1] && lastThree[1] === lastThree[2]) {
+                // The pattern is [A, A, A]. The next prediction should be the *opposite* (B).
+                const prediction = lastThree[0] === "BIG" ? "SMALL" : "BIG";
+                return { resultType: prediction, number: prediction === "BIG" ? 5 : 4 };
+            }
+        }
+
+        // 4. Default Strategy: **Predict the Most Frequent**
+        if (recentResults.length > 0) {
+            const bigCount = recentResults.filter(r => r === "BIG").length;
+            const smallCount = recentResults.length - bigCount;
+
+            const prediction = bigCount > smallCount ? "BIG" : "SMALL";
+            // Use a middle-ground number for the prediction visual
+            return { resultType: prediction, number: prediction === "BIG" ? 5 : 4 };
+        }
+        
+        // Fallback: If no history is available, use a simple formula (similar to the original)
         const minuteNum = parseInt(minutes, 10);
-        const base = (minuteNum * 3 + 7) % 10;
+        const base = (minuteNum + 5) % 10; // Slightly modified
         const isBig = base >= 5;
-        return { resultType: isBig ? "BIG" : "SMALL", number: base };
+        const fallbackPrediction = isBig ? "BIG" : "SMALL";
+        return { resultType: fallbackPrediction, number: base };
     }
+    // END: BEST CALCULATION LOGIC 🏆
     
     // Animate result updates
     function animateResultUpdate(resultType, number) {
@@ -772,14 +831,25 @@
             updateWinLossCounters();
             
             // Add result to history
-            historyData.unshift({
-                period: latestPeriod,
-                number: actualNumber,
-                prediction: lastPrediction
-            });
+            // Find and update the existing history entry for the latestPeriod
+            const existingEntryIndex = historyData.findIndex(item => String(item.period) === String(latestPeriod));
             
+            if (existingEntryIndex !== -1) {
+                historyData[existingEntryIndex].number = actualNumber;
+                historyData[existingEntryIndex].prediction = lastPrediction;
+            } else {
+                 // Add new entry if not found (should be rare)
+                historyData.unshift({
+                    period: latestPeriod,
+                    number: actualNumber,
+                    prediction: lastPrediction
+                });
+            }
+
             // Keep only latest 10 results
-            if (historyData.length > 10) historyData.pop();
+            if (historyData.length > 10) {
+                historyData = historyData.slice(0, 10);
+            }
             renderHistory();
         }
         
@@ -788,9 +858,11 @@
     
     // Make new prediction
     function makeNewPrediction(period) {
+        // Calculate the 'minutes' part of the period number (used for fallback logic)
+        // This calculates the sequential number of the 1-minute period for the day.
         const periodNumPart = parseInt(period.slice(-5), 10);
-        const minutes = periodNumPart - 10001 + 1;
-        
+        const minutes = periodNumPart - 10001 + 1; // e.g., if period ends in 10001, minutes is 1.
+
         lastPrediction = getCalculatedResult(minutes);
         
         if (domCache.periodId) domCache.periodId.innerText = period;
@@ -798,6 +870,19 @@
         animateResultUpdate(lastPrediction.resultType, lastPrediction.number);
         
         if (domCache.content) domCache.content.style.opacity = "1";
+
+        // Add a placeholder for the new prediction to the history data *before* the result is known
+        // This ensures the pattern analysis in the next round is based on the *actual* historical results
+        historyData.unshift({
+            period: period,
+            number: 0, // Placeholder for the result number
+            prediction: lastPrediction
+        });
+        
+        // Remove old entries if necessary
+        if (historyData.length > 10) {
+            historyData = historyData.slice(0, 10);
+        }
     }
     
     // Fetch previous results with error handling
@@ -819,12 +904,16 @@
             }
         } catch (error) {
             console.error("Error fetching previous results:", error);
+            // Fallback to initial fetch logic
             await fetchGameResult();
         }
     }
     
     // Fetch current game issue with performance optimizations
     async function fetchCurrentGameIssue() {
+        if (isUpdating) return; // Prevent multiple simultaneous updates
+        
+        isUpdating = true;
         const apiUrl = "https://api.bdg88zf.com/api/webapi/GetGameIssue";
         const requestData = {
             typeId: 1,
@@ -851,14 +940,23 @@
                         await fetchPreviousResults();
                         
                         if (latestPeriod && previousResults.length > 0) {
+                            // Find the result for the *just closed* period
                             const lastActualItem = previousResults.find(
                                 (item) => String(item.issueNumber) === String(latestPeriod)
                             );
                             
+                            // Check if the result is valid (number 0 is often a placeholder for a pending result)
                             if (lastActualItem && lastActualItem.number !== 0) {
                                 updatePredictionStatus(lastActualItem.number);
                             } else {
-                                console.warn(`Could not find valid result for period: ${latestPeriod}`);
+                                // If result couldn't be found or was 0, check historyData for the previous number
+                                const historyItem = historyData.find(item => String(item.period) === String(latestPeriod));
+                                if (historyItem && historyItem.prediction) {
+                                    // If we made a prediction but can't verify the result now, we assume a loss 
+                                    // or simply don't update counts to avoid false wins/losses.
+                                    // For robustness, we will only update the prediction status if we have the actual number.
+                                    console.warn(`Cannot verify result for period: ${latestPeriod}. Skipping win/loss update.`);
+                                }
                             }
                         }
                         
@@ -881,6 +979,8 @@
             }
         } catch (error) {
             console.error("Error fetching current game issue:", error);
+        } finally {
+            isUpdating = false;
         }
     }
     
@@ -909,6 +1009,8 @@
         const fragment = document.createDocumentFragment();
         
         historyData.forEach((item, index) => {
+            if (item.number === 0 && !item.prediction) return; // Skip invalid or pending initial load entries
+            
             const tr = document.createElement("tr");
             const bigSmall = item.number >= 5 ? "Big" : "Small";
             const colors = getColor(item.number);
@@ -917,22 +1019,36 @@
             let resultText = "";
             
             if (item.prediction) {
-                const wasWin = item.prediction.resultType === (item.number >= 5 ? "BIG" : "SMALL");
-                resultClass = wasWin ? "win" : "loss";
-                resultText = wasWin ? "WIN" : "LOSS";
+                const actualResultType = item.number >= 5 ? "BIG" : "SMALL";
+                const wasWin = item.prediction.resultType === actualResultType;
+                
+                // Only show win/loss if the actual result is known (number !== 0)
+                if (item.number !== 0) {
+                    resultClass = wasWin ? "win" : "loss";
+                    resultText = wasWin ? "WIN" : "LOSS";
+                } else {
+                    // This is the currently pending prediction
+                    resultText = item.prediction.resultType; 
+                    resultClass = "pending";
+                }
             } else {
                 resultText = "-";
             }
             
-            if (index === 0 && item.prediction) tr.classList.add("new-entry");
+            if (index === 0 && item.prediction && item.number !== 0) tr.classList.add("new-entry");
             
             const shortPeriod = String(item.period).slice(-5);
             
+            // Show '-' for number and type if the result is pending (number === 0)
+            const displayNumber = item.number === 0 ? "-" : item.number;
+            const displayBigSmall = item.number === 0 ? "-" : bigSmall;
+            const displayColors = item.number === 0 ? "" : colors.map(c => `<span class="dot ${c}"></span>`).join("");
+
             tr.innerHTML = `
                 <td>${shortPeriod}</td>
-                <td class="number-cell" data-number="${item.number}">${item.number}</td>
-                <td class="${bigSmall.toLowerCase()}">${bigSmall}</td>
-                <td>${colors.map(c => `<span class="dot ${c}"></span>`).join("")}</td>
+                <td class="number-cell" data-number="${displayNumber}">${displayNumber}</td>
+                <td class="${displayBigSmall.toLowerCase()}">${displayBigSmall}</td>
+                <td>${displayColors}</td>
                 <td class="${resultClass}">${resultText}</td>
             `;
             fragment.appendChild(tr);
@@ -1007,6 +1123,7 @@
             const list = data?.data?.list;
             
             if (Array.isArray(list)) {
+                // Initial load: Only load actual results, no predictions yet
                 historyData = list.slice(0, 10).map(item => ({
                     number: parseInt(item.number || item.premium || item.result, 10),
                     period: String(item.issueNumber || item.period),
