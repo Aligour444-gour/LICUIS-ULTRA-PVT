@@ -3,352 +3,1055 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WinGo Selection</title>
+    <title>LICUIS ULTRA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00ffff;
-            --primary-dark: #00cccc;
-            --secondary: #2575fc;
-            --secondary-dark: #1e5fcf;
-            --accent: #ff6b6b;
-            --accent-light: #ff8e8e;
-            --dark: #0a0a1a;
-            --darker: #050510;
-            --card-bg: rgba(255, 255, 255, 0.08);
-            --card-border: rgba(255, 255, 255, 0.15);
-            --light: #f8f9fa;
-            --red: #ff4757;
-            --green: #00ff88;
-            --yellow: #ffd700;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.4);
-            --glow: 0 0 30px rgba(0, 255, 255, 0.3);
-            --glow-strong: 0 0 50px rgba(0, 255, 255, 0.5);
-            --border-radius: 16px;
-            --border-radius-small: 12px;
+            --primary-dark: #0a0a0a;
+            --primary: #1a1a1a;
+            --primary-light: #2a2a2a;
+            --accent: #ff3c7e;
+            --accent-dark: #d42a63;
+            --gold: #ffd700;
+            --gold-light: #fff0a3;
+            --gold-glow: rgba(255, 215, 0, 0.5);
+            --silver: #c0c0c0;
+            --win: #00ff8b;
+            --loss: #ff3c7e;
+            --text: #ffffff;
+            --text-secondary: #b8c2cc;
+            --card-bg: rgba(26, 26, 26, 0.8);
+            --card-border: rgba(255, 215, 0, 0.2);
+            --card-hover: rgba(42, 42, 42, 0.9);
+            --premium-gradient: linear-gradient(135deg, #0a0a0a, #1a1a1a, #2a1e0a);
         }
-
+        
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
         }
-
+        
         body {
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(37, 117, 252, 0.1) 0%, transparent 50%),
-                linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
-            color: var(--light);
-            min-height: 100vh;
-            overflow-x: hidden;
+            margin: 0;
+            background: var(--primary-dark);
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            font-size: 13px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            min-height: 100vh;
+            font-weight: bold;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(255, 60, 126, 0.05) 0%, transparent 25%),
+                var(--premium-gradient);
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            padding: 15px 20px;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .live-text {
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--gold);
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 8px var(--gold);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { 
+                opacity: 1; 
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+            }
+            70% { 
+                box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+            }
+            100% { 
+                opacity: 1; 
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+            }
+        }
+        
+        .id-text {
+            font-weight: 700;
+            color: var(--gold);
+            background: rgba(255, 215, 0, 0.1);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .timer {
+            display: flex;
+            align-items: center;
+            color: var(--gold-light);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+        }
+        
+        .timer i {
+            margin-right: 8px;
+            color: var(--gold);
+        }
+        
+        .red-count {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            background: var(--primary-light);
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .small-link {
+            font-weight: 700;
+            color: var(--text);
+            background: var(--primary-light);
+            padding: 6px 12px;
+            border-radius: 6px;
+            min-width: 80px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 25px 20px;
+            transition: opacity 0.5s ease;
+            position: relative;
+            z-index: 5;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--gold);
+            font-size: 24px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            position: relative;
+            padding-bottom: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            border-radius: 3px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s ease;
+        }
+        
+        table:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        thead {
+            background: linear-gradient(to right, rgba(255, 215, 0, 0.2), rgba(255, 60, 126, 0.2));
+        }
+        
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--gold);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+        
+        .new-entry {
+            animation: highlight 2s ease;
             position: relative;
         }
-
-        body::before {
+        
+        .new-entry::after {
+            content: 'NEW';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--gold);
+            color: var(--primary-dark);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes highlight {
+            0% { background: rgba(255, 215, 0, 0.2); }
+            100% { background: transparent; }
+        }
+        
+        .big {
+            color: var(--gold);
+            font-weight: 700;
+        }
+        
+        .small {
+            color: var(--text);
+            font-weight: 700;
+        }
+        
+        .dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .red { background: #ff3c7e; }
+        .green { background: #00ff8b; }
+        .violet { background: #a240ff; }
+        
+        .footer {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        
+        .win-loss-container {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 25px 0;
+        }
+        
+        .win-loss-box {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 140px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .win-loss-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            background: var(--card-hover);
+        }
+        
+        .win-loss-box.win {
+            border-top: 3px solid var(--win);
+        }
+        
+        .win-loss-box.loss {
+            border-top: 3px solid var(--loss);
+        }
+        
+        .win-loss-box::before {
             content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, transparent, rgba(255, 215, 0, 0.5), transparent);
+        }
+        
+        .win-loss-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .win-loss-value {
+            font-size: 28px;
+            font-weight: 800;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .win-value {
+            color: var(--win);
+            text-shadow: 0 0 10px rgba(0, 255, 139, 0.4);
+        }
+        
+        .loss-value {
+            color: var(--loss);
+            text-shadow: 0 0 10px rgba(255, 60, 126, 0.4);
+        }
+        
+        /* Premium Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            background: var(--card-hover);
+        }
+        
+        .stat-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--gold);
+        }
+        
+        /* Win/Loss Animation Overlays */
+        .win-overlay, .loss-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
-                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
             pointer-events: none;
-            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
-
-        .container {
-            max-width: 500px;
-            width: 90%;
-            margin: 0 auto;
-            padding: 20px 15px;
-            position: relative;
-            z-index: 1;
+        
+        .win-overlay.active, .loss-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
         }
-
-        header {
+        
+        .win-content, .loss-content {
+            background: rgba(26, 26, 26, 0.97);
+            padding: 35px;
+            border-radius: 20px;
             text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 1s ease-out;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 900;
-            font-family: 'Orbitron', monospace;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: var(--glow);
-            animation: gradientShift 4s ease-in-out infinite, logoFloat 6s ease-in-out infinite;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 0 60px rgba(0, 255, 139, 0.6);
+            border: 2px solid var(--win);
             position: relative;
+            overflow: hidden;
         }
-
-        .logo::before {
+        
+        .loss-content {
+            box-shadow: 0 0 60px rgba(255, 60, 126, 0.6);
+            border: 2px solid var(--loss);
+        }
+        
+        .win-content:before, .loss-content:before {
             content: '';
             position: absolute;
             top: -10px;
             left: -10px;
             right: -10px;
             bottom: -10px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
-            background-size: 200% 200%;
-            border-radius: 20px;
-            filter: blur(20px);
-            opacity: 0.3;
             z-index: -1;
-            animation: gradientShift 4s ease-in-out infinite;
+            border-radius: 25px;
+            background: linear-gradient(45deg, var(--win), transparent, var(--win));
+            opacity: 0.3;
+            animation: rotate 3s linear infinite;
         }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 500;
-            letter-spacing: 1px;
-            margin-top: 10px;
+        
+        .loss-content:before {
+            background: linear-gradient(45deg, var(--loss), transparent, var(--loss));
         }
-
-        .selection-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 30px;
+        
+        @keyframes rotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        .evil-monster {
+            font-size: 70px;
             margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 0.8s ease-out;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
         }
-
-        .selection-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.6s;
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
         }
-
-        .selection-card:hover::before {
-            left: 100%;
-        }
-
-        .selection-title {
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-            color: var(--primary);
-            text-align: center;
-            font-weight: 700;
+        
+        .win-title, .loss-title {
+            font-size: 32px;
+            margin-bottom: 15px;
             text-transform: uppercase;
             letter-spacing: 2px;
-        }
-
-        .options-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .option {
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: var(--border-radius-small);
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .option::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.6s;
-        }
-
-        .option:hover::before {
-            left: 100%;
-        }
-
-        .option:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(0, 255, 255, 0.3);
-            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
-        }
-
-        .option-icon {
-            font-size: 1.8rem;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
-            min-width: 50px;
-            text-align: center;
-        }
-
-        .option-content {
-            flex: 1;
-        }
-
-        .option-name {
-            font-size: 1.2rem;
+            font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            margin-bottom: 5px;
-            color: var(--primary);
+        }
+        
+        .win-title {
+            color: var(--win);
+            text-shadow: 0 0 15px rgba(0, 255, 139, 0.6);
+        }
+        
+        .loss-title {
+            color: var(--loss);
+            text-shadow: 0 0 15px rgba(255, 60, 126, 0.6);
+        }
+        
+        .win-message, .loss-message {
+            margin-bottom: 25px;
+            color: var(--text);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .close-button {
+            background: var(--gold);
+            color: var(--primary-dark);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-family: 'Montserrat', sans-serif;
             text-transform: uppercase;
             letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-
-        .option-desc {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 500;
+        
+        .close-button:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         }
-
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85rem;
+        
+        /* Fade animations */
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.3s ease;
         }
-
-        /* Animations */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
+        
+        .fade-in {
+            opacity: 1;
+            transform: scale(1);
+            transition: all 0.3s ease;
+        }
+        
+        /* Premium UI Elements */
+        .premium-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 70%);
+            filter: blur(25px);
+            z-index: 1;
+            animation: glow-pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.1); }
+        }
+        
+        .glow-1 {
+            top: -150px;
+            right: -150px;
+        }
+        
+        .glow-2 {
+            bottom: -100px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(255, 60, 126, 0.15) 0%, transparent 70%);
+            animation-delay: 2s;
+        }
+        
+        .glow-3 {
+            top: 50%;
+            left: 20%;
+            background: radial-gradient(circle, rgba(160, 64, 255, 0.1) 0%, transparent 70%);
+            animation-delay: 4s;
+        }
+        
+        /* Confetti animation */
+        .confetti {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            background: var(--gold);
+            opacity: 0;
+            z-index: 99;
+            pointer-events: none;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(-100vh) rotate(0deg);
             }
-        }
-
-        @keyframes fadeInUp {
-            from {
+            100% {
                 opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+                transform: translateY(100vh) rotate(720deg);
             }
         }
-
-        @keyframes gradientShift {
-            0%, 100% {
-                background-position: 0% 50%;
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                font-size: 12px;
             }
-            50% {
-                background-position: 100% 50%;
+            
+            .status-bar {
+                flex-wrap: wrap;
+                gap: 12px;
+                padding: 12px 15px;
+            }
+            
+            .win-loss-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .win-loss-box {
+                width: 100%;
+                max-width: 200px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 11px;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+            
+            .win-title, .loss-title {
+                font-size: 24px;
+            }
+            
+            .evil-monster {
+                font-size: 50px;
+            }
+            
+            .win-content, .loss-content {
+                padding: 25px;
             }
         }
-
-        @keyframes logoFloat {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        /* Mobile-specific improvements */
+        
         @media (max-width: 480px) {
-            .container {
-                padding: 15px 10px;
+            .status-bar {
+                justify-content: center;
             }
             
-            .logo {
-                font-size: 2rem;
+            .live-text, .timer, .id-text, .red-count, .small-link {
+                margin: 5px;
             }
             
-            .selection-card {
-                padding: 20px;
-            }
-            
-            .option {
+            .content {
                 padding: 15px;
             }
             
-            .option-icon {
-                font-size: 1.5rem;
-                min-width: 40px;
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            .dot {
+                width: 10px;
+                height: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1 class="logo"></h1>
-            <div class="subtitle"></div>
-        </header>
-
-        <div class="selection-card">
-            <h2 class="selection-title">SELECT GAME TYPE</h2>
-            <div class="options-container">
-                <div class="option" onclick="selectGame('30s')">
-                    <div class="option-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <div class="option-content">
-                        <div class="option-name">WinGo 30s</div>
-                        <div class="option-desc">Fast-paced 30-second rounds with quick results</div>
-                    </div>
-                </div>
-                
-                <div class="option" onclick="selectGame('1min')">
-                    <div class="option-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="option-content">
-                        <div class="option-name">WinGo 1Min</div>
-                        <div class="option-desc">One-minute rounds with strategic gameplay</div>
-                    </div>
-                </div>
+    <div class="premium-glow glow-1"></div>
+    <div class="premium-glow glow-2"></div>
+    <div class="premium-glow glow-3"></div>
+    
+    <div class="status-bar" id="statusBar">
+        <div class="live-text">
+            <div class="live-dot"></div>
+            LIVE
+        </div>
+        <div class="id-text" id="periodId">Fetching Period...</div>
+        <div class="timer">
+            <i class="fas fa-clock"></i>
+            <span id="seconds">--s</span>
+        </div>
+        <div class="red-count fade-out" id="resultNumber">--</div>
+        <div class="small-link fade-out" id="resultType">--</div>
+    </div>
+    
+    <div class="content" id="content" style="opacity: 0.7;">
+        <h2>LICUIS ULTRA</h2>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-title">Current Streak</div>
+                <div class="stat-value" id="currentStreak">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Win Rate</div>
+                <div class="stat-value" id="winRate">0%</div>
             </div>
         </div>
-
-        <div class="footer">
-            <p>Select your preferred game type to continue</p>
+        
+        <div class="win-loss-container">
+            <div class="win-loss-box win">
+                <div class="win-loss-title">WINS</div>
+                <div class="win-loss-value win-value" id="winCount">0</div>
+            </div>
+            <div class="win-loss-box loss">
+                <div class="win-loss-title">LOSSES</div>
+                <div class="win-loss-value loss-value" id="lossCount">0</div>
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Number</th>
+                    <th>Big/Small</th>
+                    <th>Color</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody id="history-table"></tbody>
+        </table>
+        
+        <div class="footer">Showing latest 10 results</div>
+    </div>
+    
+    <div class="win-overlay" id="winOverlay">
+        <div class="win-content">
+            <div class="evil-monster">👹</div>
+            <div class="win-title">EVIL WIN!</div>
+            <div class="win-message">The dark forces have granted you victory!</div>
+            <button class="close-button" onclick="closeOverlay('winOverlay')">Claim Your Prize</button>
+        </div>
+    </div>
+    
+    <div class="loss-overlay" id="lossOverlay">
+        <div class="loss-content">
+            <div class="evil-monster">👺</div>
+            <div class="loss-title">CURSED LOSS!</div>
+            <div class="loss-message">The evil spirits have taken your bet!</div>
+            <button class="close-button" onclick="closeOverlay('lossOverlay')">Try Again</button>
         </div>
     </div>
 
     <script>
-        function selectGame(type) {
-            if (type === '30s') {
-                // Open WinGo 30s page
-                window.location.href = 'https://aligour444-gour.github.io/Wingo-30-s/';
-            } else if (type === '1min') {
-                // Open WinGo 1Min page
-                window.location.href = 'https://aligour444-gour.github.io/Wingo-1-min/';
+        let latestPeriod = ""; // Changed from lastPeriod to latestPeriod for clarity with API
+        let winCount = 0;
+        let lossCount = 0;
+        let lastPrediction = null;
+        let currentStreak = 0;
+        let maxStreak = 0;
+        let previousResults = []; // To store results from GetHistoryIssuePage
+
+        function getCalculatedResult(minute) {
+            const base = (minute * 3 + 7) % 10;
+            const isBig = base >= 5;
+            return { resultType: isBig ? "BIG" : "SMALL", number: base };
+        }
+
+        function animateResultUpdate(resultType, number) {
+            const resultEl = document.getElementById("resultNumber");
+            const typeEl = document.getElementById("resultType");
+
+            resultEl.classList.add("fade-out");
+            typeEl.classList.add("fade-out");
+
+            setTimeout(() => {
+                resultEl.innerText = number;
+                typeEl.innerText = resultType;
+                resultEl.classList.remove("fade-out");
+                typeEl.classList.remove("fade-out");
+                resultEl.classList.add("fade-in");
+                typeEl.classList.add("fade-in");
+                setTimeout(() => {
+                    resultEl.classList.remove("fade-in");
+                    typeEl.classList.remove("fade-in");
+                }, 600);
+            }, 300);
+        }
+
+        function updatePredictionStatus(actualNumber) {
+            if (lastPrediction && latestPeriod) {
+                const actualResultType = actualNumber >= 5 ? "BIG" : "SMALL";
+                const isWin = lastPrediction.resultType === actualResultType;
+
+                if (isWin) {
+                    winCount++;
+                    currentStreak = currentStreak > 0 ? currentStreak + 1 : 1;
+                    maxStreak = Math.max(maxStreak, currentStreak);
+                    showWinLossOverlay(true);
+                } else {
+                    lossCount++;
+                    currentStreak = currentStreak < 0 ? currentStreak - 1 : -1;
+                    showWinLossOverlay(false);
+                }
+                updateWinLossCounters();
+
+                // Add the result with prediction to history for rendering
+                historyData.unshift({ 
+                    period: latestPeriod, 
+                    number: actualNumber,
+                    prediction: lastPrediction 
+                });
+                if (historyData.length > 10) historyData.pop();
+                renderHistory();
+            }
+            // Clear prediction and period after checking
+            lastPrediction = null;
+        }
+
+        function makeNewPrediction(period) {
+            const periodNumPart = period.slice(10); // Extract the minute part of the period for prediction
+            const minutes = parseInt(periodNumPart) - 10001;
+            
+            lastPrediction = getCalculatedResult(minutes);
+            document.getElementById("periodId").innerText = period;
+            animateResultUpdate(lastPrediction.resultType, lastPrediction.number);
+            
+            // Set content opacity for prediction phase
+            document.getElementById("content").style.opacity = "1"; 
+        }
+
+        // ✅ Fetch historical data
+        async function fetchPreviousResults() {
+            try {
+                const timestamp = Date.now();
+                const response = await fetch(
+                    `https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50`
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data?.data?.list?.length > 0) {
+                    previousResults = data.data.list.map((item) => ({
+                        number: parseInt(item.premium || item.result || item.number || 0, 10),
+                        issueNumber: item.issueNumber || item.period,
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching previous results:", error);
             }
         }
+
+        // ✅ Fetch current game issue (main API)
+        async function fetchCurrentGameIssue() {
+            const apiUrl = "https://api.bdg88zf.com/api/webapi/GetGameIssue";
+            const requestData = {
+                typeId: 1,
+                language: 0,
+                random: "40079dcba93a48769c6ee9d4d4fae23f",
+                signature: "D12108C4F57C549D82B23A91E0FA20AE",
+                timestamp: Math.floor(Date.now() / 1000),
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json;charset=UTF-8" },
+                    body: JSON.stringify(requestData),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.code === 0) {
+                        const newPeriod = data.data.issueNumber;
+
+                        if (newPeriod !== latestPeriod) {
+                            // Fetch historical before checking last result
+                            await fetchPreviousResults();
+
+                            if (latestPeriod && previousResults.length > 0) {
+                                // Find the actual result for the period that just closed (latestPeriod)
+                                const lastActualItem = previousResults.find(
+                                    (item) => String(item.issueNumber) === String(latestPeriod)
+                                );
+
+                                if (lastActualItem) {
+                                    updatePredictionStatus(lastActualItem.number);
+                                }
+                            }
+
+                            // Start new period countdown and prediction
+                            latestPeriod = newPeriod;
+                            makeNewPrediction(newPeriod);
+                        }
+
+                        // Update timer countdown
+                        const remainingSeconds = data.data.remainingSeconds;
+                        document.getElementById("seconds").innerText = remainingSeconds + "s";
+                        
+                        // Last 5-second logic for visual dimming
+                        const content = document.getElementById("content");
+                        if (remainingSeconds <= 5) {
+                            content.style.opacity = "0.7";
+                        } else {
+                            content.style.opacity = "1";
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching current game issue:", error);
+            }
+        }
+
+        // Replace the old client-side period logic with the new API fetch
+        // setInterval(updatePeriodAndTimer, 1000); 
+        // updatePeriodAndTimer();
+        
+        setInterval(fetchCurrentGameIssue, 1000);
+        fetchCurrentGameIssue(); // Initial call
+
+        let historyData = [];
+
+        function getColor(number) {
+            switch (number) {
+                case 9: return ["green"];
+                case 8: return ["red"];
+                case 7: return ["green"];
+                case 6: return ["red"];
+                case 5: return ["green", "violet"];
+                case 4: return ["red"];
+                case 3: return ["green"];
+                case 2: return ["red"];
+                case 1: return ["green"];
+                case 0: return ["red", "violet"];
+                default: return [];
+            }
+        }
+
+        function renderHistory() {
+            const table = document.getElementById("history-table");
+            table.innerHTML = "";
+            historyData.forEach((item, index) => {
+                const tr = document.createElement("tr");
+                const bigSmall = item.number >= 5 ? "Big" : "Small";
+                const colors = getColor(item.number);
+                
+                // Determine if this was a win or loss based on prediction
+                let resultClass = "";
+                let resultText = "";
+                
+                if (item.prediction) {
+                    const wasWin = item.prediction.resultType === (item.number >= 5 ? "BIG" : "SMALL");
+                    resultClass = wasWin ? "win" : "loss";
+                    resultText = wasWin ? "WIN" : "LOSS";
+                }
+                
+                if (index === 0) tr.classList.add("new-entry");
+                tr.innerHTML = `
+                    <td>${item.period}</td>
+                    <td style="color: ${colors[0]}">${item.number}</td>
+                    <td class="${bigSmall.toLowerCase()}">${bigSmall}</td>
+                    <td>${colors.map(c => `<span class="dot ${c}"></span>`).join("")}</td>
+                    <td class="${resultClass}">${resultText}</td>
+                `;
+                table.appendChild(tr);
+            });
+        }
+
+        function createConfetti() {
+            const colors = ['#ff3c7e', '#00ff8b', '#a240ff', '#ffd700', '#00b8ff'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        function showWinLossOverlay(isWin) {
+            const overlayId = isWin ? "winOverlay" : "lossOverlay";
+            const overlay = document.getElementById(overlayId);
+            
+            if (isWin) {
+                createConfetti();
+            }
+            
+            overlay.classList.add("active");
+            
+            // Auto-close after 3 seconds
+            setTimeout(() => {
+                overlay.classList.remove("active");
+            }, 3000);
+        }
+
+        function closeOverlay(overlayId) {
+            document.getElementById(overlayId).classList.remove("active");
+        }
+
+        function updateWinLossCounters() {
+            document.getElementById("winCount").textContent = winCount;
+            document.getElementById("lossCount").textContent = lossCount;
+            
+            // Update streak and win rate
+            const totalGames = winCount + lossCount;
+            const winRate = totalGames > 0 ? Math.round((winCount / totalGames) * 100) : 0;
+            document.getElementById("winRate").textContent = winRate + "%";
+            document.getElementById("currentStreak").textContent = currentStreak;
+        }
+
+        // This function is no longer the main driver for period updates and prediction checking
+        // but it can be kept to fill history on load if needed, though fetchPreviousResults 
+        // in fetchCurrentGameIssue will handle the most recent result check.
+        async function fetchGameResult() {
+            try {
+                const ts = Date.now();
+                // Note: This API seems to be for a 30S game, while the added API is 1M. 
+                // Using the 1M API for historical data is more consistent. 
+                // This block is left mostly as-is, but the main period logic is now 
+                // in fetchCurrentGameIssue. This function can be used to load initial history.
+                const url = `https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?pageSize=10&pageNo=1&typeId=1&language=0&random=62d02162c2234c64b57aa4188c5810b2&signature=9BF7A245709AA054E231D75C404C6527&timestamp=${Math.floor(
+                    Date.now() / 1000
+                )}&ts=${ts}`;
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("API fetch failed");
+                const data = await response.json();
+                const list = data?.data?.list;
+
+                if (Array.isArray(list)) {
+                    // Filter out already processed periods and only add to historyData
+                    for (const item of list) {
+                        const number = parseInt(item.number || item.premium || item.result);
+                        const period = item.issueNumber || item.period;
+                        
+                        if (!historyData.find(h => h.period === period)) {
+                            // Only add historical data without a prediction flag
+                            historyData.push({ period, number, prediction: null });
+                        }
+                    }
+                    // Sort by period number and keep only the latest 10
+                    historyData.sort((a, b) => b.period - a.period);
+                    historyData = historyData.slice(0, 10);
+                    renderHistory();
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+            }
+        }
+
+        // Initial fetch for game history
+        fetchGameResult(); 
     </script>
 </body>
 </html>
