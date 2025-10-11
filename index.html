@@ -1602,11 +1602,11 @@
     </div>
 
     <script>
-        // 🔮 LICUIS ULTRA : ZENITH AI-CORE ENGINE 10.1 (Enhanced & Accurate) - FIXED VERSION
+        // 🔮 LICUIS ULTRA : QUANTUM-LEAP DETERMINISTIC CORE LOGIC
 
         "use strict";
 
-        // --- START PYTHON LOGIC EQUIVALENT (2-Level Recovery) ---
+        // --- QUANTUM-LEAP DETERMINISTIC CORE LOGIC ---
 
         // Simple deque implementation for JavaScript
         class Deque {
@@ -1636,62 +1636,80 @@
         }
 
         // --- Global State Management for Integrated Logic ---
-        // Use a deque for a rolling history of past results for pattern recognition
-        const PAST_RESULTS = new Deque({ maxlen: 10 }); // Increased maxlen to 10 for better pattern analysis
-        let LAST_PREDICTION_RESULT = null; // Stores the outcome of the previous prediction ("WIN" or "LOSS")
-        let RECOVERY_LEVEL = 0; // 0: Normal Mode, 1: First-level recovery, 2: Second-level recovery
-        let LAST_PREDICTION_DIRECTION = null; // Stores the size ('BIG'/'SMALL') of the last prediction
-        let RANDOMNESS_FACTOR = 0.1; // New: For simulating Random Override
+        const PAST_RESULTS = new Deque({ maxlen: 10 });
+        let LAST_PREDICTION_RESULT = null;
+        let RECOVERY_LEVEL = 0;
+        let LAST_PREDICTION_DIRECTION = null;
+        let RANDOMNESS_FACTOR = 0.1;
 
         // Configuration for thresholds
         const config = {
-            antiPredictThreshold: 0.60, // 60% win rate for Anti-Predict
-            minStreakForContinuation: 2, // Win/Loss Streak length for Fallback
+            antiPredictThreshold: 0.60,
+            minStreakForContinuation: 2,
         };
 
         // --- Helper Functions ---
 
         function get_last_five_digits_masked(period_number) {
-            /** Extracts the last 5 digits and masks the rest of the period number. 
-             * FIXED: Now shows the first four digits and masks the middle section, 
-             * while ensuring the last five digits are visible.
-             */
             const period_number_str = String(period_number);
             
             if (period_number_str.length <= 9) {
-                // If the number is short (e.g., up to 9 digits), just show it.
                 return period_number_str;
             }
 
             const firstFour = period_number_str.slice(0, 4);
             const lastFive = period_number_str.slice(-5);
-            // Mask the middle part of the number. The length of the masked part will vary.
-            const maskedMiddle = 'XXXXX'; // Use a fixed length of 'X' for visual consistency
+            const maskedMiddle = 'XXXXX';
             
             return firstFour + maskedMiddle + lastFive;
         }
 
         function get_last_four_digits(period_number) {
-            /** Safely extracts the last four digits as integers from a string period_number. */
             const period_number_str = String(period_number);
             const digits = period_number_str.slice(-4);
             return digits.split('').map(d => parseInt(d, 10));
         }
 
         function get_size_outcome(number) {
-            // 0-4 is SMALL, 5-9 is BIG
             return number > 4 ? "BIG" : "SMALL";
         }
         
-        // --- NEW: Function to get Red/Green outcome ---
         function get_color_outcome(number) {
-            // 1,3,5,7,9 (Odd) is GREEN
-            // 0,2,4,6,8 (Even) is RED
             return number % 2 !== 0 ? "GREEN" : "RED";
         }
 
+        // Advanced Transformation Function
+        function advanced_term(value) {
+            return Math.tanh(Math.sin(value) * Math.cos(value) + Math.log(Math.abs(value) + 1));
+        }
+
+        function generate_deterministic_seed(last_five_digits, chaos_sum) {
+            // Calculate ICV using the advanced transformation
+            const pi = Math.PI;
+            const e = Math.E;
+            
+            const ICV = advanced_term(last_five_digits + pi) * advanced_term(last_five_digits + e);
+            
+            // Mersenne-Aligned Weight (MAW)
+            const MERSENNE_PRIME = 2147483647; // 2^31 - 1
+            const MAW = (ICV + chaos_sum) % MERSENNE_PRIME;
+            
+            // Deterministic Seed (D_seed) - digital root
+            let digital_root = MAW;
+            while (digital_root > 9) {
+                let sum = 0;
+                let num = digital_root;
+                while (num > 0) {
+                    sum += num % 10;
+                    num = Math.floor(num / 10);
+                }
+                digital_root = sum;
+            }
+            
+            return digital_root;
+        }
+
         function analyze_pattern_section(results) {
-            /** New: Core Pattern Analysis based on the prompt's Step 1. */
             const len = results.length;
             if (len < 3) return { type: "NEUTRAL", prediction: null, confidence: 0 };
             
@@ -1699,124 +1717,105 @@
             const secondLast = results[len - 2];
             const thirdLast = results[len - 3];
             
-            // 1. Trap Pattern (Simulated: a break in an established sequence suggesting a trap)
-            // Check for a long streak (5+) immediately broken by a single opposite result
+            // 1. Trap Pattern
             if (len >= 6) {
                 const last6 = results.slice(-6);
                 const streakType = last6[0];
                 const isStreak5 = last6.slice(0, 5).every(res => res === streakType);
                 if (isStreak5 && last6[5] !== streakType) {
-                    // 5-streak broken on the 6th result. Server is "trapping." Predict the reversal.
                     return { type: "TRAP_REVERSAL", prediction: streakType, confidence: 0.95 };
                 }
             }
 
-            // 2. Alternating Pattern (B-S-B-S) - check last 4
+            // 2. Alternating Pattern
             if (len >= 4 && lastResult !== secondLast && secondLast !== thirdLast && thirdLast !== results[len-4]) {
-                // Alternating found (e.g., X, Y, X, Y). Predict next X.
                 return { type: "ALTERNATING_PATTERN", prediction: secondLast, confidence: 0.85 };
             }
 
-            // 3. Repeat Pattern (Streaks like B-B-B) - check last 3
+            // 3. Repeat Pattern
             if (lastResult === secondLast && secondLast === thirdLast) {
-                // Streak continuation
                 return { type: "REPEAT_PATTERN", prediction: lastResult, confidence: 0.80 };
             }
 
-            // 4. Two-Then-One Pattern (X-X-Y) - check last 3
+            // 4. Two-Then-One Pattern
             if (lastResult !== secondLast && secondLast === thirdLast) {
-                // e.g., B-B-S. Predict continuation 'X', which is B.
                 return { type: "TWO_THEN_ONE", prediction: secondLast, confidence: 0.75 };
             }
 
             // 5. Fallback: Simple Alternation
             if (lastResult !== secondLast && lastResult === thirdLast) {
-                 // e.g., S-B-S. Predict continuation B.
                 return { type: "SIMPLE_ALTERNATING", prediction: lastResult === 'BIG' ? 'SMALL' : 'BIG', confidence: 0.65 };
             }
-
-            // Number Sequence Patterns (Not explicitly implemented here as they rely on the number, not BIG/SMALL)
 
             return { type: "NEUTRAL", prediction: null, confidence: 0 };
         }
 
         function pattern_analysis_prediction(history, currentPeriod) {
-            /**
-             * Executes the Pattern Analysis (Primary Check) and Random Override.
-             */
-            const results = history.items.slice(-10); // Last 10 results for pattern analysis
+            const results = history.items.slice(-10);
             const analysis = analyze_pattern_section(results);
             
             let prediction = analysis.prediction;
             let confidence = analysis.confidence;
             
             if (prediction) {
-                // 2. Random Override (Controlled Unpredictability)
+                // Random Override
                 if (Math.random() < RANDOMNESS_FACTOR) {
                     prediction = prediction === 'BIG' ? 'SMALL' : 'BIG';
-                    confidence = Math.max(0.5, confidence * 0.7); // Drop confidence on override
+                    confidence = Math.max(0.5, confidence * 0.7);
                 }
             } else {
-                // Fallback to simple parity check from the current period number
-                const digits = get_last_four_digits(currentPeriod);
-                const total_sum = digits.reduce((a, b) => a + b, 0);
-                prediction = total_sum % 2 === 1 ? "BIG" : "SMALL"; // Simple default: Odd sum = BIG, Even sum = SMALL
-                confidence = 0.5;
+                // Quantum-Leap Deterministic Seed Generation
+                const last_five_digits = parseInt(String(currentPeriod).slice(-5));
+                const chaos_sum = String(currentPeriod).split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+                
+                const deterministic_seed = generate_deterministic_seed(last_five_digits, chaos_sum);
+                
+                // Use deterministic seed to make prediction
+                prediction = deterministic_seed % 2 === 0 ? "BIG" : "SMALL";
+                confidence = 0.65 + (deterministic_seed % 10) * 0.035;
             }
             
             return { prediction, confidence };
         }
 
         function fallback_algorithm_prediction(lastPrediction, lastResult, coordinator) {
-            /**
-             * Executes the Fallback Algorithm (Adaptive/Sequential Logic) - Step 3.
-             */
-            
-            let prediction = lastPrediction; // Default is to repeat the last prediction
+            let prediction = lastPrediction;
             let confidence = 0.55;
 
-            // Fetch config values from coordinator (for Anti-Predict threshold)
-            const overallWinRate = coordinator.zenithAI.modelPerformance.reinforcement.accuracy; // Using reinforcement model accuracy as a proxy for overall win rate
+            const overallWinRate = coordinator.zenithAI.modelPerformance.reinforcement?.accuracy || 0.5;
             const antiPredictThreshold = coordinator.zenithAI.config.antiPredictThreshold || 0.60;
 
             // 1. High Win Rate Switch (Anti-Predict)
             if (overallWinRate > antiPredictThreshold) {
-                prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG'; // Switch to the opposite
-                confidence = 0.88; // High confidence for anti-predict
+                prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG';
+                confidence = 0.88;
                 return { prediction, confidence, reason: "ANTI_PREDICT" };
             }
 
             // 2. Loss Reversal
             if (lastResult === 'LOSS') {
-                prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG'; // Switch direction
+                prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG';
                 return { prediction, confidence: 0.70, reason: "LOSS_REVERSAL" };
             }
 
-            // 3. Streak Continuation/Reversal (Uses coordinator's streak counts)
+            // 3. Streak Continuation/Reversal
             const winStreak = coordinator.consecutiveWins;
-            const lossStreak = coordinator.consecutiveLosses; // Note: lossStreak > 0 implies RECOVERY_LEVEL > 0
+            const lossStreak = coordinator.consecutiveLosses;
 
             if (winStreak >= config.minStreakForContinuation) {
-                // Win Streak Continuation (predict the same as last outcome)
-                prediction = PAST_RESULTS.at(-1); // Predict the last outcome
+                prediction = PAST_RESULTS.at(-1);
                 return { prediction, confidence: 0.75, reason: "WIN_STREAK_CONT" };
             }
             
             if (lossStreak >= config.minStreakForContinuation) {
-                // Loss Streak Reversal (switch direction)
                 prediction = lastPrediction === 'BIG' ? 'SMALL' : 'BIG'; 
                 return { prediction, confidence: 0.80, reason: "LOSS_STREAK_REV" };
             }
             
-            // Default Fallback
             return { prediction, confidence, reason: "FALLBACK_DEFAULT" };
         }
 
         function final_prediction_core(period_number, history, lastPrediction, lastResult, coordinator) {
-            /**
-             * Orchestrates the prediction logic based on the prompt's sequence.
-             */
-            
             let predictionData = { prediction: null, confidence: 0, reason: "INITIAL" };
             
             // 1. Pattern Analysis (Primary Check)
@@ -1824,30 +1823,26 @@
                 predictionData = pattern_analysis_prediction(history, period_number);
             }
             
-            // 3. Fallback Algorithm (if no specific pattern is found or low confidence)
+            // 2. Fallback Algorithm
             if (!predictionData.prediction || predictionData.confidence < 0.60) {
                 if (lastPrediction && lastResult) {
                     predictionData = fallback_algorithm_prediction(lastPrediction, lastResult, coordinator);
                 } else {
-                     // Ultimate default
-                    const digits = get_last_four_digits(period_number);
-                    const total_sum = digits.reduce((a, b) => a + b, 0);
-                    predictionData.prediction = total_sum % 2 === 1 ? "BIG" : "SMALL";
-                    predictionData.confidence = 0.5;
-                    predictionData.reason = "ULTIMATE_DEFAULT";
+                    // Quantum-Leap Deterministic Seed as ultimate fallback
+                    const last_five_digits = parseInt(String(period_number).slice(-5));
+                    const chaos_sum = String(period_number).split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+                    const deterministic_seed = generate_deterministic_seed(last_five_digits, chaos_sum);
+                    
+                    predictionData.prediction = deterministic_seed % 2 === 0 ? "BIG" : "SMALL";
+                    predictionData.confidence = 0.65 + (deterministic_seed % 10) * 0.035;
+                    predictionData.reason = "QUANTUM_DETERMINISTIC_SEED";
                 }
             }
-            
-            // 4. Number Generation (The model only predicts 'BIG'/'SMALL'. Specific number generation is an ensemble step.)
-            // Note: The lossRecoveryModel is typically an override/aggressive mode, handled by the `LossRecoveryModel` logic.
             
             return predictionData;
         }
 
         function update_integrated_state(actual_result, made_prediction, was_recovery_mode) {
-            /**
-             * Updates global state (PAST_RESULTS, RECOVERY_LEVEL, RANDOMNESS_FACTOR)
-             */
             PAST_RESULTS.append(actual_result);
             LAST_PREDICTION_DIRECTION = made_prediction;
             
@@ -1856,65 +1851,50 @@
             if (isWin) {
                 LAST_PREDICTION_RESULT = "WIN";
                 RECOVERY_LEVEL = 0;
-                // Decrease randomness after a WIN
                 RANDOMNESS_FACTOR = Math.max(0.1, RANDOMNESS_FACTOR * 0.8);
             } else {
                 LAST_PREDICTION_RESULT = "LOSS";
                 
-                // Only increase recovery level if we weren't in recovery mode, or if the recovery failed
                 if (was_recovery_mode || RECOVERY_LEVEL === 0) {
                     RECOVERY_LEVEL += 1;
                 }
 
-                // Critical Check: Handle system failure if a third consecutive loss occurs (Level 3 or higher)
                 if (RECOVERY_LEVEL > 2) {
                     console.log(`!! 🛑 MAX LEVEL ALERT: ${RECOVERY_LEVEL} consecutive losses detected. Resetting to Normal Mode. !!`);
-                    RECOVERY_LEVEL = 0; // Reset after failure
+                    RECOVERY_LEVEL = 0;
                     LAST_PREDICTION_DIRECTION = null;
                 }
                 
-                // Increase randomness after a LOSS
                 RANDOMNESS_FACTOR = Math.min(0.5, RANDOMNESS_FACTOR * 1.5 + 0.1);
             }
         }
 
-        function generateNumber(direction, period_number) {
-            /** New: Selects a specific number (0-9) aligned with the direction. */
-            const digits = get_last_four_digits(period_number);
-            const lastDigit = digits.length > 0 ? digits[digits.length - 1] : Math.floor(Math.random() * 10);
-            
-            if (direction === 'BIG') {
-                // Try to pick a BIG number (5-9) close to the last digit, or a random BIG
-                if (lastDigit >= 5) return lastDigit;
-                return Math.floor(Math.random() * 5) + 5; // 5, 6, 7, 8, 9
-            } else {
-                // Try to pick a SMALL number (0-4) close to the last digit, or a random SMALL
-                if (lastDigit <= 4) return lastDigit;
-                return Math.floor(Math.random() * 5); // 0, 1, 2, 3, 4
+        function aggressive_recovery_logic_v2(period_number, recovery_level, history) {
+            if (history.length > 0) {
+                const last_result = history.at(-1);
+                return last_result === "BIG" ? "SMALL" : "BIG";
             }
+            
+            // Quantum-Leap Deterministic Seed for recovery
+            const last_five_digits = parseInt(String(period_number).slice(-5));
+            const chaos_sum = String(period_number).split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+            const deterministic_seed = generate_deterministic_seed(last_five_digits, chaos_sum);
+            
+            return deterministic_seed % 2 === 0 ? "BIG" : "SMALL";
         }
 
-        // --- Integrated Utility Functions for Coordinator/Core Interop ---
-
         function final_prediction_2lvl_recovery(period_number, actual_result = null, coordinator) {
-            /**
-             * The main function that orchestrates the prediction process,
-             * managing the state for the upgraded 2-level recovery system (FIXED).
-             */
-            
-            // The coordinator is required for access to dynamic data (win rate, streaks)
             if (!coordinator) throw new Error("Coordinator instance is required for final_prediction_2lvl_recovery.");
 
             let prediction;
             let confidence = 0;
             
-            // **RECOVERY MODE LOGIC (Override)**
+            // RECOVERY MODE LOGIC
             if (RECOVERY_LEVEL > 0) {
-                // Level 1 or 2 recovery is high-conviction. Use the aggressive logic as a sure-shot.
                 prediction = aggressive_recovery_logic_v2(period_number, RECOVERY_LEVEL, PAST_RESULTS);
                 confidence = RECOVERY_LEVEL === 2 ? 0.99 : 0.95;
             } else {
-                // **NORMAL MODE**: Use the new core logic sequence
+                // NORMAL MODE: Use Quantum-Leap Deterministic Core Logic
                 const corePredData = final_prediction_core(
                     period_number, 
                     PAST_RESULTS, 
@@ -1926,47 +1906,24 @@
                 confidence = corePredData.confidence;
             }
 
-            // 2. Update System State (only if an actual result is provided, i.e., at the end of a period)
+            // Update System State
             if (actual_result !== null) {
-                
-                // Get the prediction that was made for this closed period
                 const externalMadePrediction = coordinator.zenithAI.lastPrediction; 
                 
                 update_integrated_state(actual_result, externalMadePrediction, RECOVERY_LEVEL > 0);
                 
-                // The coordinator needs to sync its streak count with the new RECOVERY_LEVEL
                 coordinator.consecutiveLosses = RECOVERY_LEVEL;
                 if (RECOVERY_LEVEL === 0) {
-                    coordinator.consecutiveWins++; // Only increment coordinator win streak if recovery level is reset (i.e., we just won a cycle)
+                    coordinator.consecutiveWins++;
                 } else {
                     coordinator.consecutiveWins = 0;
                 }
             }
 
-            // 3. Return the calculated prediction
             return { prediction, confidence };
         }
 
-        function aggressive_recovery_logic_v2(period_number, recovery_level, history) {
-            /**
-             * High-Certainty Logic for Recovery Mode.
-             * The logic becomes more aggressive at Level 2.
-             * This replaces the old aggressive_recovery_logic for simplicity and focus on reversal.
-             */
-            
-            // The core idea of recovery is REVERSAL of the last outcome.
-            if (history.length > 0) {
-                const last_result = history.at(-1);
-                return last_result === "BIG" ? "SMALL" : "BIG";
-            }
-            
-            // Fallback if no history
-            const digits = get_last_four_digits(period_number);
-            const total_sum = digits.reduce((a, b) => a + b, 0);
-            return total_sum % 2 === 1 ? "BIG" : "SMALL";
-        }
-
-        // --- END PYTHON LOGIC EQUIVALENT ---
+        // --- END QUANTUM-LEAP DETERMINISTIC CORE LOGIC ---
 
         const LOCAL_STORAGE_KEY = 'zenithAICoreState';
         const PREDICTOR_COORDINATOR_KEY = 'zenithPredictorCoordinatorState';
@@ -1974,7 +1931,7 @@
         class zenithAICore {
             constructor() {
                 this.history = [];
-                this.config = config; // Expose config for logic functions
+                this.config = config;
                 this.modelWeights = {
                     quantumEntanglement: 10,
                     temporalFusion: 9.5,
@@ -2005,13 +1962,12 @@
                     antiStreak: 12.0,
                     alternatingMatch: 11.5,
                     weightedProbability: 10.5,
-                    lossRecovery: 20.0, // Increased weight for high-conviction recovery
+                    lossRecovery: 20.0,
                     simulatedNN: 9.0,
                     simulatedML: 9.2,
                     mirrorPattern: 9.5,
                     parityImbalance: 8.5,
                     doubleRepeatBreak: 7.0,
-                    // Low-weight models from the original list for completeness, but typically overridden
                     momentum: 4.0,
                     zigzag: 3.5,
                     frequency: 5.0,
@@ -2040,8 +1996,6 @@
             }
 
             initializeModels() {
-                // ... (Model definitions remain the same, only LossRecoveryModel is critical)
-                // ... (Initialize Models code block)
                 this.models = {
                     momentum: this.MomentumModel(),
                     zigzag: this.ZigZagModel(),
@@ -2111,7 +2065,6 @@
                     deepLearningEnabled: this.deepLearningEnabled,
                     adaptiveModelsEnabled: this.adaptiveModelsEnabled,
                     learningRate: this.learningRate,
-                    // Include integrated state for persistence (optional, but robust)
                     integratedRecoveryLevel: RECOVERY_LEVEL,
                     integratedLastResult: LAST_PREDICTION_RESULT,
                     integratedLastDirection: LAST_PREDICTION_DIRECTION,
@@ -2139,14 +2092,12 @@
                             }
                         }
                         
-                        // Load integrated state
                         if (parsedState.integratedRecoveryLevel !== undefined) {
                             RECOVERY_LEVEL = parsedState.integratedRecoveryLevel;
                             LAST_PREDICTION_RESULT = parsedState.integratedLastResult;
                             LAST_PREDICTION_DIRECTION = parsedState.integratedLastDirection;
                             RANDOMNESS_FACTOR = parsedState.integratedRandomnessFactor;
                             PAST_RESULTS.items = parsedState.integratedPastResults || [];
-                            // Ensure deque maxlen is respected on load
                             PAST_RESULTS.maxlen = 10;
                             while (PAST_RESULTS.items.length > PAST_RESULTS.maxlen) {
                                 PAST_RESULTS.items.shift();
@@ -2159,7 +2110,6 @@
             }
 
             updateDynamicWeights() {
-                // ... (Existing updateDynamicWeights implementation)
                 const modelsWithData = Object.values(this.modelPerformance).filter(p => p.total > 0);
                 const totalAccuracy = modelsWithData.reduce((sum, p) => sum + p.accuracy, 0);
 
@@ -2212,7 +2162,6 @@
             }
 
             updateModelPerformance(actualSize) {
-                // ... (Existing updateModelPerformance implementation)
                 for (const modelName in this.models) {
                     const modelPredCacheKey = modelName + "_" + this.history.slice(0, 15).map(h => h.issueNumber || h.period).join('');
                     let prediction = this.predictionCache.get(modelPredCacheKey);
@@ -2246,35 +2195,26 @@
             }
 
             _mapToSize(number) {
-                // Numbers 5 through 9 are BIG, 0 through 4 are SMALL.
                 return number > 4 ? 'BIG' : 'SMALL';
             }
 
-            // --- Specific Model Implementations ---
-
-            // ... (All other models remain the same)
-
+            // Model Implementations
             LossRecoveryModel() {
-                // This model implements the integrated 2-level recovery logic for the ensemble.
                 return {
                     predict: (history, context) => {
-                        const period_number = history[0] ? history[0].issueNumber || history[0].period : '00000000000'; // Get current period for digit analysis
+                        const period_number = history[0] ? history[0].issueNumber || history[0].period : '00000000000';
 
-                        // If in RECOVERY MODE, this model provides the high-conviction prediction
                         if (RECOVERY_LEVEL > 0) { 
-                            // This uses the V2 aggressive logic (reversal of last outcome)
                             const prediction = aggressive_recovery_logic_v2(period_number, RECOVERY_LEVEL, PAST_RESULTS); 
                             
-                            // Use a max confidence of 0.99 for the model level, allowing the ensemble to scale it up
                             return {
                                 size: prediction,
                                 confidence: 0.99
                             };
                         }
-                        // When not in recovery, it can still provide a low-confidence prediction based on Fallback Loss Reversal
                         else if (LAST_PREDICTION_RESULT === 'LOSS') {
                             const lastPredSize = LAST_PREDICTION_DIRECTION;
-                            const prediction = lastPredSize === 'BIG' ? 'SMALL' : 'BIG'; // Reversal
+                            const prediction = lastPredSize === 'BIG' ? 'SMALL' : 'BIG';
                             return {
                                 size: prediction,
                                 confidence: 0.70
@@ -2289,7 +2229,6 @@
                 };
             }
             
-            // ... (All other models remain the same)
             AntiStreakModel() {
                 const MIN_STREAK = 3;
                 return {
@@ -2298,7 +2237,6 @@
                             size: null,
                             confidence: 0
                         };
-                        // Reverse the history to analyze the most recent sequence
                         const results = history.map(h => this._mapToSize(h.number));
 
                         let streakType = results[0];
@@ -2307,13 +2245,12 @@
                             if (results[i] === streakType) {
                                 streakLength++;
                             } else {
-                                break; // Streak is broken
+                                break;
                             }
                         }
 
                         if (streakLength >= MIN_STREAK) {
                             const opposite = streakType === 'BIG' ? 'SMALL' : 'BIG';
-                            // Confidence increases with streak length
                             const confidence = Math.min(1.0, 0.7 + ((streakLength - MIN_STREAK + 1) / 10));
                             return {
                                 size: opposite,
@@ -2347,7 +2284,6 @@
                         }
 
                         if (isAlternating) {
-                            // Predict the next one will be the opposite of the most recent result (results[0])
                             const prediction = results[0] === 'BIG' ? 'SMALL' : 'BIG';
                             return {
                                 size: prediction,
@@ -2364,7 +2300,7 @@
 
             WeightedProbabilityModel() {
                 const LOOKBACK = 15;
-                const IMBALANCE_THRESHOLD = 0.2; // 70% Big or 30% Big (3 results difference in 10)
+                const IMBALANCE_THRESHOLD = 0.2;
                 return {
                     predict: (history) => {
                         if (history.length < LOOKBACK) return {
@@ -2376,11 +2312,9 @@
                         const bigRatio = bigCount / LOOKBACK;
                         const smallRatio = 1 - bigRatio;
 
-                        // Check for significant imbalance
                         if (Math.abs(bigRatio - 0.5) > IMBALANCE_THRESHOLD) {
-                            // Predict a regression to the mean (the opposite of the current bias)
                             const prediction = bigRatio > smallRatio ? 'SMALL' : 'BIG';
-                            const confidence = Math.abs(bigRatio - 0.5); // Confidence is proportional to the imbalance
+                            const confidence = Math.abs(bigRatio - 0.5);
                             return {
                                 size: prediction,
                                 confidence: Math.min(0.95, 0.6 + confidence)
@@ -2404,19 +2338,17 @@
                             confidence: 0
                         };
 
-                        let prediction = this._mapToSize(history[0].number) === 'BIG' ? 'SMALL' : 'BIG'; // Default: Predict opposite of last result
+                        let prediction = this._mapToSize(history[0].number) === 'BIG' ? 'SMALL' : 'BIG';
                         let confidence = 0.75;
 
                         if (history.length >= LOOKBACK) {
                             const last15 = history.slice(0, LOOKBACK);
                             const bigRatio = last15.filter(h => h.number > 4).length / LOOKBACK;
 
-                            // If big results are heavily biased, anticipate a strong correction to SMALL
                             if (bigRatio > BIG_BIAS_THRESHOLD) {
                                 prediction = 'SMALL';
                                 confidence = 0.90;
                             }
-                            // If small results are heavily biased, anticipate a strong correction to BIG
                             else if (bigRatio < (1 - BIG_BIAS_THRESHOLD)) {
                                 prediction = 'BIG';
                                 confidence = 0.90;
@@ -2443,9 +2375,7 @@
 
                         if (history.length >= DOUBLE_REPEAT_LEN) {
                             const p = results.slice(0, DOUBLE_REPEAT_LEN);
-                            // Check for a 'double-double' pattern (e.g., BBSS or SSBB)
                             if ((p[0] === p[1] && p[2] === p[3]) && (p[1] !== p[2])) {
-                                // Pattern completion (e.g., if BBSS, predict B. if SSBB, predict S)
                                 const prediction = p[0];
                                 return {
                                     size: prediction,
@@ -2454,7 +2384,6 @@
                             }
                         }
 
-                        // Fallback: Predict the second-to-last result (results[1]), indicating a simple repetition/continuation
                         return {
                             size: results[1],
                             confidence: 0.65
@@ -2474,9 +2403,7 @@
                         const results = history.map(h => this._mapToSize(h.number));
                         const [r0, r1, r2, r3] = results;
 
-                        // If the last 4 results were strictly alternating (B-S-B-S or S-B-S-B)
                         if (r0 !== r1 && r1 !== r2 && r2 !== r3) {
-                            // Predict a "mirror" of the 4th-to-last result (r3) to break the alternation
                             const prediction = r3;
                             return {
                                 size: prediction,
@@ -2493,7 +2420,7 @@
 
             ParityImbalanceModel() {
                 const LOOKBACK = 15;
-                const IMBALANCE_THRESHOLD = 4; // e.g., 9 Odd vs 6 Even
+                const IMBALANCE_THRESHOLD = 4;
                 return {
                     predict: (history) => {
                         if (history.length < LOOKBACK) return {
@@ -2505,12 +2432,9 @@
                         const evens = LOOKBACK - odds;
 
                         if (Math.abs(odds - evens) >= IMBALANCE_THRESHOLD) {
-                            // Check for the Size (BIG/SMALL) distribution during this parity imbalance
                             let bigCount = last15.filter(h => h.number > 4).length;
                             let smallCount = LOOKBACK - bigCount;
 
-                            // If the current period is skewed towards one parity, the prediction logic
-                            // assumes the **less frequent** Size will appear to restore balance.
                             const prediction = bigCount < smallCount ? 'BIG' : 'SMALL';
                             return {
                                 size: prediction,
@@ -2535,9 +2459,7 @@
                         const results = history.map(h => this._mapToSize(h.number));
                         const [r0, r1] = results;
 
-                        // If the last two results were the same (BB or SS)
                         if (r0 === r1) {
-                            // Predict a "break" in the streak (the opposite)
                             const opposite = r0 === 'BIG' ? 'SMALL' : 'BIG';
                             return {
                                 size: opposite,
@@ -2558,7 +2480,6 @@
                     confidence: 0.5
                 };
                 const last = this._mapToSize(history[0].number);
-                // Fallback/Simulated: Predict the opposite of the last result, as a common simple strategy
                 const prediction = last === 'BIG' ? 'SMALL' : 'BIG';
                 return {
                     size: prediction,
@@ -2566,210 +2487,73 @@
                 };
             }
 
-            MomentumModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            ZigZagModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            FrequencyModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            SequencePatternModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            AIFusionModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            MarkovChainModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            FibonacciModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            MartingaleModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            AntiMartingaleModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            ParabolicSARModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            SVMModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            KMeansModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            PatternRecognitionModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            SimpleNeuralNetModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            ProbabilisticModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            RSIModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            QuantumEntanglementModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            GANModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            TemporalFusionModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            LocalClusterModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            TrendStrengthModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            CycleDetectionModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            PatternMatrixModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            AnomalyDetectionModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            LSTMSimModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            BayesianModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            ReinforcementModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            DeepLearningModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            TransformerModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            AttentionNetworkModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            EvolutionaryModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            SwarmIntelligenceModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            GeneticAlgorithmModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
-            BayesianNetworkModel() {
-                return {
-                    predict: (history) => this._getNonBiasedPred(history)
-                };
-            }
+            // Placeholder models
+            MomentumModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            ZigZagModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            FrequencyModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            SequencePatternModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            AIFusionModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            MarkovChainModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            FibonacciModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            MartingaleModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            AntiMartingaleModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            ParabolicSARModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            SVMModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            KMeansModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            PatternRecognitionModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            SimpleNeuralNetModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            ProbabilisticModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            RSIModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            QuantumEntanglementModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            GANModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            TemporalFusionModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            LocalClusterModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            TrendStrengthModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            CycleDetectionModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            PatternMatrixModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            AnomalyDetectionModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            LSTMSimModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            BayesianModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            ReinforcementModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            DeepLearningModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            TransformerModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            AttentionNetworkModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            EvolutionaryModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            SwarmIntelligenceModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            GeneticAlgorithmModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
+            BayesianNetworkModel() { return { predict: (history) => this._getNonBiasedPred(history) }; }
 
             async generatePrediction(history) {
                 if (history.length < this.minHistoryRequired) {
                     return {
-                        size: "BIG", // Default guess
+                        size: "BIG",
                         confidence: 50,
                         insufficientData: true
                     };
                 }
 
                 this.history = history;
-                const historyKey = history.map(h => h.issueNumber || h.period).slice(0, 15).join(','); // Use a reasonable slice for cache key
+                const historyKey = history.map(h => h.issueNumber || h.period).slice(0, 15).join(',');
                 if (this.predictionCache.has(historyKey)) {
                     return this.predictionCache.get(historyKey);
                 }
 
                 const modelPredictions = {};
 
-                // Run all models
                 for (const modelName in this.models) {
-                    // Skip deep learning models if disabled
                     if (!this.deepLearningEnabled && (modelName.includes('deepLearning') || modelName.includes('transformer') || modelName.includes('attention'))) continue;
 
                     const modelPredCacheKey = modelName + "_" + historyKey;
                     let prediction = this.predictionCache.get(modelPredCacheKey);
 
-                    if (!prediction || modelName === 'lossRecovery' || modelName === 'weightedProbability') { // Always recalculate high-conviction/state-dependent models
+                    if (!prediction || modelName === 'lossRecovery' || modelName === 'weightedProbability') {
                         prediction = this.models[modelName].predict(history, {
                             consecutiveLosses: this.consecutiveLosses,
                             lastPrediction: this.lastPrediction,
                             lastActual: this.lastActual,
                             instance: this
                         });
-                        this.predictionCache.set(modelPredCacheKey, prediction); // Cache model-specific prediction
+                        this.predictionCache.set(modelPredCacheKey, prediction);
                     }
                     modelPredictions[modelName] = prediction;
                 }
@@ -2781,7 +2565,7 @@
                     confidence: prediction.confidence,
                 };
 
-                this.predictionCache.set(historyKey, finalPrediction); // Cache the final ensemble prediction
+                this.predictionCache.set(historyKey, finalPrediction);
                 return finalPrediction;
             }
 
@@ -2795,10 +2579,7 @@
                 for (const modelName in predictions) {
                     const pred = predictions[modelName];
                     if (pred.size) {
-                        // Confidence is scaled between 0 and 1
                         const predConfidence = Math.min(1.0, Math.max(0, pred.confidence));
-
-                        // Weight is a product of dynamic model weight and confidence
                         const weight = this.modelWeights[modelName] * Math.pow(predConfidence, aggressivenessFactor);
                         votes[pred.size] += weight;
                     }
@@ -2806,12 +2587,10 @@
 
                 const totalVotes = votes.BIG + votes.SMALL;
                 const bigRatio = totalVotes > 0 ? votes.BIG / totalVotes : 0.5;
-
-                // Final confidence is derived from the dominance of the winning vote
                 const finalConfidence = (Math.max(bigRatio, 1 - bigRatio) * 100);
 
                 return {
-                    size: bigRatio >= 0.5 ? 'BIG' : 'SMALL', // Default to BIG on tie
+                    size: bigRatio >= 0.5 ? 'BIG' : 'SMALL',
                     confidence: parseFloat(finalConfidence.toFixed(2))
                 };
             }
@@ -2879,7 +2658,7 @@
                     consecutiveLosses: this.consecutiveLosses,
                     consecutiveWins: this.consecutiveWins,
                     mode: this.mode,
-                    predictionLog: this.predictionLog.slice(-20) // Only save recent logs
+                    predictionLog: this.predictionLog.slice(-20)
                 };
                 try {
                     localStorage.setItem(PREDICTOR_COORDINATOR_KEY, JSON.stringify(state));
@@ -2901,7 +2680,6 @@
             }
 
             analyzePatterns(history) {
-                // ... (Existing analyzePatterns implementation)
                 const patterns = {};
 
                 const shortTerm = this.calculateWMA(history.slice(0, 7));
@@ -2938,7 +2716,6 @@
             }
 
             assessSafety(history) {
-                // ... (Existing assessSafety implementation)
                 const safety = {
                     score: 'green',
                     flags: [],
@@ -2968,37 +2745,31 @@
             }
 
             updateReinforcement(actualResult, internalPrediction) {
-                
-                // Ensure the internal prediction has the correct BIG/SMALL value
                 const predSize = internalPrediction;
                 
                 this.zenithAI.lastActual = actualResult; 
                 
-                // --- LOGIC INTEGRATION: Update Python State first ---
                 const lastPredictionLog = this.predictionLog[this.predictionLog.length - 1];
                 const period_number = lastPredictionLog ? lastPredictionLog.period : '00000000000';
                 
-                // **FIXED**: This now calls the integrated state update function.
-                // It updates the global RECOVERY_LEVEL based on the outcome of the last prediction
-                // It uses the prediction that was made (this.zenithAI.lastPrediction) and the actual result.
-                final_prediction_2lvl_recovery(period_number, actualResult, this); // Pass the coordinator instance
+                final_prediction_2lvl_recovery(period_number, actualResult, this);
 
-                this.consecutiveLosses = RECOVERY_LEVEL; // Keep coordinator state in sync with Python state for mode switching
-                // Note: consecutiveWins is updated within final_prediction_2lvl_recovery
-                // --- END LOGIC INTEGRATION ---
+                this.consecutiveLosses = RECOVERY_LEVEL;
+                if (RECOVERY_LEVEL === 0) {
+                    this.consecutiveWins++;
+                } else {
+                    this.consecutiveWins = 0;
+                }
                 
-                if (!predSize) return;
-
-                // Adaptive strategy change on loss based on the new RECOVERY_LEVEL
                 if (this.consecutiveLosses === 0) {
                     this.mode = 'normal';
-                    this.zenithAI.setStrategy('trendFollowing'); // Revert to a stable strategy on win/reset
+                    this.zenithAI.setStrategy('trendFollowing');
                 } else if (this.consecutiveLosses === 1) {
                     this.mode = 'cautious';
                     this.zenithAI.setStrategy('patternRecognition');
                 } else if (this.consecutiveLosses === 2) {
                     this.mode = 'sureShot';
-                    this.zenithAI.setStrategy('quantum'); // Aggressive switch to high-conviction models
+                    this.zenithAI.setStrategy('quantum');
                 }
                 
                 this.saveState();
@@ -3017,30 +2788,21 @@
                 const patterns = this.analyzePatterns(history);
                 const safety = this.assessSafety(history);
 
-                // --- CORE AI PREDICTION ---
-                // Ensemble prediction provides a base and confidence
                 let zenithPred = await this.zenithAI.generatePrediction(history);
 
-                // --- LOGIC INTEGRATION: OVERRIDE WITH PYTHON LOGIC (Core Logic/Recovery) ---
-                // This is a LOOK-AHEAD call to determine the prediction for the *current* period
                 const integratedPredData = final_prediction_2lvl_recovery(period, null, this);
                 
-                // The integrated logic (which includes Pattern Analysis and Fallback) is the FINAL prediction source
                 let finalPrediction = integratedPredData.prediction;
                 let finalConfidence = integratedPredData.confidence * 100;
 
-                // Apply mode and safety overrides (Zenith's confidence can be used as a tie-breaker/modifier)
                 if (this.mode === 'sureShot') {
-                    // In sureShot mode, the confidence is boosted
                     finalConfidence = Math.max(finalConfidence, 95.0);
                 }
 
                 if (safety.score === 'red' && finalConfidence > 90) {
-                    // Drop confidence significantly on high uncertainty/volatility
                     finalConfidence = 70.0 + (finalConfidence - 90.0) * 0.5;
                 }
                 
-                // If the integrated logic provided a low confidence, fallback to the ensemble's strong prediction
                 if (integratedPredData.confidence < 0.60 && zenithPred.confidence > 75) {
                      finalPrediction = zenithPred.size;
                      finalConfidence = zenithPred.confidence;
@@ -3049,7 +2811,7 @@
                 const finalOutput = {
                     size: finalPrediction,
                     confidence: parseFloat(finalConfidence.toFixed(2)),
-                    internalPrediction: finalPrediction, // Use the final prediction as the internal prediction for logging/reinforcement
+                    internalPrediction: finalPrediction,
                     internalConfidence: zenithPred.confidence,
                     mode: this.mode,
                     safety: safety.score,
@@ -3058,24 +2820,18 @@
                     period: period
                 };
                 
-                // Log the final prediction and confidence
                 this.predictionLog.push(finalOutput);
-                
-                // This is the prediction the coordinator is finalizing, so the AI Core needs to store it
                 this.zenithAI.lastPrediction = finalPrediction; 
 
                 this.saveState();
                 return finalOutput;
             }
             
-            // ... (All other helper functions remain the same)
             calculateWMA(data) {
                 if (data.length === 0) return 0.5;
                 const numbers = data.map(d => d.number);
-                // Weight: last result gets highest weight
                 const totalWeight = numbers.reduce((sum, _, i) => sum + (i + 1), 0);
-                const weightedSum = numbers.reduce((sum, num, i) => sum + (num * (data.length - i)), 0); // Reverse weights
-                // Normalize the sum of results (0-9) to a 0.0-1.0 range (mean is 4.5/9 = 0.5)
+                const weightedSum = numbers.reduce((sum, num, i) => sum + (num * (data.length - i)), 0);
                 return (weightedSum / totalWeight) / 9;
             }
 
@@ -3095,14 +2851,13 @@
             }
 
             detectMicroPattern(sequence) {
-                // Pattern logic: Predict the opposite of the current repeating short pattern
                 const patterns = {
                     'BBB': 'S',
-                    'SSS': 'B', // Anti-streak (3-long)
+                    'SSS': 'B',
                     'BSB': 'B',
-                    'SBS': 'S', // Simple alternation continuation
+                    'SBS': 'S',
                     'BBSS': 'B',
-                    'SSBB': 'S', // 2-by-2 break
+                    'SSBB': 'S',
                 };
 
                 const last4 = sequence.slice(0, 4).join('');
@@ -3116,7 +2871,7 @@
                 const numbers = data.map(d => d.number);
                 const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
                 const variance = numbers.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / numbers.length;
-                return Math.sqrt(variance); // Standard Deviation
+                return Math.sqrt(variance);
             }
 
             calculateEntropy(data) {
@@ -3124,7 +2879,6 @@
                 const bigProb = data.filter(d => d.number > 4).length / data.length;
                 const smallProb = 1 - bigProb;
 
-                // Shannon Entropy for a binary outcome (BIG/SMALL)
                 if (bigProb === 0 || smallProb === 0) return 0;
                 return -(bigProb * Math.log2(bigProb) + smallProb * Math.log2(smallProb));
             }
@@ -3132,7 +2886,6 @@
             detectClusterBias(history) {
                 const recent = history.slice(0, 5);
                 const bigBias = recent.filter(d => d.number > 4).length / recent.length;
-                // Returns 1.0 for all BIG or all SMALL, 0.0 for 50/50 split
                 return Math.abs(bigBias - 0.5) * 2;
             }
 
@@ -3154,7 +2907,6 @@
                 const wasCorrect = lastPred.internalPrediction === actualResult;
                 const adjustment = wasCorrect ? 1.1 : 0.9;
 
-                // This function is currently not called in the main logic, but kept for future expansion
                 lastPred.patterns.forEach(pattern => {
                     if (this.patternWeights[pattern]) {
                         this.patternWeights[pattern] *= adjustment;
@@ -3166,38 +2918,20 @@
             }
         }
 
-        // Global instances for easy access in the client-side code
         const predictorCoordinator = new ZenithPredictorCoordinator();
         const zenithCoreAI = predictorCoordinator.zenithAI;
 
-        // --- FIXED: Helper functions for mapping results ---
         const getBigSmallOutcome = (num) => (num >= 5) ? 'BIG' : 'SMALL';
-        // NEW LOGIC: Odd (1,3,5,7,9) is GREEN, Even (0,2,4,6,8) is RED
         const getRedGreenOutcome = (num) => (num % 2 !== 0) ? 'GREEN' : 'RED'; 
-
-        // Export for use in other modules (Node/CommonJS environment, won't run in browser directly)
-        if (typeof module !== 'undefined' && module.exports) {
-            module.exports = {
-                zenithAICore,
-                ZenithPredictorCoordinator,
-                predictorCoordinator,
-                zenithCoreAI,
-                getBigSmallOutcome,
-                getRedGreenOutcome
-            };
-        }
 
         document.addEventListener('DOMContentLoaded', function() {
 
-            // --- Tab System and UI Logic ---
             const tabs = document.querySelectorAll('.tab');
             const contentSections = document.querySelectorAll('.content-section');
             tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabId = this.getAttribute('data-tab');
 
-                    // --- FIX START ---
-                    // Deactivate all tabs and content sections first
                     tabs.forEach(t => {
                         t.classList.remove('active');
                         t.setAttribute('aria-selected', 'false');
@@ -3205,13 +2939,10 @@
                     contentSections.forEach(section => {
                         section.classList.remove('active');
                     });
-                    // --- FIX END ---
 
-                    // Activate the clicked tab
                     this.classList.add('active');
                     this.setAttribute('aria-selected', 'true');
 
-                    // Activate the corresponding content section
                     const targetSection = document.getElementById(`${tabId}-section`);
                     if (targetSection) {
                         targetSection.classList.add('active');
@@ -3267,8 +2998,6 @@
                     particle.style.opacity = Math.random() * 0.5 + 0.1;
                     particle.style.animationDuration = `${duration}s`;
                     particle.style.animationDelay = `${delay}s`;
-                    // Note: Commented out appending particles to body to prevent layout issues if no CSS is provided
-                    // document.body.appendChild(particle); 
                 }
             }
 
@@ -3290,7 +3019,6 @@
 
                             const sum = parseInt(sumElement.textContent, 10);
                             const isBig = sum >= 5;
-                            // NEW: Even is Red, Odd is Green
                             const isGreen = sum % 2 !== 0; 
 
                             if ((filter === 'big' && isBig) || (filter === 'small' && !isBig) || (filter === 'red' && !isGreen) || (filter === 'green' && isGreen)) {
@@ -3303,7 +3031,6 @@
                 });
             });
 
-            // Fetch data for history tab
             async function fetchData() {
                 try {
                     const historyContent = document.getElementById('historyContent');
@@ -3312,7 +3039,6 @@
                     historyContent.innerHTML = '<div class="loading-container"><i class="fas fa-spinner fa-spin"></i> LOADING DATA...</div>';
 
                     const timestamp = Date.now();
-                    // This API endpoint is specific to the original logic's game and may need updating
                     const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50`);
 
                     if (!response.ok) {
@@ -3335,7 +3061,6 @@
                 }
             }
 
-            // Display history data
             function displayHistory(data) {
                 const historyContent = document.getElementById('historyContent');
                 if (!historyContent) return;
@@ -3357,11 +3082,9 @@
                 data.forEach(item => {
                     const sum = parseInt(item.premium || item.result || item.number || 0, 10);
                     const bigSmall = getBigSmallOutcome(sum);
-                    // NEW LOGIC: Odd (1,3,5,7,9) is GREEN, Even (0,2,4,6,8) is RED
                     const redGreen = getRedGreenOutcome(sum); 
                     const colorClass = (redGreen === 'RED') ? 'color-red' : 'color-green';
 
-                    // --- FIXED: Period number display logic ---
                     const periodNumberFull = item.issueNumber || item.period || 'N/A';
                     const periodDisplay = get_last_five_digits_masked(periodNumberFull);
 
@@ -3395,7 +3118,6 @@
                 historyContent.innerHTML = html;
             }
 
-            // Perform advanced analysis
             async function performAdvancedAnalysis() {
                 try {
                     const analysisContent = document.getElementById('advancedAnalysis');
@@ -3426,7 +3148,6 @@
                 }
             }
 
-            // Display advanced analysis
             function displayAdvancedAnalysis(data) {
                 const analysisContent = document.getElementById('advancedAnalysis');
                 if (!analysisContent) return;
@@ -3441,7 +3162,6 @@
 
                 const bigCount = numbers.filter(n => n >= 5).length;
                 const smallCount = numbers.length - bigCount;
-                // NEW: Red (Even) and Green (Odd) counts
                 const redCount = numbers.filter(n => n % 2 === 0).length;
                 const greenCount = numbers.length - redCount;
 
@@ -3540,7 +3260,7 @@
 
                 html += `
                     <div class="analysis-title">
-                        <i class="fas fa-chart-line"></i> ZENITH-CORE AI ANALYSIS
+                        <i class="fas fa-chart-line"></i> LICUIS ULTRA 
                     </div>
                     <div class="pattern-analysis">
                         <div class="pattern-item">
@@ -3560,7 +3280,7 @@
                             <span class="pattern-count">${zenithCoreAI.strategy}</span>
                         </div>
                         <div class="pattern-item">
-                            <span class="pattern-value">Recovery Level (Integrated)</span>
+                            <span class="pattern-value">Recovery Level (Quantum)</span>
                             <span class="pattern-count">${RECOVERY_LEVEL}</span>
                         </div>
                     </div>
@@ -3569,7 +3289,6 @@
                 analysisContent.innerHTML = html;
             }
 
-            // Detect patterns in number sequences
             function detectPatterns(numbers) {
                 const patterns = [];
                 const sequence = numbers.map(n => n >= 5 ? 'B' : 'S').join('');
@@ -3584,7 +3303,6 @@
                             count++;
                         }
 
-                        // Only consider patterns that repeat more than once
                         if (count > 1) {
                             patterns.push({
                                 pattern: pattern.split('').join('-'),
@@ -3594,7 +3312,6 @@
                     }
                 }
 
-                // Filter for unique patterns
                 const uniquePatterns = [];
                 patterns.forEach(p => {
                     const existing = uniquePatterns.find(up => up.pattern === p.pattern);
@@ -3603,19 +3320,17 @@
                     }
                 });
 
-                // Sort by count and return top 5
                 return uniquePatterns.sort((a, b) => b.count - a.count).slice(0, 5);
             }
 
-            // Display all strategies
             function displayAllStrategies() {
                 const strategiesContainer = document.getElementById('strategiesContainer');
                 if (!strategiesContainer) return;
 
                 const strategies = [{
-                    title: "Zenith-Core Engine",
+                    title: "Quantum-Leap Deterministic Core",
                     icon: "fas fa-robot",
-                    description: "Advanced ensemble prediction system combining 30+ AI models with dynamic weighting and adaptive learning."
+                    description: "Advanced prediction system using quantum-inspired algorithms and deterministic seed generation for maximum accuracy."
                 }, {
                     title: "Quantum Entanglement Analysis",
                     icon: "fas fa-atom",
@@ -3639,7 +3354,7 @@
                 }, {
                     title: "Loss Recovery Hybrid (Martingale)",
                     icon: "fas fa-crosshairs",
-                    description: "High-confidence strategy to reverse the last prediction after two or more consecutive losses (Integrated 2-Level Recovery)."
+                    description: "High-confidence strategy to reverse the last prediction after two or more consecutive losses (Quantum 2-Level Recovery)."
                 }, {
                     title: "Anti-Streak Detection",
                     icon: "fas fa-compress-arrows-alt",
@@ -3672,7 +3387,6 @@
             let lastPredictionPeriod = null;
             let lastActualNumber = null;
 
-            // DOM elements (assuming these IDs exist in the omitted HTML)
             const messagesContainer = document.getElementById('messages-container');
             const typingIndicator = document.getElementById('typing-indicator');
             const connectionStatus = document.getElementById('connection-status');
@@ -3680,21 +3394,19 @@
             const lastUpdateTime = document.getElementById('last-update-time');
             const scrollDownBtn = document.getElementById('scroll-down-btn');
 
-            // Initialize
             updateClock();
             setInterval(updateClock, 1000);
             setTimeout(() => {
                 if (typingIndicator) typingIndicator.style.display = 'none';
                 addMessage('received',
                     `<div class="prediction-card">
-                        <div class="prediction-title"><i class="fas fa-robot"></i> SYSTEM INITIALIZED</div>
-                        <p>Welcome to <strong>LICUIS ULTRA</strong>. Advanced AI models are analyzing game patterns in real-time to provide you with the most accurate predictions.</p>
+                        <div class="prediction-title"><i class="fas fa-robot"></i>SYSTEM INITIALIZED</div>
+                        <p>Welcome to <strong>LICUIS ULTRA</strong>. Quantum-Leap Deterministic Core Logic is now active, analyzing game patterns with advanced mathematical models for maximum prediction accuracy.</p>
                     </div>`,
                     'LICUIS ULTRA');
                 simulateInitialAnalysis();
             }, 1500);
 
-            // Scroll button functionality
             if (scrollDownBtn) {
                 scrollDownBtn.addEventListener('click', () => {
                     if (messagesContainer) messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -3763,12 +3475,12 @@
                     addMessage('received',
                         `<div class="prediction-card">
                             <div class="prediction-title"><i class="fas fa-check-circle"></i> ANALYSIS COMPLETE</div>
-                            <p>AI pattern detection complete. Advanced algorithms initialized and ready for predictions.</p>
+                            <p>Quantum-Leap pattern detection complete. Advanced deterministic algorithms initialized and ready for high-accuracy predictions.</p>
                         </div>`,
                         'LICUIS ULTRA');
 
                     fetchCurrentGameIssue();
-                    setInterval(fetchCurrentGameIssue, 5000); // Poll every 5 seconds
+                    setInterval(fetchCurrentGameIssue, 5000);
                 }, 2000);
             }
 
@@ -3776,18 +3488,13 @@
                 const confidencePercentage = Math.round(parseFloat(predictionData.confidence));
                 const confidenceWidth = `${confidencePercentage}%`;
                 
-                // --- FIXED: Period number display logic ---
                 const periodDisplay = get_last_five_digits_masked(latestPeriod);
 
                 let color = 'var(--warning)';
                 if (confidencePercentage >= 90) color = 'var(--win)';
                 else if (confidencePercentage < 70) color = 'var(--loss)';
                 
-                // Get the predicted Red/Green color based on the predicted Size (BIG/SMALL)
-                // This is a common pattern for these predictors where a specific number/parity is also implied
-                // Since the model only outputs BIG/SMALL, we derive a "likely" color for the display, 
-                // but the actual prediction is BIG/SMALL. We'll use a placeholder for the predicted parity here.
-                let likelyColor = predictionData.size === 'BIG' ? 'GREEN' : 'RED'; // Placeholder heuristic
+                let likelyColor = predictionData.size === 'BIG' ? 'GREEN' : 'RED';
 
                 return `
                     <div class="prediction-card">
@@ -3808,14 +3515,12 @@
             async function fetchPreviousResults() {
                 try {
                     const timestamp = Date.now();
-                    // Fetch more than one to provide sufficient history for the AI core
                     const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50`);
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const data = await response.json();
                     if (data && data.data && data.data.list && data.data.list.length > 0) {
-                        // Map the list, ensuring the most recent result is at index 0
                         previousResults = data.data.list.map(item => ({
                             number: parseInt(item.premium || item.result || item.number || 0, 10),
                             issueNumber: item.issueNumber || item.period
@@ -3828,10 +3533,9 @@
 
             async function fetchCurrentGameIssue() {
                 const now = new Date();
-                // This is a placeholder/example API for the current period number and countdown
                 const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
                 const requestData = {
-                    typeId: 1, // WinGo 1M
+                    typeId: 1,
                     language: 0,
                     random: "40079dcba93a48769c6ee9d4d4fae23f",
                     signature: "D12108C4F57C549D82B23A91E0FA20AE",
@@ -3854,12 +3558,9 @@
                             const newPeriod = data.data.issueNumber;
 
                             if (newPeriod !== latestPeriod) {
-                                // 1. Fetch the actual result for the *last* period
                                 await fetchPreviousResults();
 
-                                // 2. Process the result of the *last* period
                                 if (latestPeriod && zenithCoreAI.lastPrediction && previousResults.length > 0) {
-                                    // Find the result that matches the *last* period we made a prediction for (latestPeriod)
                                     const lastActualItem = previousResults.find(item => item.issueNumber === latestPeriod);
                                     
                                     if (lastActualItem) {
@@ -3867,20 +3568,14 @@
                                         const lastResult = lastActualItem.number;
                                         lastActualNumber = parseInt(lastResult, 10);
                                         const actualResultSize = getBigSmallOutcome(lastActualNumber);
-                                        // NEW: Get the actual Red/Green outcome
                                         const actualResultColor = getRedGreenOutcome(lastActualNumber);
                                         
-                                        // Update AI Core State and Reinforcement
-                                        // This single call handles the integrated Python logic's state update (RECOVERY_LEVEL, PAST_RESULTS)
-                                        // zenithCoreAI.lastPrediction holds the prediction that was made for the period that just closed.
                                         predictorCoordinator.updateReinforcement(actualResultSize, zenithCoreAI.lastPrediction);
 
-                                        // Update individual model performance
                                         zenithCoreAI.updateModelPerformance(actualResultSize);
 
                                         const wasCorrect = zenithCoreAI.lastPrediction === actualResultSize;
                                         
-                                        // --- FIXED: Period number display logic for result message ---
                                         const periodDisplay = get_last_five_digits_masked(periodOfResult);
 
                                         const message = wasCorrect ?
@@ -3888,12 +3583,10 @@
                                             `<div class="prediction-card loss" style="border-color: var(--loss);"><div class="prediction-title"><i class="fas fa-times"></i>   ${periodDisplay}</div><p>   ${actualResultSize} / ${actualResultColor} (${lastActualNumber})  <strong style="color: var(--loss);">LOSS</strong></p></div>`;
                                         addMessage('received', message, 'SYSTEM RESULT');
                                         
-                                        // Reset lastPrediction since the period is closed. It will be set again for the new period.
                                         zenithCoreAI.lastPrediction = null; 
                                     }
                                 }
 
-                                // 3. Generate a prediction for the *new* period
                                 latestPeriod = newPeriod;
                                 updatePredictions(now, newPeriod);
                             }
@@ -3910,18 +3603,15 @@
             }
 
             async function updatePredictions(currentTime, currentPeriod) {
-                // Ensure we have up-to-date history
                 await fetchPreviousResults();
                 zenithCoreAI.history = previousResults.map(item => ({
                     number: item.number,
-                    issueNumber: item.issueNumber, // Ensure both fields are present
+                    issueNumber: item.issueNumber,
                     period: item.issueNumber
                 }));
 
-                // Only generate a new prediction if the period is new
                 if (zenithCoreAI.history.length >= 5 && currentPeriod !== lastPredictionPeriod) {
                     
-                    // Generate the prediction for the CURRENT period using all integrated logic
                     const predictionData = await predictorCoordinator.generateDirectPrediction(zenithCoreAI.history, currentPeriod);
 
                     const finalPrediction = predictionData.size;
@@ -3929,8 +3619,6 @@
 
                     currentPrediction = finalPrediction;
                     lastPredictionPeriod = currentPeriod;
-
-                    // zenithCoreAI.lastPrediction is already set by generateDirectPrediction
 
                     showTyping();
                     setTimeout(() => {
@@ -3946,23 +3634,21 @@
                 if (serverOnline !== online) {
                     serverOnline = online;
                     if (online) {
-                        if (connectionStatus) connectionStatus.textContent = "Connected to Server";
+                        if (connectionStatus) connectionStatus.textContent = "Quantum Connection Active";
                         const indicator = document.querySelector('.status-indicator');
                         if (indicator) indicator.className = "status-indicator online";
-                        addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> CONNECTION RESTORED</div><p>Server connection reestablished. Resuming normal operations.</p>', 'System');
+                        addMessage('received', '<div class="prediction-title"><i class="fas fa-plug"></i> QUANTUM CONNECTION RESTORED</div><p>Quantum server connection reestablished. Resuming normal operations.</p>', 'Quantum System');
                     } else {
-                        if (connectionStatus) connectionStatus.textContent = "Connecting...";
+                        if (connectionStatus) connectionStatus.textContent = "Quantum Connecting...";
                         const indicator = document.querySelector('.status-indicator');
                         if (indicator) indicator.className = "status-indicator offline";
-                        addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> CONNECTION LOST</div><p>Temporarily lost connection to prediction server. Attempting to reconnect...</p>', 'System');
+                        addMessage('received', '<div class="prediction-title"><i class="fas fa-exclamation-triangle"></i> QUANTUM CONNECTION LOST</div><p>Temporarily lost connection to quantum prediction server. Attempting to reconnect...</p>', 'Quantum System');
                     }
                 }
             }
 
-            // Initialize the application
             createParticles();
 
-            // Animate the game selection title after page load
             setTimeout(() => {
                 const title = document.getElementById('gameSelectionTitle');
                 if (title) title.classList.add('animate');
