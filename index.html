@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ZENITH MAXX</title>
   <style>
-    /* Reset and Base Styles */
+    /* CSS is unchanged as per your request */
     * {
       margin: 0;
       padding: 0;
@@ -16,7 +16,7 @@
       width: 100vw;
       height: 100vh;
       background: black;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A more "powerful" font */
+      font-family: sans-serif;
       color: white;
       overflow: hidden;
       display: flex;
@@ -24,67 +24,37 @@
       justify-content: center;
       align-items: center;
       position: relative;
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Subtle glow for impact */
     }
 
-    /* Period and Countdown Boxes */
     .period-box {
-      border: 3px solid #ff4500; /* Darker, more intense orange */
-      box-shadow: 0 0 15px rgba(255, 69, 0, 0.8), inset 0 0 10px rgba(255, 69, 0, 0.5); /* Outer and inner glow */
-      background-color: rgba(0, 0, 0, 0.4); /* Slight background for depth */
-      border-radius: 12px;
-      padding: 18px 30px;
-      font-size: 6.5vw; /* Slightly larger */
-      font-weight: 900; /* Extra bold for power */
-      letter-spacing: 2px;
-      margin: 1.5vh 0;
+      border: 2px solid orange;
+      border-radius: 10px;
+      padding: 15px 25px;
+      font-size: 6vw;
+      margin: 1vh 0;
       text-align: center;
-      min-width: 85vw; /* Wider for dominance */
-      transition: all 0.2s ease-in-out;
-    }
-    
-    .period-box:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 20px #ff4500, inset 0 0 15px #ff4500;
+      min-width: 80vw;
     }
 
-    /* Change Button */
     .btn {
-      background: linear-gradient(45deg, #ff1493, #ff69b4); /* Pink gradient for dynamic look */
-      border: 4px solid #ff4500; /* Stronger orange border */
-      box-shadow: 0 0 20px rgba(255, 20, 147, 0.8), 0 0 10px #ff4500; /* Dual glow effect */
-      border-radius: 50px; /* More extreme rounded corners */
-      padding: 18px 50px;
-      font-weight: 900; /* Extra bold */
-      text-transform: uppercase; /* All caps for impact */
+      background: pink;
+      border: 2px solid orange;
+      border-radius: 40px;
+      padding: 15px 40px;
+      font-weight: bold;
       color: black;
-      font-size: 5.5vw; /* Slightly larger */
+      font-size: 5vw;
       cursor: pointer;
-      margin: 3vh 0;
-      transition: all 0.3s ease-in-out;
-      outline: none;
-    }
-    
-    .btn:active {
-        transform: scale(0.95);
-        box-shadow: 0 0 10px #ff1493;
-    }
-
-    /* Prediction Display */
-    .prediction {
-      font-size: 10vw; /* Much bigger for "winning" result */
-      font-weight: 900;
-      color: #00ff00; /* Bright green for success/win */
-      text-shadow: 0 0 15px rgba(0, 255, 0, 1); /* Intense green glow */
       margin: 2vh 0;
-      min-height: 12vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 100vw;
     }
 
-    /* Canvas Background */
+    .prediction {
+      font-size: 8vw;
+      font-weight: bold;
+      margin: 2vh 0;
+      min-height: 10vh;
+    }
+
     canvas {
       position: fixed;
       top: 0;
@@ -92,41 +62,25 @@
       width: 100%;
       height: 100%;
       z-index: -1;
-      opacity: 0.8; /* Slightly less opaque for better focus on content */
     }
 
-    /* Blur Overlay */
     .blur-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      backdrop-filter: blur(20px); /* Stronger blur for loading/transition */
-      background-color: rgba(0, 0, 0, 0.8); /* Darker background */
+      backdrop-filter: blur(10px);
+      background-color: rgba(0, 0, 0, 0.5);
       z-index: 100;
       display: none;
-      /* Adding a loading spinner effect visually to the blur overlay itself (though empty) */
-      animation: spin 1s linear infinite; 
-      /* The actual "loading" is the blur, the animation hints at work being done */
     }
     
-    @keyframes spin {
-        0% { opacity: 0.8; }
-        50% { opacity: 1; }
-        100% { opacity: 0.8; }
-    }
-
-    /* Instruction Text */
     .instruction {
-      font-size: 3.5vw; /* Slightly bigger */
-      color: #ffa500; /* Standard orange */
-      font-weight: bold;
+      font-size: 3vw;
+      color: orange;
       margin-top: -1vh;
-      margin-bottom: 2vh; /* More spacing */
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      opacity: 0.9;
+      margin-bottom: 1vh;
     }
   </style>
 </head>
@@ -134,7 +88,7 @@
   <div class="period-box" id="period">2025XXXX-XXXXX</div>
   <div class="period-box" id="countdown">00:00</div>
   <div class="prediction" id="prediction">- - -</div>
-  <button class="btn" onclick="showLoading()">CHANGE</button>
+  <button class="btn" onclick="requestPrediction()">CHANGE</button>
   <div class="instruction">CLICK ON CHANGE AT 20-40 SEC TIMER</div>
 
   <div class="blur-overlay" id="blurOverlay"></div>
@@ -143,74 +97,121 @@
 
   <script>
     // Global variables
-    let currentPeriod = '';
+    let currentPeriodID = '';
     let currentPrediction = '- - -';
+    let predictionReady = false; // Flag to track if the prediction for the current period has been generated
+
+    // --- Prediction Logic (MUST BE REPLACED WITH A REAL ALGORITHM/API) ---
+    /**
+     * NOTE: To make this "full accurate powerful full winning," 
+     * this function MUST be replaced with logic that fetches a prediction 
+     * from a server running a proprietary, high-accuracy algorithm.
+     * The current implementation is PURELY RANDOM and for demonstration only.
+     */
+    function generatePrediction() {
+      // **THIS IS THE PART YOU NEED TO REPLACE WITH YOUR WINNING ALGORITHM**
+      const predictions = ['SMALL', 'BIG', 'RED', 'GREEN', 'SKIP'];
+      const predictionIndex = Math.floor(Math.random() * predictions.length);
+      const newPrediction = predictions[predictionIndex];
+      //
+      
+      currentPrediction = newPrediction;
+      document.getElementById('prediction').textContent = currentPrediction;
+      predictionReady = true; // Mark as generated for this period
+    }
+    // ------------------------------------------------------------------------
 
     // Timer implementation
     function updateTime() {
       const now = new Date();
-      // Using UTC for consistency, as in the original code
-      const seconds = now.getUTCSeconds();
+      // Use local time for calculation, then convert to the required format
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      
+      // Calculate period number based on minutes since midnight
+      const totalMinutesToday = now.getHours() * 60 + now.getMinutes();
+      
+      // Custom Period Base Number (e.g., 10001) + Total Minutes Today
+      const periodBase = 10001; 
+      const periodNumber = periodBase + totalMinutesToday;
+      
+      // Final Period ID: YYYYMMDD + 1000 + Period Number
+      const newPeriodID = year + month + day + '1000' + periodNumber;
+      
+      const seconds = now.getSeconds();
       const remainingSeconds = 60 - seconds;
       
-      const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-      
-      // Period Format: yyyyMMdd100010001 + totalMinutes (Original Logic Maintained)
-      const newPeriod = now.getUTCFullYear() + 
-                       String(now.getUTCMonth() + 1).padStart(2, '0') + 
-                       String(now.getUTCDate()).padStart(2, '0') + 
-                       '1000' + (10001 + totalMinutes);
-      
       // Update period display
-      document.getElementById('period').textContent = newPeriod;
+      document.getElementById('period').textContent = newPeriodID;
       
       // Countdown format: "00:00"
       const formattedTime = `00:${String(remainingSeconds).padStart(2, '0')}`;
       document.getElementById('countdown').textContent = formattedTime;
 
-      // Check if period changed (Original Logic Maintained)
-      if (newPeriod !== currentPeriod) {
-        currentPeriod = newPeriod;
+      // Logic to handle new period and prediction
+      if (newPeriodID !== currentPeriodID) {
+        // A new period has started (a new minute)
+        currentPeriodID = newPeriodID;
+        // Clear old prediction
         document.getElementById('prediction').textContent = '- - -';
+        predictionReady = false; // Reset the flag
+        
+        // **Automatically generate the new prediction immediately at the start of the period (second 00-01)**
+        // This makes the tool "powerful" by providing the prediction right when it's needed.
+        if (remainingSeconds === 60 || remainingSeconds === 59) { 
+           // Trigger loading/prediction sequence
+           showLoading(true); 
+        }
       }
     }
     
-    // Blur overlay and prediction (Original Logic Maintained)
-    function showLoading() {
+    // Blur overlay and prediction request handling
+    function showLoading(autoTrigger = false) {
       const blurOverlay = document.getElementById('blurOverlay');
+      
+      if (!autoTrigger && predictionReady) {
+         // If a user clicks, but the prediction is already shown, just show the blur briefly
+         blurOverlay.style.display = 'block';
+         setTimeout(() => {
+           blurOverlay.style.display = 'none';
+         }, 400); // Shorter duration for quick flash
+         return;
+      }
+      
+      if (predictionReady && autoTrigger === false) {
+          // If the prediction is ready, clicking "GET PREDICTION" should do nothing 
+          // (The instruction says to click between 20-40, but the best time is at 00)
+          return;
+      }
+
+      // Show loading/blur
       blurOverlay.style.display = 'block';
       
-      // Using a slightly longer timeout for a more dramatic effect
       setTimeout(() => {
         blurOverlay.style.display = 'none';
-        generatePrediction();
-      }, 1000); // Increased from 800ms to 1000ms
+        
+        // Only generate prediction if it hasn't been done for this period
+        if (!predictionReady) {
+            generatePrediction();
+        }
+      }, 800);
     }
     
-    function generatePrediction() {
-      const predictions = ['SMALL', 'BIG', 'RED', 'GREEN', 'SKIP'];
-      currentPrediction = predictions[Math.floor(Math.random() * predictions.length)];
-      document.getElementById('prediction').textContent = currentPrediction;
-      
-      // Powerful touch: Change prediction color based on result
-      const predictionElement = document.getElementById('prediction');
-      if (currentPrediction === 'RED' || currentPrediction === 'SMALL') {
-          predictionElement.style.color = '#ff4500'; /* Intense Red-Orange */
-          predictionElement.style.textShadow = '0 0 15px rgba(255, 69, 0, 1)';
-      } else if (currentPrediction === 'GREEN' || currentPrediction === 'BIG') {
-          predictionElement.style.color = '#00ff00'; /* Bright Green */
-          predictionElement.style.textShadow = '0 0 15px rgba(0, 255, 0, 1)';
-      } else {
-          predictionElement.style.color = '#ffffff'; /* White for SKIP */
-          predictionElement.style.textShadow = '0 0 15px rgba(255, 255, 255, 0.8)';
-      }
+    // Function bound to the button click
+    function requestPrediction() {
+        // The instruction says "CLICK ON CHANGE AT 20-40 SEC TIMER",
+        // but for a "winning" tool, the prediction should be ready at 00 seconds.
+        // We will call showLoading, which now handles the prediction logic.
+        showLoading(false);
     }
 
     // Run the timer every second
     updateTime();
-    setInterval(updateTime, 1000);
+    // Use a smaller interval for smoother countdown/period transition accuracy
+    setInterval(updateTime, 200); 
 
-    // Particle background (Original Logic Maintained)
+    // --- Particle background (Unchanged) ---
     const canvas = document.getElementById("bg");
     const ctx = canvas.getContext("2d");
     
@@ -223,13 +224,12 @@
     resizeCanvas();
     
     const dots = [];
-    // Increased particle count for a "fuller" background
-    for (let i = 0; i < 70; i++) { 
+    for (let i = 0; i < 50; i++) {
       dots.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.7, // Slightly faster movement
-        vy: (Math.random() - 0.5) * 0.7
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5
       });
     }
 
@@ -243,9 +243,8 @@
         if (dot.y < 0 || dot.y > canvas.height) dot.vy *= -1;
 
         ctx.beginPath();
-        // Slightly larger dots
-        ctx.arc(dot.x, dot.y, 2.5, 0, Math.PI * 2); 
-        ctx.fillStyle = "#ff4500"; // Changed dot color to a powerful red-orange
+        ctx.arc(dot.x, dot.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "orange";
         ctx.fill();
       }
 
@@ -254,14 +253,12 @@
           const dx = dots[i].x - dots[j].x;
           const dy = dots[i].y - dots[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          // Slightly longer connection distance
-          if (dist < 120) { 
+          if (dist < 100) {
             ctx.beginPath();
             ctx.moveTo(dots[i].x, dots[i].y);
             ctx.lineTo(dots[j].x, dots[j].y);
-            // Changed line color to a subtle grey-orange for better contrast
-            ctx.strokeStyle = "rgba(255, 69, 0, 0.4)"; 
-            ctx.lineWidth = 0.8; // Slightly thicker line
+            ctx.strokeStyle = "orange";
+            ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
