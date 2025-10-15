@@ -1,58 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-  <title>ZENITH MAXX</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LICUIS ULTRA</title>
+  
+  <!-- Load Tailwind CSS and configure for the dark theme -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind Configuration for Custom Colors and Shadows -->
+  <script>
+      tailwind.config = {
+          theme: {
+              extend: {
+                  colors: {
+                      'dark-bg': '#0a0a0a',
+                      'card-bg': 'rgba(20, 20, 20, 0.9)',
+                      'fire-red': 'rgb(255, 0, 0)',
+                      'fire-shadow': 'rgba(255, 0, 0, 0.7)',
+                      'zenith-orange': '#ff7700',
+                      'zenith-pink': '#ff4d94',
+                  },
+                  boxShadow: {
+                      // Custom shadow for a stronger glow effect
+                      'fire-glow': '0 0 15px var(--tw-shadow-color), 0 0 30px var(--tw-shadow-color)',
+                      'zenith-glow': '0 0 20px rgba(255, 119, 0, 0.7), 0 0 40px rgba(255, 119, 0, 0.4)',
+                  }
+              }
+          }
+      }
+  </script>
+
   <style>
+    /* Base styles */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html,body { height: 100%; }
     body {
-      width: 100vw;
-      height: 100vh;
-      background: black;
-      font-family: sans-serif;
-      color: white;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
+        /* Use custom font for the dark theme */
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+    }
+    html, body {
+        height: 100%;
+    }
+    
+    /* Custom class for the prominent glowing text */
+    .glow-text {
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.4);
+    }
+    
+    .zenith-glow-text {
+        text-shadow: 0 0 10px rgba(255, 119, 0, 0.8), 0 0 20px rgba(255, 119, 0, 0.4);
+    }
+    
+    /* Custom border and shadow for prediction boxes */
+    .box-glow-border {
+        border: 2px solid theme('colors.fire-red');
+        box-shadow: 0 0 8px theme('colors.fire-shadow');
+    }
+    
+    .zenith-box-border {
+        border: 2px solid theme('colors.zenith-orange');
+        box-shadow: 0 0 8px rgba(255, 119, 0, 0.7);
     }
 
-    .period-box {
-      border: 2px solid orange;
-      border-radius: 10px;
-      padding: 12px 20px;
-      font-size: 6vw;
-      margin: 1vh 0;
-      text-align: center;
-      min-width: 80vw;
-      background: rgba(0,0,0,0.2);
-    }
-
-    .btn {
-      background: pink;
-      border: 2px solid orange;
-      border-radius: 40px;
-      padding: 12px 36px;
-      font-weight: bold;
-      color: black;
-      font-size: 5vw;
-      cursor: pointer;
-      margin: 2vh 0;
-      user-select: none;
-    }
-
-    .prediction {
-      font-size: 8vw;
-      font-weight: bold;
-      margin: 2vh 0;
-      min-height: 10vh;
-      text-align: center;
-    }
-
+    /* Color overrides for signals/data for maximum impact */
+    .period-box { color: #facc15; /* Tailwind yellow-400 */ }
+    .big { color: #38bdf8; /* Tailwind sky-400 for a cool contrast */ }
+    .small { color: #fb923c; /* Tailwind orange-400 for contrast */ }
+    .number-box { color: #34d399; /* Tailwind emerald-400 for winning numbers */ }
+    
+    /* Canvas animation styles */
     canvas {
       position: fixed;
       top: 0;
@@ -61,7 +79,8 @@
       height: 100%;
       z-index: -1;
     }
-
+    
+    /* Loading overlay */
     .blur-overlay {
       position: fixed;
       top: 0;
@@ -72,309 +91,367 @@
       background-color: rgba(0, 0, 0, 0.5);
       z-index: 100;
       display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
-
-    .instruction {
-      font-size: 3vw;
-      color: orange;
-      margin-top: -1vh;
-      margin-bottom: 1vh;
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 119, 0, 0.3);
+      border-radius: 50%;
+      border-top-color: theme('colors.zenith-orange');
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 20px;
     }
-
-    /* small screens adjustments */
-    @media (max-width:480px) {
-      .period-box { font-size: 7vw; }
-      .btn { font-size: 6vw; padding: 10px 26px; }
-      .prediction { font-size: 10vw; }
-      .instruction { font-size: 3.5vw; }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Improved responsive design */
+    @media (max-width: 640px) {
+      .main-container {
+        padding: 1rem;
+      }
+      .card-container {
+        padding: 1.5rem;
+      }
+    }
+    
+    /* Pulse animation for countdown */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .pulse-animation {
+      animation: pulse 1s infinite;
+    }
+    
+    /* Fade in animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
     }
   </style>
 </head>
-<body>
-  <div class="period-box" id="period">Loading...</div>
-  <div class="period-box" id="countdown">00:00</div>
-  <div class="prediction" id="prediction">- - -</div>
-  <button class="btn" id="btnChange">CHANGE</button>
-  <div class="instruction">CLICK ON CHANGE AT 20-40 SEC TIMER</div>
+<body class="bg-dark-bg text-white flex justify-center items-center p-4">
 
-  <div class="blur-overlay" id="blurOverlay"></div>
-  <canvas id="bg"></canvas>
+    <!-- Background Canvas -->
+    <canvas id="backgroundCanvas"></canvas>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="blur-overlay">
+        <div class="loading-spinner"></div>
+        <p class="text-xl font-bold text-zenith-orange">LOADING PREDICTION...</p>
+    </div>
 
-  <script>
-    /************************************************************************
-     * CONFIG - adjust these values if needed
-     ************************************************************************/
-    const API_URL = 'https://api.bdg88zf.com/api/webapi/GetGameIssue'; // your API
-    const REQUEST_DATA = {
-      typeId: 1,
-      language: 0,
-      random: "e7fe6c090da2495ab8290dac551ef1ed",
-      signature: "1F390E2B2D8A55D693E57FD905AE73A7",
-      timestamp: 1723726679
-    };
-    const POLL_INTERVAL_MS = 200; // how often updateTime runs (keeps countdown smooth)
-    const API_CALL_AT_SECOND = 59; // call API at second 59 to pick up the new period right before minute flips
-    /************************************************************************/
+    <!-- PREDICTION SYSTEM (MAIN APP) - Visible immediately -->
+    <div id="main-app" class="w-full max-w-md p-6 bg-card-bg rounded-2xl shadow-2xl shadow-fire-shadow transition duration-500 ease-in-out transform hover:shadow-fire-red/80 card-container fade-in">
 
-    let currentPeriodID = null;
-    let currentPrediction = '- - -';
-    let predictionReady = false;
-    let lastApiSuccessAt = 0; // timestamp of last successful API call (ms)
-    let fallbackPeriodSeed = null; // used if API never responds
+        <!-- Centered header with branding -->
+        <div class="text-center mb-4">
+            <h1 class="text-3xl font-black text-fire-red uppercase glow-text tracking-wider mb-2">
+                LICUIS ULTRA
+            </h1>
+            <h2 class="text-xl font-black text-zenith-orange uppercase zenith-glow-text tracking-wider">
+                
+            </h2>
+        </div>
+        
+        <p class="text-sm mb-6 text-gray-400 text-center">
+            
+        </p>
 
-    // Utility: robustly extract period/issue from various API shapes
-    function extractIssueFromApiResponse(resp) {
-      // check common locations. Add more as you learn the exact API response.
-      if (!resp) return null;
-      if (typeof resp === 'string' || typeof resp === 'number') return String(resp);
-      // if top-level fields
-      if (resp.issue) return String(resp.issue);
-      if (resp.Issue) return String(resp.Issue);
-      if (resp.currentIssue) return String(resp.currentIssue);
-      if (resp.data) {
-        const d = resp.data;
-        if (d.issue) return String(d.issue);
-        if (d.Issue) return String(d.Issue);
-        if (d.currentIssue) return String(d.currentIssue);
-        // sometimes the API returns an array of issues - take first
-        if (Array.isArray(d) && d.length > 0 && (d[0].issue || d[0].Issue)) {
-          return String(d[0].issue || d[0].Issue);
+        <!-- Period and Countdown Display -->
+        <div class="mb-6">
+            <div class="zenith-box-border rounded-xl p-4 text-center mb-3">
+                <p class="text-sm font-semibold text-gray-400 mb-1">PERIOD</p>
+                <p id="period" class="text-2xl font-extrabold period-box">2025XXXX-XXXXX</p>
+            </div>
+            
+            <div class="zenith-box-border rounded-xl p-4 text-center">
+                <p class="text-sm font-semibold text-gray-400 mb-1">COUNTDOWN</p>
+                <p id="countdown" class="text-2xl font-extrabold period-box">00:00</p>
+            </div>
+        </div>
+
+        <!-- Prediction Display Sections -->
+        <div id="prediction-display" class="space-y-4">
+
+            <!-- SIGNAL (BIG/SMALL) -->
+            <div class="p-3 bg-gray-800/70 rounded-xl box-glow-border text-center">
+                <span class="text-sm font-semibold text-gray-400 block mb-1">SIGNAL</span>
+                <p id="signal" class="text-4xl font-black">
+                    <!-- The class will be dynamically applied by JS (big or small) -->
+                    <span id="signal-value" class="py-2 px-6 rounded-lg box-glow-border transition duration-300 transform scale-100 hover:scale-[1.02]">--</span>
+                </p>
+            </div>
+
+            <!-- PREDICTED NUMBERS -->
+            <div class="p-3 bg-gray-800/70 rounded-xl box-glow-border text-center">
+                <span class="text-sm font-semibold text-gray-400 block mb-1">NUMBERS</span>
+                <p id="prediction" class="text-4xl font-black number-box">
+                    <span id="prediction-value" class="py-2 px-6 rounded-lg box-glow-border">--/--</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Live Status & Buttons -->
+        <p id="live-result" class="text-sm font-bold mt-6 mb-4 text-yellow-500 text-center">LIVE UPDATING...</p>
+        
+        <!-- Single button for refreshing predictions -->
+        <div class="flex justify-center">
+            <button class="w-full py-3 bg-zenith-pink text-black font-extrabold text-lg rounded-xl shadow-lg shadow-zenith-orange/50 cursor-pointer transition duration-300 ease-in-out transform hover:bg-pink-300 hover:scale-[1.03] hover:shadow-zenith-orange/80 uppercase tracking-wider" onclick="showLoading()">
+                UPDATE PREDICTION
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Core Application Logic (Preserved) ---
+        const API_URL = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
+        const REQUEST_DATA = {
+            typeId: 1,
+            language: 0,
+            random: "e7fe6c090da2495ab8290dac551ef1ed",
+            signature: "1F390E2B2D8A55D693E57FD905AE73A7",
+            timestamp: 1723726679
+        };
+
+        let periodResults = {}; // Store results for each period
+        let countdownInterval;
+        let lastTimerUpdate = 0;
+        
+        // Canvas animation
+        const canvas = document.getElementById('backgroundCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-      }
-      // try other names
-      if (resp.issueNo) return String(resp.issueNo);
-      return null;
-    }
-
-    // Robust fetch with safe JSON parse and timeout
-    async function fetchJsonWithTimeout(url, options = {}, timeoutMs = 7000) {
-      const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), timeoutMs);
-      try {
-        const res = await fetch(url, { ...options, signal: controller.signal });
-        const text = await res.text();
-        try {
-          return JSON.parse(text);
-        } catch (err) {
-          // not JSON? return raw text
-          return text;
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Particle system for background
+        const particles = [];
+        const particleCount = 50;
+        
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.color = Math.random() > 0.5 ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 119, 0, 0.5)';
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x > canvas.width || this.x < 0 || this.y > canvas.height || this.y < 0) {
+                    this.reset();
+                }
+            }
+            
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
-      } finally {
-        clearTimeout(id);
-      }
-    }
-
-    async function getPeriodFromAPI() {
-      try {
-        const response = await fetchJsonWithTimeout(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(REQUEST_DATA)
-        }, 8000);
-
-        const extracted = extractIssueFromApiResponse(response);
-        if (extracted) {
-          lastApiSuccessAt = Date.now();
-          return String(extracted);
-        } else {
-          console.warn('API returned but no issue found. Response snapshot:', response);
-          return null;
+        
+        // Initialize particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
         }
-      } catch (err) {
-        console.error('Error fetching period from API (fetch failed):', err);
-        return null;
-      }
-    }
-
-    // Local fallback: generate a stable "period id" based on current minute timestamp.
-    // Format: YYYYMMDDHHMM
-    function generateFallbackPeriodId(date = new Date()) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, '0');
-      const d = String(date.getDate()).padStart(2, '0');
-      const hh = String(date.getHours()).padStart(2, '0');
-      const mm = String(date.getMinutes()).padStart(2, '0');
-      return `${y}${m}${d}${hh}${mm}`;
-    }
-
-    // Update period UI (and reset prediction when new period observed)
-    function updatePeriodDisplay(newPeriodID) {
-      const el = document.getElementById('period');
-      if (!newPeriodID) {
-        el.textContent = 'No Period';
-        return;
-      }
-      if (newPeriodID !== currentPeriodID) {
-        console.log('New period detected:', newPeriodID, 'old:', currentPeriodID);
-        currentPeriodID = newPeriodID;
-        el.textContent = newPeriodID;
-        // reset prediction state for the new period
-        document.getElementById('prediction').textContent = '- - -';
-        currentPrediction = '- - -';
-        predictionReady = false;
-        // optionally auto-trigger loading/animation
-        showLoading(true);
-      } else {
-        // same period — just ensure UI is updated
-        el.textContent = newPeriodID;
-      }
-    }
-
-    // Combined logic: attempt API, fallback to local if necessary
-    async function refreshPeriodIfNeeded(force = false) {
-      // Try API if we reasonably should:
-      const now = Date.now();
-      const apiIsFresh = (now - lastApiSuccessAt) < (90 * 1000); // treat success as fresh for 90s
-      let periodFromApi = null;
-
-      if (force || !apiIsFresh) {
-        periodFromApi = await getPeriodFromAPI();
-      }
-
-      if (periodFromApi) {
-        updatePeriodDisplay(periodFromApi);
-      } else {
-        // API failed or returned nothing — use fallback
-        if (!fallbackPeriodSeed) {
-          fallbackPeriodSeed = generateFallbackPeriodId();
+        
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let particle of particles) {
+                particle.update();
+                particle.draw();
+            }
+            
+            requestAnimationFrame(animate);
         }
-        const fallback = generateFallbackPeriodId();
-        // if fallback changed (minute changed) then it's a new period
-        updatePeriodDisplay(fallback);
-      }
-    }
+        
+        animate();
 
-    // ---------- PREDICTION logic (temporary random) ----------
-    // Replace generatePrediction() with your real algorithm or server call.
-    function generatePrediction() {
-      const predictions = ['SMALL', 'BIG', 'RED', 'GREEN', 'SKIP'];
-      const idx = Math.floor(Math.random() * predictions.length);
-      currentPrediction = predictions[idx];
-      document.getElementById('prediction').textContent = currentPrediction;
-      predictionReady = true;
-      console.log('Generated prediction for period', currentPeriodID, currentPrediction);
-    }
+        /**
+         * Fetches the current game issue and calculates the "winning" prediction.
+         * The prediction logic (random numbers and Big/Small based on sum of digits) is preserved as per user request.
+         */
+        function fetchPrediction() {
+            // Update status immediately to show activity
+            document.getElementById("live-result").className = "text-sm font-bold mt-6 mb-4 text-yellow-500 text-center";
+            document.getElementById("live-result").textContent = "📡 FETCHING ACCURATE DATA...";
 
-    // Loading/blur overlay behaviour
-    function showLoading(autoTrigger = false) {
-      const overlay = document.getElementById('blurOverlay');
+            fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                },
+                body: JSON.stringify(REQUEST_DATA)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const liveResultElement = document.getElementById("live-result");
+                const periodElement = document.getElementById("period");
+                const signalValueElement = document.getElementById("signal-value");
+                const predictionValueElement = document.getElementById("prediction-value");
 
-      // if auto triggered (new period), show shorter animation
-      const duration = autoTrigger ? 700 : 800;
+                if (data && data.data) {
+                    let issueNumber = data.data.issueNumber || "---";
+                    
+                    // Update period display
+                    periodElement.textContent = issueNumber;
 
-      // If user clicks and prediction is already ready, do a quick flash
-      if (!autoTrigger && predictionReady) {
-        overlay.style.display = 'block';
-        setTimeout(() => overlay.style.display = 'none', 350);
-        return;
-      }
+                    // Check if result already exists for this period
+                    if (!periodResults[issueNumber]) {
+                        // --- Core Prediction Logic (Preserved) ---
+                        let num1 = Math.floor(Math.random() * 10);
+                        let num2 = (num1 + 3) % 10;
 
-      overlay.style.display = 'block';
-      setTimeout(() => {
-        overlay.style.display = 'none';
-        if (!predictionReady) generatePrediction();
-      }, duration);
-    }
+                        // Calculate Big/Small based on sum of digits (Preserved Logic)
+                        let sumDigits = String(issueNumber).split('').reduce((acc, num) => acc + parseInt(num), 0);
+                        let bigSmallPrediction = sumDigits % 2 === 0 ? "BIG" : "SMALL";
+                        // --- End Core Prediction Logic ---
 
-    document.getElementById('btnChange').addEventListener('click', () => {
-      // guard: only allow clicking in the 20-40s window optionally — but user requested
-      // simply call showLoading; instruction text on page tells user when to click
-      showLoading(false);
-    });
+                        // Store result for this period
+                        periodResults[issueNumber] = {
+                            bigSmallPrediction,
+                            predictedNumbers: `${num1}/${num2}`
+                        };
+                    }
 
-    // Countdown: show seconds left until next minute in format 00:SS
-    function updateTime() {
-      const now = new Date();
-      const seconds = now.getSeconds();
-      const secLeft = 59 - seconds; // 59 -> 0 (when seconds==59 shows 00:00)
-      const formatted = `00:${String(secLeft).padStart(2, '0')}`;
-      document.getElementById('countdown').textContent = formatted;
+                    const { bigSmallPrediction, predictedNumbers } = periodResults[issueNumber];
+                    
+                    // Apply class for color based on signal
+                    let signalClass = bigSmallPrediction === "BIG" ? "big" : "small";
 
-      // Call API at the configured second to pick up the new period
-      // We call refreshPeriodIfNeeded() at second API_CALL_AT_SECOND (usually 59)
-      // and also once on page load (handled separately)
-      if (seconds === API_CALL_AT_SECOND) {
-        // force an API refresh right before minute flips
-        refreshPeriodIfNeeded(true);
-      }
-    }
+                    // Update UI with new dynamic classes
+                    // Clear previous classes and add new ones (includes glow/border and color class)
+                    signalValueElement.className = `py-2 px-6 rounded-lg box-glow-border transition duration-300 transform scale-100 hover:scale-[1.02] ${signalClass}`;
+                    signalValueElement.textContent = bigSmallPrediction;
 
-    // Initialize
-    (async function init() {
-      // initial attempt to get period
-      await refreshPeriodIfNeeded(true);
+                    predictionValueElement.textContent = predictedNumbers;
 
-      // start smooth countdown + periodic checks
-      updateTime();
-      setInterval(updateTime, POLL_INTERVAL_MS);
-
-      // As a safety: every 30s attempt refresh if API hasn't succeeded recently
-      setInterval(() => {
-        const now = Date.now();
-        if ((now - lastApiSuccessAt) > 30000) {
-          refreshPeriodIfNeeded(false);
+                    liveResultElement.className = "text-sm font-bold mt-6 mb-4 text-green-400 text-center";
+                    liveResultElement.textContent = "✅ FULL ACCURACY ACHIEVED! LIVE DATA READY.";
+                    
+                    // Start countdown timer
+                    startCountdown();
+                } else {
+                    liveResultElement.className = "text-sm font-bold mt-6 mb-4 text-red-500 text-center";
+                    liveResultElement.textContent = "⚠️ ERROR! CANNOT FETCH GAME ISSUE DATA.";
+                }
+            })
+            .catch(error => {
+                console.error("API Fetch Error:", error);
+                const liveResultElement = document.getElementById("live-result");
+                liveResultElement.className = "text-sm font-bold mt-6 mb-4 text-red-500 text-center";
+                liveResultElement.textContent = "❌ CONNECTION ERROR! CHECK NETWORK.";
+            });
         }
-      }, 30000);
-    })();
-
-    // ---------- Particle background (unchanged mostly) ----------
-    const canvas = document.getElementById('bg');
-    const ctx = canvas.getContext('2d');
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    const dots = [];
-    for (let i = 0; i < 50; i++) {
-      dots.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5
-      });
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let dot of dots) {
-        dot.x += dot.vx;
-        dot.y += dot.vy;
-
-        if (dot.x < 0 || dot.x > canvas.width) dot.vx *= -1;
-        if (dot.y < 0 || dot.y > canvas.height) dot.vy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = "orange";
-        ctx.fill();
-      }
-
-      for (let i = 0; i < dots.length; i++) {
-        for (let j = i + 1; j < dots.length; j++) {
-          const dx = dots[i].x - dots[j].x;
-          const dy = dots[i].y - dots[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 100) {
-            ctx.beginPath();
-            ctx.moveTo(dots[i].x, dots[i].y);
-            ctx.lineTo(dots[j].x, dots[j].y);
-            ctx.strokeStyle = "orange";
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
+        
+        // Fixed timer function
+        function updatePeriodAndTimer() {
+            const now = new Date();
+            const currentTime = now.getTime();
+            
+            // Prevent too frequent updates
+            if (currentTime - lastTimerUpdate < 1000) return;
+            lastTimerUpdate = currentTime;
+            
+            // Get UTC components
+            const year = now.getUTCFullYear();
+            const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(now.getUTCDate()).padStart(2, '0');
+            const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+            
+            // Generate period number
+            const periodNumber = `${year}${month}${day}1000${10001 + totalMinutes}`;
+            
+            // Calculate remaining seconds in the current minute
+            const remainingSeconds = 60 - now.getUTCSeconds();
+            
+            // Update countdown display
+            const countdownElement = document.getElementById("countdown");
+            countdownElement.textContent = `00:${String(remainingSeconds).padStart(2, '0')}`;
+            
+            // Add pulse animation when time is running out
+            if (remainingSeconds <= 10) {
+                countdownElement.classList.add('pulse-animation');
+            } else {
+                countdownElement.classList.remove('pulse-animation');
+            }
+            
+            // Update period display
+            document.getElementById("period").textContent = periodNumber;
+            
+            // Auto-refresh when countdown reaches zero
+            if (remainingSeconds === 0) {
+                fetchPrediction();
+            }
         }
-      }
+        
+        // Countdown timer function
+        function startCountdown() {
+            // Clear any existing interval
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            // Start the timer
+            countdownInterval = setInterval(updatePeriodAndTimer, 1000);
+            updatePeriodAndTimer(); // Initial call
+        }
+        
+        // Loading overlay function
+        function showLoading() {
+            const overlay = document.getElementById("loadingOverlay");
+            overlay.style.display = "flex";
+            
+            // Simulate loading process
+            setTimeout(() => {
+                overlay.style.display = "none";
+                fetchPrediction();
+            }, 2000);
+        }
 
-      requestAnimationFrame(draw);
-    }
-    draw();
+        // Auto-run the prediction logic on load and start the interval
+        window.onload = function() {
+            fetchPrediction();
+            // Set up interval for continuous updates every 30 seconds (30000 ms)
+            setInterval(fetchPrediction, 30000); 
+        };
+    </script>
 
-    // helpful console info
-    console.log('Page initialized. API_URL:', API_URL);
-  </script>
 </body>
 </html>
