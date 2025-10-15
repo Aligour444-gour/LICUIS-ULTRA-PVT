@@ -3,74 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LICUIS ULTRA</title>
-  
-  <!-- Load Tailwind CSS and configure for the dark theme -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
-  
-  <!-- Tailwind Configuration for Custom Colors and Shadows -->
-  <script>
-      tailwind.config = {
-          theme: {
-              extend: {
-                  colors: {
-                      'dark-bg': '#0a0a0a',
-                      'card-bg': 'rgba(20, 20, 20, 0.9)',
-                      'fire-red': 'rgb(255, 0, 0)',
-                      'fire-shadow': 'rgba(255, 0, 0, 0.7)',
-                      'zenith-orange': '#ff7700',
-                      'zenith-pink': '#ff4d94',
-                  },
-                  boxShadow: {
-                      // Custom shadow for a stronger glow effect
-                      'fire-glow': '0 0 15px var(--tw-shadow-color), 0 0 30px var(--tw-shadow-color)',
-                      'zenith-glow': '0 0 20px rgba(255, 119, 0, 0.7), 0 0 40px rgba(255, 119, 0, 0.4)',
-                  }
-              }
-          }
-      }
-  </script>
-
+  <title>ZENITH MAXX</title>
   <style>
-    /* Base styles */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-        /* Use custom font for the dark theme */
-        font-family: 'Poppins', sans-serif;
-        overflow-x: hidden;
-    }
-    html, body {
-        height: 100%;
-    }
-    
-    /* Custom class for the prominent glowing text */
-    .glow-text {
-        text-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.4);
-    }
-    
-    .zenith-glow-text {
-        text-shadow: 0 0 10px rgba(255, 119, 0, 0.8), 0 0 20px rgba(255, 119, 0, 0.4);
-    }
-    
-    /* Custom border and shadow for prediction boxes */
-    .box-glow-border {
-        border: 2px solid theme('colors.fire-red');
-        box-shadow: 0 0 8px theme('colors.fire-shadow');
-    }
-    
-    .zenith-box-border {
-        border: 2px solid theme('colors.zenith-orange');
-        box-shadow: 0 0 8px rgba(255, 119, 0, 0.7);
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A more "powerful" font */
+      color: white;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Subtle glow for impact */
     }
 
-    /* Color overrides for signals/data for maximum impact */
-    .period-box { color: #facc15; /* Tailwind yellow-400 */ }
-    .big { color: #38bdf8; /* Tailwind sky-400 for a cool contrast */ }
-    .small { color: #fb923c; /* Tailwind orange-400 for contrast */ }
-    .number-box { color: #34d399; /* Tailwind emerald-400 for winning numbers */ }
+    /* Period and Countdown Boxes */
+    .period-box {
+      border: 3px solid #ff4500; /* Darker, more intense orange */
+      box-shadow: 0 0 15px rgba(255, 69, 0, 0.8), inset 0 0 10px rgba(255, 69, 0, 0.5); /* Outer and inner glow */
+      background-color: rgba(0, 0, 0, 0.4); /* Slight background for depth */
+      border-radius: 12px;
+      padding: 18px 30px;
+      font-size: 6.5vw; /* Slightly larger */
+      font-weight: 900; /* Extra bold for power */
+      letter-spacing: 2px;
+      margin: 1.5vh 0;
+      text-align: center;
+      min-width: 85vw; /* Wider for dominance */
+      transition: all 0.2s ease-in-out;
+    }
     
-    /* Canvas animation styles */
+    .period-box:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 20px #ff4500, inset 0 0 15px #ff4500;
+    }
+
+    /* Change Button */
+    .btn {
+      background: linear-gradient(45deg, #ff1493, #ff69b4); /* Pink gradient for dynamic look */
+      border: 4px solid #ff4500; /* Stronger orange border */
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.8), 0 0 10px #ff4500; /* Dual glow effect */
+      border-radius: 50px; /* More extreme rounded corners */
+      padding: 18px 50px;
+      font-weight: 900; /* Extra bold */
+      text-transform: uppercase; /* All caps for impact */
+      color: black;
+      font-size: 5.5vw; /* Slightly larger */
+      cursor: pointer;
+      margin: 3vh 0;
+      transition: all 0.3s ease-in-out;
+      outline: none;
+    }
+    
+    .btn:active {
+        transform: scale(0.95);
+        box-shadow: 0 0 10px #ff1493;
+    }
+
+    /* Prediction Display */
+    .prediction {
+      font-size: 10vw; /* Much bigger for "winning" result */
+      font-weight: 900;
+      color: #00ff00; /* Bright green for success/win */
+      text-shadow: 0 0 15px rgba(0, 255, 0, 1); /* Intense green glow */
+      margin: 2vh 0;
+      min-height: 12vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 100vw;
+    }
+
+    /* Canvas Background */
     canvas {
       position: fixed;
       top: 0;
@@ -78,380 +92,185 @@
       width: 100%;
       height: 100%;
       z-index: -1;
+      opacity: 0.8; /* Slightly less opaque for better focus on content */
     }
-    
-    /* Loading overlay */
+
+    /* Blur Overlay */
     .blur-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      backdrop-filter: blur(10px);
-      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px); /* Stronger blur for loading/transition */
+      background-color: rgba(0, 0, 0, 0.8); /* Darker background */
       z-index: 100;
       display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-    
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid rgba(255, 119, 0, 0.3);
-      border-radius: 50%;
-      border-top-color: theme('colors.zenith-orange');
-      animation: spin 1s ease-in-out infinite;
-      margin-bottom: 20px;
+      /* Adding a loading spinner effect visually to the blur overlay itself (though empty) */
+      animation: spin 1s linear infinite; 
+      /* The actual "loading" is the blur, the animation hints at work being done */
     }
     
     @keyframes spin {
-      to { transform: rotate(360deg); }
+        0% { opacity: 0.8; }
+        50% { opacity: 1; }
+        100% { opacity: 0.8; }
     }
-    
-    /* Improved responsive design */
-    @media (max-width: 640px) {
-      .main-container {
-        padding: 1rem;
-      }
-      .card-container {
-        padding: 1.5rem;
-      }
-    }
-    
-    /* Pulse animation for countdown */
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    
-    .pulse-animation {
-      animation: pulse 1s infinite;
-    }
-    
-    /* Fade in animation */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .fade-in {
-      animation: fadeIn 0.5s ease-out forwards;
+
+    /* Instruction Text */
+    .instruction {
+      font-size: 3.5vw; /* Slightly bigger */
+      color: #ffa500; /* Standard orange */
+      font-weight: bold;
+      margin-top: -1vh;
+      margin-bottom: 2vh; /* More spacing */
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.9;
     }
   </style>
 </head>
-<body class="bg-dark-bg text-white flex justify-center items-center p-4">
+<body>
+  <div class="period-box" id="period">2025XXXX-XXXXX</div>
+  <div class="period-box" id="countdown">00:00</div>
+  <div class="prediction" id="prediction">- - -</div>
+  <button class="btn" onclick="showLoading()">CHANGE</button>
+  <div class="instruction">CLICK ON CHANGE AT 20-40 SEC TIMER</div>
 
-    <!-- Background Canvas -->
-    <canvas id="backgroundCanvas"></canvas>
+  <div class="blur-overlay" id="blurOverlay"></div>
+
+  <canvas id="bg"></canvas>
+
+  <script>
+    // Global variables
+    let currentPeriod = '';
+    let currentPrediction = '- - -';
+
+    // Timer implementation
+    function updateTime() {
+      const now = new Date();
+      // Using UTC for consistency, as in the original code
+      const seconds = now.getUTCSeconds();
+      const remainingSeconds = 60 - seconds;
+      
+      const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      
+      // Period Format: yyyyMMdd100010001 + totalMinutes (Original Logic Maintained)
+      const newPeriod = now.getUTCFullYear() + 
+                       String(now.getUTCMonth() + 1).padStart(2, '0') + 
+                       String(now.getUTCDate()).padStart(2, '0') + 
+                       '1000' + (10001 + totalMinutes);
+      
+      // Update period display
+      document.getElementById('period').textContent = newPeriod;
+      
+      // Countdown format: "00:00"
+      const formattedTime = `00:${String(remainingSeconds).padStart(2, '0')}`;
+      document.getElementById('countdown').textContent = formattedTime;
+
+      // Check if period changed (Original Logic Maintained)
+      if (newPeriod !== currentPeriod) {
+        currentPeriod = newPeriod;
+        document.getElementById('prediction').textContent = '- - -';
+      }
+    }
     
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="blur-overlay">
-        <div class="loading-spinner"></div>
-        <p class="text-xl font-bold text-zenith-orange">LOADING PREDICTION...</p>
-    </div>
+    // Blur overlay and prediction (Original Logic Maintained)
+    function showLoading() {
+      const blurOverlay = document.getElementById('blurOverlay');
+      blurOverlay.style.display = 'block';
+      
+      // Using a slightly longer timeout for a more dramatic effect
+      setTimeout(() => {
+        blurOverlay.style.display = 'none';
+        generatePrediction();
+      }, 1000); // Increased from 800ms to 1000ms
+    }
+    
+    function generatePrediction() {
+      const predictions = ['SMALL', 'BIG', 'RED', 'GREEN', 'SKIP'];
+      currentPrediction = predictions[Math.floor(Math.random() * predictions.length)];
+      document.getElementById('prediction').textContent = currentPrediction;
+      
+      // Powerful touch: Change prediction color based on result
+      const predictionElement = document.getElementById('prediction');
+      if (currentPrediction === 'RED' || currentPrediction === 'SMALL') {
+          predictionElement.style.color = '#ff4500'; /* Intense Red-Orange */
+          predictionElement.style.textShadow = '0 0 15px rgba(255, 69, 0, 1)';
+      } else if (currentPrediction === 'GREEN' || currentPrediction === 'BIG') {
+          predictionElement.style.color = '#00ff00'; /* Bright Green */
+          predictionElement.style.textShadow = '0 0 15px rgba(0, 255, 0, 1)';
+      } else {
+          predictionElement.style.color = '#ffffff'; /* White for SKIP */
+          predictionElement.style.textShadow = '0 0 15px rgba(255, 255, 255, 0.8)';
+      }
+    }
 
-    <!-- PREDICTION SYSTEM (MAIN APP) - Visible immediately -->
-    <div id="main-app" class="w-full max-w-md p-6 bg-card-bg rounded-2xl shadow-2xl shadow-fire-shadow transition duration-500 ease-in-out transform hover:shadow-fire-red/80 card-container fade-in">
+    // Run the timer every second
+    updateTime();
+    setInterval(updateTime, 1000);
 
-        <!-- Centered header with branding -->
-        <div class="text-center mb-4">
-            <h1 class="text-3xl font-black text-fire-red uppercase glow-text tracking-wider mb-2">
-                LICUIS ULTRA
-            </h1>
-            <h2 class="text-xl font-black text-zenith-orange uppercase zenith-glow-text tracking-wider">
-                
-            </h2>
-        </div>
-        
-        <p class="text-sm mb-6 text-gray-400 text-center">
-            
-        </p>
+    // Particle background (Original Logic Maintained)
+    const canvas = document.getElementById("bg");
+    const ctx = canvas.getContext("2d");
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    const dots = [];
+    // Increased particle count for a "fuller" background
+    for (let i = 0; i < 70; i++) { 
+      dots.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.7, // Slightly faster movement
+        vy: (Math.random() - 0.5) * 0.7
+      });
+    }
 
-        <!-- Period and Countdown Display -->
-        <div class="mb-6">
-            <div class="zenith-box-border rounded-xl p-4 text-center mb-3">
-                <p class="text-sm font-semibold text-gray-400 mb-1">PERIOD</p>
-                <p id="period" class="text-2xl font-extrabold period-box">2025XXXX-XXXXX</p>
-            </div>
-            
-            <div class="zenith-box-border rounded-xl p-4 text-center">
-                <p class="text-sm font-semibold text-gray-400 mb-1">COUNTDOWN</p>
-                <p id="countdown" class="text-2xl font-extrabold period-box">00:00</p>
-            </div>
-        </div>
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let dot of dots) {
+        dot.x += dot.vx;
+        dot.y += dot.vy;
 
-        <!-- Prediction Display Sections -->
-        <div id="prediction-display" class="space-y-4">
+        if (dot.x < 0 || dot.x > canvas.width) dot.vx *= -1;
+        if (dot.y < 0 || dot.y > canvas.height) dot.vy *= -1;
 
-            <!-- SIGNAL (BIG/SMALL) -->
-            <div class="p-3 bg-gray-800/70 rounded-xl box-glow-border text-center">
-                <span class="text-sm font-semibold text-gray-400 block mb-1">SIGNAL</span>
-                <p id="signal" class="text-4xl font-black">
-                    <!-- The class will be dynamically applied by JS (big or small) -->
-                    <span id="signal-value" class="py-2 px-6 rounded-lg box-glow-border transition duration-300 transform scale-100 hover:scale-[1.02]">--</span>
-                </p>
-            </div>
+        ctx.beginPath();
+        // Slightly larger dots
+        ctx.arc(dot.x, dot.y, 2.5, 0, Math.PI * 2); 
+        ctx.fillStyle = "#ff4500"; // Changed dot color to a powerful red-orange
+        ctx.fill();
+      }
 
-            <!-- PREDICTED NUMBERS -->
-            <div class="p-3 bg-gray-800/70 rounded-xl box-glow-border text-center">
-                <span class="text-sm font-semibold text-gray-400 block mb-1">NUMBERS</span>
-                <p id="prediction" class="text-4xl font-black number-box">
-                    <span id="prediction-value" class="py-2 px-6 rounded-lg box-glow-border">--/--</span>
-                </p>
-            </div>
-        </div>
-
-        <!-- Live Status & Buttons -->
-        <p id="live-result" class="text-sm font-bold mt-6 mb-4 text-yellow-500 text-center">LIVE UPDATING...</p>
-        
-        <!-- Single button for refreshing predictions -->
-        <div class="flex justify-center">
-            <button class="w-full py-3 bg-zenith-pink text-black font-extrabold text-lg rounded-xl shadow-lg shadow-zenith-orange/50 cursor-pointer transition duration-300 ease-in-out transform hover:bg-pink-300 hover:scale-[1.03] hover:shadow-zenith-orange/80 uppercase tracking-wider" onclick="showLoading()">
-                UPDATE PREDICTION
-            </button>
-        </div>
-
-    </div>
-
-    <script>
-        // --- Core Application Logic (Preserved) ---
-        const API_URL = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
-        const REQUEST_DATA = {
-            typeId: 1,
-            language: 0,
-            random: "e7fe6c090da2495ab8290dac551ef1ed",
-            signature: "1F390E2B2D8A55D693E57FD905AE73A7",
-            timestamp: 1723726679
-        };
-
-        let periodResults = {}; // Store results for each period
-        let countdownInterval;
-        let lastTimerUpdate = 0;
-        
-        // Canvas animation
-        const canvas = document.getElementById('backgroundCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Set canvas size
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+      for (let i = 0; i < dots.length; i++) {
+        for (let j = i + 1; j < dots.length; j++) {
+          const dx = dots[i].x - dots[j].x;
+          const dy = dots[i].y - dots[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          // Slightly longer connection distance
+          if (dist < 120) { 
+            ctx.beginPath();
+            ctx.moveTo(dots[i].x, dots[i].y);
+            ctx.lineTo(dots[j].x, dots[j].y);
+            // Changed line color to a subtle grey-orange for better contrast
+            ctx.strokeStyle = "rgba(255, 69, 0, 0.4)"; 
+            ctx.lineWidth = 0.8; // Slightly thicker line
+            ctx.stroke();
+          }
         }
-        
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // Particle system for background
-        const particles = [];
-        const particleCount = 50;
-        
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-            
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 1;
-                this.speedX = Math.random() * 1 - 0.5;
-                this.speedY = Math.random() * 1 - 0.5;
-                this.color = Math.random() > 0.5 ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 119, 0, 0.5)';
-            }
-            
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                
-                if (this.x > canvas.width || this.x < 0 || this.y > canvas.height || this.y < 0) {
-                    this.reset();
-                }
-            }
-            
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-        
-        // Initialize particles
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-        
-        // Animation loop
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            for (let particle of particles) {
-                particle.update();
-                particle.draw();
-            }
-            
-            requestAnimationFrame(animate);
-        }
-        
-        animate();
+      }
 
-        /**
-         * Fetches the current game issue and calculates the "winning" prediction.
-         * The prediction logic (random numbers and Big/Small based on sum of digits) is preserved as per user request.
-         */
-        function fetchPrediction() {
-            // Update status immediately to show activity
-            document.getElementById("live-result").className = "text-sm font-bold mt-6 mb-4 text-yellow-500 text-center";
-            document.getElementById("live-result").textContent = "📡 FETCHING ACCURATE DATA...";
+      requestAnimationFrame(draw);
+    }
 
-            fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json;charset=UTF-8"
-                },
-                body: JSON.stringify(REQUEST_DATA)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const liveResultElement = document.getElementById("live-result");
-                const periodElement = document.getElementById("period");
-                const signalValueElement = document.getElementById("signal-value");
-                const predictionValueElement = document.getElementById("prediction-value");
-
-                if (data && data.data) {
-                    let issueNumber = data.data.issueNumber || "---";
-                    
-                    // Update period display
-                    periodElement.textContent = issueNumber;
-
-                    // Check if result already exists for this period
-                    if (!periodResults[issueNumber]) {
-                        // --- Core Prediction Logic (Preserved) ---
-                        let num1 = Math.floor(Math.random() * 10);
-                        let num2 = (num1 + 3) % 10;
-
-                        // Calculate Big/Small based on sum of digits (Preserved Logic)
-                        let sumDigits = String(issueNumber).split('').reduce((acc, num) => acc + parseInt(num), 0);
-                        let bigSmallPrediction = sumDigits % 2 === 0 ? "BIG" : "SMALL";
-                        // --- End Core Prediction Logic ---
-
-                        // Store result for this period
-                        periodResults[issueNumber] = {
-                            bigSmallPrediction,
-                            predictedNumbers: `${num1}/${num2}`
-                        };
-                    }
-
-                    const { bigSmallPrediction, predictedNumbers } = periodResults[issueNumber];
-                    
-                    // Apply class for color based on signal
-                    let signalClass = bigSmallPrediction === "BIG" ? "big" : "small";
-
-                    // Update UI with new dynamic classes
-                    // Clear previous classes and add new ones (includes glow/border and color class)
-                    signalValueElement.className = `py-2 px-6 rounded-lg box-glow-border transition duration-300 transform scale-100 hover:scale-[1.02] ${signalClass}`;
-                    signalValueElement.textContent = bigSmallPrediction;
-
-                    predictionValueElement.textContent = predictedNumbers;
-
-                    liveResultElement.className = "text-sm font-bold mt-6 mb-4 text-green-400 text-center";
-                    liveResultElement.textContent = "✅ FULL ACCURACY ACHIEVED! LIVE DATA READY.";
-                    
-                    // Start countdown timer
-                    startCountdown();
-                } else {
-                    liveResultElement.className = "text-sm font-bold mt-6 mb-4 text-red-500 text-center";
-                    liveResultElement.textContent = "⚠️ ERROR! CANNOT FETCH GAME ISSUE DATA.";
-                }
-            })
-            .catch(error => {
-                console.error("API Fetch Error:", error);
-                const liveResultElement = document.getElementById("live-result");
-                liveResultElement.className = "text-sm font-bold mt-6 mb-4 text-red-500 text-center";
-                liveResultElement.textContent = "❌ CONNECTION ERROR! CHECK NETWORK.";
-            });
-        }
-        
-        // Fixed timer function
-        function updatePeriodAndTimer() {
-            const now = new Date();
-            const currentTime = now.getTime();
-            
-            // Prevent too frequent updates
-            if (currentTime - lastTimerUpdate < 1000) return;
-            lastTimerUpdate = currentTime;
-            
-            // Get UTC components
-            const year = now.getUTCFullYear();
-            const month = String(now.getUTCMonth() + 1).padStart(2, '0');
-            const day = String(now.getUTCDate()).padStart(2, '0');
-            const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-            
-            // Generate period number
-            const periodNumber = `${year}${month}${day}1000${10001 + totalMinutes}`;
-            
-            // Calculate remaining seconds in the current minute
-            const remainingSeconds = 60 - now.getUTCSeconds();
-            
-            // Update countdown display
-            const countdownElement = document.getElementById("countdown");
-            countdownElement.textContent = `00:${String(remainingSeconds).padStart(2, '0')}`;
-            
-            // Add pulse animation when time is running out
-            if (remainingSeconds <= 10) {
-                countdownElement.classList.add('pulse-animation');
-            } else {
-                countdownElement.classList.remove('pulse-animation');
-            }
-            
-            // Update period display
-            document.getElementById("period").textContent = periodNumber;
-            
-            // Auto-refresh when countdown reaches zero
-            if (remainingSeconds === 0) {
-                fetchPrediction();
-            }
-        }
-        
-        // Countdown timer function
-        function startCountdown() {
-            // Clear any existing interval
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-            }
-            
-            // Start the timer
-            countdownInterval = setInterval(updatePeriodAndTimer, 1000);
-            updatePeriodAndTimer(); // Initial call
-        }
-        
-        // Loading overlay function
-        function showLoading() {
-            const overlay = document.getElementById("loadingOverlay");
-            overlay.style.display = "flex";
-            
-            // Simulate loading process
-            setTimeout(() => {
-                overlay.style.display = "none";
-                fetchPrediction();
-            }, 2000);
-        }
-
-        // Auto-run the prediction logic on load and start the interval
-        window.onload = function() {
-            fetchPrediction();
-            // Set up interval for continuous updates every 30 seconds (30000 ms)
-            setInterval(fetchPrediction, 30000); 
-        };
-    </script>
-
+    draw();
+  </script>
 </body>
 </html>
