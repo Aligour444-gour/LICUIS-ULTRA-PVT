@@ -1,457 +1,1773 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LICUIS ULTRA</title>
-  
-  <!-- Load Tailwind CSS and configure for the dark theme -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
-  
-  <!-- Tailwind Configuration for Custom Colors and Shadows -->
-  <script>
-      tailwind.config = {
-          theme: {
-              extend: {
-                  colors: {
-                      'dark-bg': '#0a0a0a',
-                      'card-bg': 'rgba(20, 20, 20, 0.9)',
-                      'fire-red': 'rgb(255, 0, 0)',
-                      'fire-shadow': 'rgba(255, 0, 0, 0.7)',
-                      'zenith-orange': '#ff7700',
-                      'zenith-pink': '#ff4d94',
-                  },
-                  boxShadow: {
-                      // Custom shadow for a stronger glow effect
-                      'fire-glow': '0 0 15px var(--tw-shadow-color), 0 0 30px var(--tw-shadow-color)',
-                      'zenith-glow': '0 0 20px rgba(255, 119, 0, 0.7), 0 0 40px rgba(255, 119, 0, 0.4)',
-                  }
-              }
-          }
-      }
-  </script>
-
-  <style>
-    /* Base styles */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-        /* Use custom font for the dark theme */
-        font-family: 'Poppins', sans-serif;
-        overflow-x: hidden;
-    }
-    html, body {
-        height: 100%;
-    }
-    
-    /* Custom class for the prominent glowing text */
-    .glow-text {
-        text-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.4);
-    }
-    
-    .zenith-glow-text {
-        text-shadow: 0 0 10px rgba(255, 119, 0, 0.8), 0 0 20px rgba(255, 119, 0, 0.4);
-    }
-    
-    /* Custom border and shadow for prediction boxes */
-    .box-glow-border {
-        border: 2px solid theme('colors.fire-red');
-        box-shadow: 0 0 8px theme('colors.fire-shadow');
-    }
-    
-    .zenith-box-border {
-        border: 2px solid theme('colors.zenith-orange');
-        box-shadow: 0 0 8px rgba(255, 119, 0, 0.7);
-    }
-
-    /* Color overrides for signals/data for maximum impact */
-    .period-box { color: #facc15; /* Tailwind yellow-400 */ }
-    .big { color: #38bdf8; /* Tailwind sky-400 for a cool contrast */ }
-    .small { color: #fb923c; /* Tailwind orange-400 for contrast */ }
-    .number-box { color: #34d399; /* Tailwind emerald-400 for winning numbers */ }
-    
-    /* Canvas animation styles */
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-    
-    /* Loading overlay */
-    .blur-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      backdrop-filter: blur(10px);
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 100;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-    
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid rgba(255, 119, 0, 0.3);
-      border-radius: 50%;
-      border-top-color: theme('colors.zenith-orange');
-      animation: spin 1s ease-in-out infinite;
-      margin-bottom: 20px;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    /* Improved responsive design */
-    @media (max-width: 640px) {
-      .main-container {
-        padding: 1rem;
-      }
-      .card-container {
-        padding: 1.5rem;
-      }
-    }
-    
-    /* Pulse animation for countdown */
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    
-    .pulse-animation {
-      animation: pulse 1s infinite;
-    }
-    
-    /* Fade in animation */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .fade-in {
-      animation: fadeIn 0.5s ease-out forwards;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LICUIS ULTRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #D4AF37;
+            --secondary-color: #1a1a1a;
+            --tertiary-color: #FFD700;
+            --text-color: #ffffff;
+            --card-bg: rgba(26, 26, 26, 0.8);
+        }
+        
+        .blue {
+            --primary-color: #3a7bd5;
+            --tertiary-color: #00d2ff;
+        }
+        
+        .red {
+            --primary-color: #ed213a;
+            --tertiary-color: #ff512f;
+        }
+        
+        .purple {
+            --primary-color: #8e2de2;
+            --tertiary-color: #4a00e0;
+        }
+        
+        .emerald {
+            --primary-color: #11998e;
+            --tertiary-color: #38ef7d;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #2d2d2d 100%);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tab-system {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 4px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            z-index: 100;
+            position: relative;
+        }
+        
+        .tab {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            justify-content: center;
+            margin: 0 2px;
+        }
+        
+        .tab.active {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+        
+        .tab-icon {
+            margin-right: 8px;
+        }
+        
+        .content-section {
+            display: none;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .game-selection {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .game-selection-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .game-list-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .game-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .game-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .game-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .game-url {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .fullscreen-iframe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            border: none;
+            background: white;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .injector-tape {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .injector-tape:hover {
+            transform: scale(1.1);
+        }
+        
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .win-status {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+        
+        .loss-status {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+        
+        .pending-status {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+        }
+        
+        .theme-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .theme-option:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            animation: modalAppear 0.3s ease;
+        }
+        
+        @keyframes modalAppear {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .prediction-card {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(40, 40, 40, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .loading-bar {
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color));
+            width: 0%;
+            transition: width 1s linear;
+        }
+        
+        .glow {
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+        
+        /* New styles for improved UI */
+        .mini-stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .mini-stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .mini-stat-box:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .mini-stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .mini-stat-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-live {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        
+        .status-offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .prediction-highlight {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(255, 215, 0, 0.1) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .prediction-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .period-display {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .info-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
+        }
+        
+        .info-card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-card-content {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        
+        /* Improved tab system for game mode */
+        .game-mode .tab-system {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1002;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .game-mode .content-section {
+            padding-top: 60px;
+        }
+        
+        /* Enhanced UI elements */
+        .nav-button {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .game-frame-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1002;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .game-control-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .game-control-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+        
+        /* Game mode header */
+        .game-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1001;
+            background: rgba(26, 26, 26, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            display: none;
+        }
+        
+        .game-header.active {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .game-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        /* New styles for improved game tab management */
+        .game-frame-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            display: none;
+        }
+        
+        .game-frame-container.active {
+            display: block;
+        }
+        
+        .game-frame-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .game-tab-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 1001;
+        }
+        
+        /* NEW: Styles for game tabs management */
+        .game-tab {
+            display: none;
+        }
+        
+        .game-tab.active {
+            display: block;
+        }
+        
+        .game-tab-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1001;
+            background: rgba(26, 26, 26, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .game-tab-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .game-tab-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .game-tab-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .game-tab-frame {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 60px);
+            border: none;
+            z-index: 999;
+        }
+    </style>
 </head>
-<body class="bg-dark-bg text-white flex justify-center items-center p-4">
+<body class="min-h-screen flex flex-col">
+    <header class="glass-card p-4 sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-full bg-[var(--primary-color)] flex items-center justify-center">
+                    <i class="fas fa-chart-line text-[var(--secondary-color)]"></i>
+                </div>
+                <h1 class="text-xl font-bold gradient-text">LICUIS ULTRA</h1>
+            </div>
+            
+            <div class="flex space-x-2">
+                <button id="themeBtn" class="nav-button p-2 rounded-full transition-all duration-300">
+                    <i class="fas fa-palette"></i>
+                </button>
+                <button id="infoBtn" class="nav-button p-2 rounded-full transition-all duration-300">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+            </div>
+        </div>
+    </header>
 
-    <!-- Background Canvas -->
-    <canvas id="backgroundCanvas"></canvas>
-    
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="blur-overlay">
-        <div class="loading-spinner"></div>
-        <p class="text-xl font-bold text-zenith-orange">LOADING PREDICTION...</p>
+    <div class="tab-system">
+        <div class="tab active" data-tab="home" role="tab" aria-controls="home-section" aria-selected="true">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div class="tab-label">Home</div>
+        </div>
+        <div class="tab" data-tab="games" role="tab" aria-controls="games-section" aria-selected="false">
+            <div class="tab-icon"><i class="fas fa-gamepad"></i></div>
+            <div class="tab-label">Games</div>
+        </div>
+        <div class="tab" data-tab="history" role="tab" aria-controls="history-section" aria-selected="false">
+            <div class="tab-icon"><i class="fas fa-history"></i></div>
+            <div class="tab-label">History</div>
+        </div>
     </div>
 
-    <!-- PREDICTION SYSTEM (MAIN APP) - Visible immediately -->
-    <div id="main-app" class="w-full max-w-md p-6 bg-card-bg rounded-2xl shadow-2xl shadow-fire-shadow transition duration-500 ease-in-out transform hover:shadow-fire-red/80 card-container fade-in">
-
-        <!-- Centered header with branding -->
-        <div class="text-center mb-4">
-            <h1 class="text-3xl font-black text-fire-red uppercase glow-text tracking-wider mb-2">
-                LICUIS ULTRA
-            </h1>
-            <h2 class="text-xl font-black text-zenith-orange uppercase zenith-glow-text tracking-wider">
+    <div class="content-section active" id="home-section" role="tabpanel" aria-labelledby="home-tab">
+        <div class="container mx-auto px-4">
+            <section class="mb-8">
+                <div class="prediction-card rounded-2xl p-6 mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold">Current Prediction</h2>
+                        <div class="status-indicator status-live">
+                            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            <span>Live</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="prediction-highlight">
+                            <p class="period-display">Current Period</p>
+                            <p id="currentPeriod" class="prediction-value">-</p>
+                        </div>
+                        
+                        <div class="prediction-highlight">
+                            <p class="period-display">Prediction</p>
+                            <p id="currentPrediction" class="prediction-value">-</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="mb-8">
+                <div class="section-header">
+                    <h2 class="section-title">Performance Stats</h2>
+                </div>
                 
-            </h2>
+                <div class="mini-stats-container">
+                    <div class="mini-stat-box">
+                        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
+                            <i class="fas fa-trophy text-green-500 text-sm"></i>
+                        </div>
+                        <p class="mini-stat-label">Wins</p>
+                        <p id="wins" class="mini-stat-value">0</p>
+                    </div>
+                    
+                    <div class="mini-stat-box">
+                        <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center mx-auto">
+                            <i class="fas fa-times-circle text-red-500 text-sm"></i>
+                        </div>
+                        <p class="mini-stat-label">Losses</p>
+                        <p id="losses" class="mini-stat-value">0</p>
+                    </div>
+                    
+                    <div class="mini-stat-box">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto">
+                            <i class="fas fa-percentage text-blue-500 text-sm"></i>
+                        </div>
+                        <p class="mini-stat-label">Win Rate</p>
+                        <p id="winRate" class="mini-stat-value">0%</p>
+                    </div>
+                    
+                    <div class="mini-stat-box">
+                        <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto">
+                            <i class="fas fa-chart-bar text-purple-500 text-sm"></i>
+                        </div>
+                        <p class="mini-stat-label">Total Predictions</p>
+                        <p id="totalPredictions" class="mini-stat-value">0</p>
+                    </div>
+                </div>
+            </section>
         </div>
-        
-        <p class="text-sm mb-6 text-gray-400 text-center">
+    </div>
+
+    <div class="content-section" id="games-section" role="tabpanel" aria-labelledby="games-tab">
+        <div class="game-selection" id="gameSelection">
+            <h1 class="game-selection-title" id="gameSelectionTitle">SELECT GAME</h1>
+            <div class="game-list-container">
+                <div class="game-list">
+                    <div class="game-item" data-game="big-daddy" data-url="https://bdginf.com/#/login" data-name="BIG DADDY" role="button" tabindex="0">
+                        <div class="game-name">BIG DADDY</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="ok-win" data-url="http://Okwin.bio" data-name="OK WIN" role="button" tabindex="0">
+                        <div class="game-name">OK WIN</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="goa-game" data-url="https://goagamea.com/#/login" data-name="GOA GAME" role="button" tabindex="0">
+                        <div class="game-name">GOA GAME</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="big-mumbai" data-url="https://www.bigmumbaiq.com/#/login" data-name="BIG MUMBAI" role="button" tabindex="0">
+                        <div class="game-name">BIG MUMBAI</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="tiranga" data-url="http://tirangagame.top" data-name="TIRANGA" role="button" tabindex="0">
+                        <div class="game-name">TIRANGA</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="fifty-one-game" data-url="https://51game5.com/#/" data-name="51 GAME" role="button" tabindex="0">
+                        <div class="game-name">51 GAME</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="bdg-win" data-url="https://bdgwin.cc/#/login" data-name="BDG WIN" role="button" tabindex="0">
+                        <div class="game-name">BDG WIN</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="raja-wager" data-url="http://rajawager.com" data-name="RAJA WAGER" role="button" tabindex="0">
+                        <div class="game-name">RAJA WAGER</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="fifty-five-club" data-url="http://55club.game" data-name="55 CLUB" role="button" tabindex="0">
+                        <div class="game-name">55 CLUB</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="bharat-club" data-url="https://bharatclub.net/#/login" data-name="BHARAT CLUB" role="button" tabindex="0">
+                        <div class="game-name">BHARAT CLUB</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="diuwin" data-url="https://www.diuwin8.com/#/" data-name="DIUWIN" role="button" tabindex="0">
+                        <div class="game-name">DIUWIN</div>
+                        <div class="game-url"></div>
+                    </div>
+                    <div class="game-item" data-game="ninety-one-club" data-url="https://www.aatclub.com/#/" data-name="91 CLUB" role="button" tabindex="0">
+                        <div class="game-name">91 CLUB</div>
+                        <div class="game-url"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section" id="history-section" role="tabpanel" aria-labelledby="history-tab">
+        <div class="container mx-auto px-4">
+            <div class="section-header">
+                <h2 class="section-title">History</h2>
+                <button id="clearHistoryBtn" class="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors">
+                    <i class="fas fa-trash mr-2"></i>Clear History
+                </button>
+            </div>
             
-        </p>
-
-        <!-- Period and Countdown Display -->
-        <div class="mb-6">
-            <div class="zenith-box-border rounded-xl p-4 text-center mb-3">
-                <p class="text-sm font-semibold text-gray-400 mb-1">PERIOD</p>
-                <p id="period" class="text-2xl font-extrabold period-box">2025XXXX-XXXXX</p>
-            </div>
-            
-            <div class="zenith-box-border rounded-xl p-4 text-center">
-                <p class="text-sm font-semibold text-gray-400 mb-1">COUNTDOWN</p>
-                <p id="countdown" class="text-2xl font-extrabold period-box">00:00</p>
+            <div id="historyContainer" class="space-y-4">
+                <div class="glass-card rounded-xl p-6 text-center">
+                    <i class="fas fa-history text-4xl opacity-30 mb-4"></i>
+                    <p class="text-lg opacity-70">No prediction history yet</p>
+                    <p class="text-sm opacity-50">Predictions will appear here as they are generated</p>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- Prediction Display Sections -->
-        <div id="prediction-display" class="space-y-4">
-
-            <!-- SIGNAL (BIG/SMALL) -->
-            <div class="p-3 bg-gray-800/70 rounded-xl box-glow-border text-center">
-                <span class="text-sm font-semibold text-gray-400 block mb-1">SIGNAL</span>
-                <p id="signal" class="text-4xl font-black">
-                    <!-- The class will be dynamically applied by JS (big or small) -->
-                    <span id="signal-value" class="py-2 px-6 rounded-lg box-glow-border transition duration-300 transform scale-100 hover:scale-[1.02]">--</span>
-                </p>
-            </div>
-
-            <!-- PREDICTED NUMBERS -->
-            <div class="p-3 bg-gray-800/70 rounded-xl box-glow-border text-center">
-                <span class="text-sm font-semibold text-gray-400 block mb-1">NUMBERS</span>
-                <p id="prediction" class="text-4xl font-black number-box">
-                    <span id="prediction-value" class="py-2 px-6 rounded-lg box-glow-border">--/--</span>
-                </p>
-            </div>
-        </div>
-
-        <!-- Live Status & Buttons -->
-        <p id="live-result" class="text-sm font-bold mt-6 mb-4 text-yellow-500 text-center">LIVE UPDATING...</p>
-        
-        <!-- Single button for refreshing predictions -->
-        <div class="flex justify-center">
-            <button class="w-full py-3 bg-zenith-pink text-black font-extrabold text-lg rounded-xl shadow-lg shadow-zenith-orange/50 cursor-pointer transition duration-300 ease-in-out transform hover:bg-pink-300 hover:scale-[1.03] hover:shadow-zenith-orange/80 uppercase tracking-wider" onclick="showLoading()">
-                UPDATE PREDICTION
+    <div class="game-tab" id="big-daddy-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="big-daddy">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
             </button>
+            <div class="game-tab-title">BIG DADDY</div>
+            <div></div>
         </div>
+        <iframe class="game-tab-frame" id="big-daddy-frame" allowfullscreen aria-label="BIG DADDY Game"></iframe>
+    </div>
+    
+    <div class="game-tab" id="ok-win-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="ok-win">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">OK WIN</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="ok-win-frame" allowfullscreen aria-label="OK WIN Game"></iframe>
+    </div>
+    
+    <div class="game-tab" id="goa-game-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="goa-game">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">GOA GAME</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="goa-game-frame" allowfullscreen aria-label="GOA GAME"></iframe>
+    </div>
+    
+    <div class="game-tab" id="big-mumbai-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="big-mumbai">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">BIG MUMBAI</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="big-mumbai-frame" allowfullscreen aria-label="BIG MUMBAI Game"></iframe>
+    </div>
+    
+    <div class="game-tab" id="tiranga-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="tiranga">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">TIRANGA</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="tiranga-frame" allowfullscreen aria-label="TIRANGA Game"></iframe>
+    </div>
+    
+    <div class="game-tab" id="fifty-one-game-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="fifty-one-game">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">51 GAME</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="fifty-one-game-frame" allowfullscreen aria-label="51 GAME"></iframe>
+    </div>
+    
+    <div class="game-tab" id="bdg-win-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="bdg-win">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">BDG WIN</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="bdg-win-frame" allowfullscreen aria-label="BDG WIN Game"></iframe>
+    </div>
+    
+    <div class="game-tab" id="raja-wager-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="raja-wager">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">RAJA WAGER</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="raja-wager-frame" allowfullscreen aria-label="RAJA WAGER Game"></iframe>
+    </div>
+    
+    <div class="game-tab" id="fifty-five-club-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="fifty-five-club">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">55 CLUB</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="fifty-five-club-frame" allowfullscreen aria-label="55 CLUB Game"></iframe>
+    </div>
+    
+    <div class="game-tab" id="bharat-club-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="bharat-club">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">BHARAT CLUB</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="bharat-club-frame" allowfullscreen aria-label="BHARAT CLUB Game"></iframe>
+    </div>
+    
+    <div class="game-tab" id="diuwin-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="diuwin">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">DIUWIN</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="diuwin-frame" allowfullscreen aria-label="DIUWIN Game"></iframe>
+    </div>
+    
+    <div class="game-tab" id="ninety-one-club-tab">
+        <div class="game-tab-header">
+            <button class="game-tab-back" data-game="ninety-one-club">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Games</span>
+            </button>
+            <div class="game-tab-title">91 CLUB</div>
+            <div></div>
+        </div>
+        <iframe class="game-tab-frame" id="ninety-one-club-frame" allowfullscreen aria-label="91 CLUB Game"></iframe>
+    </div>
 
+    <div id="themeModal" class="modal">
+        <div id="themeModalContent" class="modal-content max-w-md mx-auto mt-20 p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold">Choose Theme</h3>
+                <button id="closeThemeModal" class="text-xl opacity-70 hover:opacity-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="theme-option p-4 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#FFD700] text-center" data-theme="default">
+                    <i class="fas fa-crown text-2xl mb-2"></i>
+                    <p>Gold</p>
+                </div>
+                
+                <div class="theme-option p-4 rounded-lg bg-gradient-to-r from-[#3a7bd5] to-[#00d2ff] text-center" data-theme="blue">
+                    <i class="fas fa-water text-2xl mb-2"></i>
+                    <p>Ocean</p>
+                </div>
+                
+                <div class="theme-option p-4 rounded-lg bg-gradient-to-r from-[#ed213a] to-[#ff512f] text-center" data-theme="red">
+                    <i class="fas fa-fire text-2xl mb-2"></i>
+                    <p>Fire</p>
+                </div>
+                
+                <div class="theme-option p-4 rounded-lg bg-gradient-to-r from-[#8e2de2] to-[#4a00e0] text-center" data-theme="purple">
+                    <i class="fas fa-magic text-2xl mb-2"></i>
+                    <p>Royal</p>
+                </div>
+                
+                <div class="theme-option p-4 rounded-lg bg-gradient-to-r from-[#11998e] to-[#38ef7d] text-center" data-theme="emerald">
+                    <i class="fas fa-gem text-2xl mb-2"></i>
+                    <p>Emerald</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="clearHistoryModal" class="modal">
+        <div id="clearHistoryModalContent" class="modal-content max-w-md mx-auto mt-20 p-6">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Clear History?</h3>
+                <p class="opacity-80">This will permanently delete all your prediction history. This action cannot be undone.</p>
+            </div>
+            
+            <div class="flex space-x-4">
+                <button id="cancelClear" class="flex-1 py-3 rounded-lg bg-gray-500/20 hover:bg-gray-500/30 transition-colors">
+                    Cancel
+                </button>
+                <button id="confirmClear" class="flex-1 py-3 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors">
+                    Clear History
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // --- Core Application Logic (Preserved) ---
-        const API_URL = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
-        const REQUEST_DATA = {
-            typeId: 1,
-            language: 0,
-            random: "e7fe6c090da2495ab8290dac551ef1ed",
-            signature: "1F390E2B2D8A55D693E57FD905AE73A7",
-            timestamp: 1723726679
+        // Theme Management
+        const themes = {
+          default: {
+            primary: '#D4AF37',
+            secondary: '#1a1a1a',
+            tertiary: '#FFD700',
+            text: '#ffffff',
+            cardBg: 'rgba(26, 26, 26, 0.8)'
+          },
+          blue: {
+            primary: '#3a7bd5',
+            secondary: '#1a1a1a',
+            tertiary: '#00d2ff',
+            text: '#ffffff',
+            cardBg: 'rgba(26, 26, 26, 0.8)'
+          },
+          red: {
+            primary: '#ed213a',
+            secondary: '#1a1a1a',
+            tertiary: '#ff512f',
+            text: '#ffffff',
+            cardBg: 'rgba(26, 26, 26, 0.8)'
+          },
+          purple: {
+            primary: '#8e2de2',
+            secondary: '#1a1a1a',
+            tertiary: '#4a00e0',
+            text: '#ffffff',
+            cardBg: 'rgba(26, 26, 26, 0.8)'
+          },
+          emerald: {
+            primary: '#11998e',
+            secondary: '#1a1a1a',
+            tertiary: '#38ef7d',
+            text: '#ffffff',
+            cardBg: 'rgba(26, 26, 26, 0.8)'
+          }
         };
 
-        let periodResults = {}; // Store results for each period
-        let countdownInterval;
-        let lastTimerUpdate = 0;
-        
-        // Canvas animation
-        const canvas = document.getElementById('backgroundCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Set canvas size
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        function applyTheme(themeName) {
+          const theme = themes[themeName];
+          document.documentElement.style.setProperty('--primary-color', theme.primary);
+          document.documentElement.style.setProperty('--secondary-color', theme.secondary);
+          document.documentElement.style.setProperty('--tertiary-color', theme.tertiary);
+          document.documentElement.style.setProperty('--text-color', theme.text);
+          document.documentElement.style.setProperty('--card-bg', theme.cardBg);
+          document.body.className = `min-h-screen flex flex-col ${themeName}`;
+          localStorage.setItem('selectedTheme', themeName);
+          showToast(`Theme changed to ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`);
         }
-        
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // Particle system for background
-        const particles = [];
-        const particleCount = 50;
-        
-        class Particle {
-            constructor() {
-                this.reset();
-            }
+
+        // Tab System Functionality - FIXED
+        const tabs = document.querySelectorAll('.tab');
+        const contentSections = document.querySelectorAll('.content-section');
+        const gameTabs = document.querySelectorAll('.game-tab');
+
+        function activateTab(tab) {
+          tabs.forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          
+          contentSections.forEach(section => {
+            section.classList.remove('active');
+          });
+          
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+          
+          const tabId = tab.getAttribute('data-tab');
+          const targetSection = document.getElementById(`${tabId}-section`);
+          if (targetSection) {
+            targetSection.classList.add('active');
+          }
+          
+          // Hide all game tabs when switching to non-games tabs
+          if (tabId !== 'games') {
+            gameTabs.forEach(gameTab => {
+              gameTab.classList.remove('active');
+            });
+          }
+        }
+
+        tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            activateTab(tab);
+          });
+        });
+
+        // Game Selection Functionality - FIXED
+        const gameItems = document.querySelectorAll('.game-item');
+        const gameTabBackButtons = document.querySelectorAll('.game-tab-back');
+
+        function openGame(gameId, url) {
+          // Hide all content sections
+          contentSections.forEach(section => {
+            section.classList.remove('active');
+          });
+          
+          // Hide all game tabs
+          gameTabs.forEach(gameTab => {
+            gameTab.classList.remove('active');
+          });
+          
+          // Show the selected game tab
+          const gameTab = document.getElementById(`${gameId}-tab`);
+          if (gameTab) {
+            gameTab.classList.add('active');
             
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 1;
-                this.speedX = Math.random() * 1 - 0.5;
-                this.speedY = Math.random() * 1 - 0.5;
-                this.color = Math.random() > 0.5 ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 119, 0, 0.5)';
+            // Load the game if not already loaded
+            const gameFrame = document.getElementById(`${gameId}-frame`);
+            if (gameFrame && !gameFrame.src) {
+              gameFrame.src = url;
             }
-            
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                
-                if (this.x > canvas.width || this.x < 0 || this.y > canvas.height || this.y < 0) {
-                    this.reset();
+          }
+        }
+
+        function closeGame() {
+          // Hide all game tabs
+          gameTabs.forEach(gameTab => {
+            gameTab.classList.remove('active');
+          });
+          
+          // Show the games section
+          const gamesSection = document.getElementById('games-section');
+          if (gamesSection) {
+             gamesSection.classList.add('active');
+          }
+          
+          // Activate the games tab
+          tabs.forEach(tab => {
+            tab.classList.remove('active');
+            tab.setAttribute('aria-selected', 'false');
+            if (tab.getAttribute('data-tab') === 'games') {
+              tab.classList.add('active');
+              tab.setAttribute('aria-selected', 'true');
+            }
+          });
+        }
+
+        gameItems.forEach(item => {
+          item.addEventListener('click', () => {
+            const gameId = item.getAttribute('data-game');
+            const url = item.getAttribute('data-url');
+            openGame(gameId, url);
+          });
+        });
+
+        gameTabBackButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            closeGame();
+          });
+        });
+
+        // Modal Handling
+        const clearHistoryModal = document.getElementById('clearHistoryModal');
+        const clearHistoryModalContent = document.getElementById('clearHistoryModalContent');
+        const themeModal = document.getElementById('themeModal');
+        const themeModalContent = document.getElementById('themeModalContent');
+        const themeOptions = document.querySelectorAll('.theme-option');
+
+        if (document.getElementById('clearHistoryBtn')) {
+          document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+            if (clearHistoryModal) clearHistoryModal.style.display = 'block';
+            if (clearHistoryModalContent) clearHistoryModalContent.style.display = 'block';
+          });
+        }
+
+        if (document.getElementById('confirmClear')) {
+          document.getElementById('confirmClear').addEventListener('click', () => {
+            clearHistory();
+            if (clearHistoryModal) clearHistoryModal.style.display = 'none';
+            if (clearHistoryModalContent) clearHistoryModalContent.style.display = 'none';
+            showToast('History cleared successfully');
+          });
+        }
+
+        if (document.getElementById('cancelClear')) {
+          document.getElementById('cancelClear').addEventListener('click', () => {
+            if (clearHistoryModal) clearHistoryModal.style.display = 'none';
+            if (clearHistoryModalContent) clearHistoryModalContent.style.display = 'none';
+          });
+        }
+
+        if (document.getElementById('themeBtn')) {
+          document.getElementById('themeBtn').addEventListener('click', () => {
+            if (themeModal) themeModal.style.display = 'block';
+            if (themeModalContent) themeModalContent.style.display = 'block';
+          });
+        }
+
+        if (document.getElementById('closeThemeModal')) {
+          document.getElementById('closeThemeModal').addEventListener('click', () => {
+            if (themeModal) themeModal.style.display = 'none';
+            if (themeModalContent) themeModalContent.style.display = 'none';
+          });
+        }
+
+        themeOptions.forEach(option => {
+          option.addEventListener('click', () => {
+            const theme = option.getAttribute('data-theme');
+            applyTheme(theme);
+            if (themeModal) themeModal.style.display = 'none';
+            if (themeModalContent) themeModalContent.style.display = 'none';
+          });
+        });
+
+        if (document.getElementById('infoBtn')) {
+          document.getElementById('infoBtn').addEventListener('click', () => {
+            showToast('More features coming soon!');
+          });
+        }
+
+        // Close modals when clicking outside
+        [clearHistoryModal, themeModal].filter(m => m).forEach(modal => {
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                if (modal === clearHistoryModal && clearHistoryModalContent) {
+                  clearHistoryModalContent.style.display = 'none';
+                } else if (themeModalContent) {
+                  themeModalContent.style.display = 'none';
                 }
             }
-            
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
+          });
+        });
+
+        // --- Core Application Logic (Deterministic Algorithm Integration) ---
+        let historyData = [];
+        let latestPeriod = null; 
+        let previousResults = [];
         
-        // Initialize particles
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
+        let lastPrediction = null; 
+        let consecutiveLosses = 0;
+        let winLevel = 0;
+        const MAX_WIN_LEVEL = 3;
+
+        // Constants for the Deterministic Algorithm
+        const PI = Math.PI;
+        const E = Math.E;
+        const PHI = 1.6180339887; // Golden Ratio
+        const DEG_TO_RAD = 0.0174533;
+        const PRIME_FACTORS = [2, 3, 5, 7, 11, 13, 17, 19];
         
-        // Animation loop
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            for (let particle of particles) {
-                particle.update();
-                particle.draw();
-            }
-            
-            requestAnimationFrame(animate);
+        const COLOR_RED_SET = [0, 1, 3, 5, 7, 8, 10];
+        const BS_BIG_SET = [0, 1, 2, 3, 4, 8, 9, 12, 15];
+
+
+        function getBigSmallOutcome(number) {
+            if (number >= 5) return 'BIG';
+            if (number >= 0 && number <= 4) return 'SMALL';
+            return '-';
         }
-        
-        animate();
+
+        function getOppositeNumber(prediction) {
+          const small = [0, 1, 2, 3, 4];
+          const big = [5, 6, 7, 8, 9];
+          let arr = prediction === "BIG" ? small : big;
+          // Return a random number from the opposite range
+          return arr[Math.floor(Math.random() * arr.length)];
+        }
 
         /**
-         * Fetches the current game issue and calculates the "winning" prediction.
-         * The prediction logic (random numbers and Big/Small based on sum of digits) is preserved as per user request.
+         * Core Logic - The Deterministic Algorithm (Section 1)
          */
-        function fetchPrediction() {
-            // Update status immediately to show activity
-            document.getElementById("live-result").className = "text-sm font-bold mt-6 mb-4 text-yellow-500 text-center";
-            document.getElementById("live-result").textContent = "📡 FETCHING ACCURATE DATA...";
 
-            fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json;charset=UTF-8"
-                },
-                body: JSON.stringify(REQUEST_DATA)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const liveResultElement = document.getElementById("live-result");
-                const periodElement = document.getElementById("period");
-                const signalValueElement = document.getElementById("signal-value");
-                const predictionValueElement = document.getElementById("prediction-value");
-
-                if (data && data.data) {
-                    let issueNumber = data.data.issueNumber || "---";
-                    
-                    // Update period display
-                    periodElement.textContent = issueNumber;
-
-                    // Check if result already exists for this period
-                    if (!periodResults[issueNumber]) {
-                        // --- Core Prediction Logic (Preserved) ---
-                        let num1 = Math.floor(Math.random() * 10);
-                        let num2 = (num1 + 3) % 10;
-
-                        // Calculate Big/Small based on sum of digits (Preserved Logic)
-                        let sumDigits = String(issueNumber).split('').reduce((acc, num) => acc + parseInt(num), 0);
-                        let bigSmallPrediction = sumDigits % 2 === 0 ? "BIG" : "SMALL";
-                        // --- End Core Prediction Logic ---
-
-                        // Store result for this period
-                        periodResults[issueNumber] = {
-                            bigSmallPrediction,
-                            predictedNumbers: `${num1}/${num2}`
-                        };
-                    }
-
-                    const { bigSmallPrediction, predictedNumbers } = periodResults[issueNumber];
-                    
-                    // Apply class for color based on signal
-                    let signalClass = bigSmallPrediction === "BIG" ? "big" : "small";
-
-                    // Update UI with new dynamic classes
-                    // Clear previous classes and add new ones (includes glow/border and color class)
-                    signalValueElement.className = `py-2 px-6 rounded-lg box-glow-border transition duration-300 transform scale-100 hover:scale-[1.02] ${signalClass}`;
-                    signalValueElement.textContent = bigSmallPrediction;
-
-                    predictionValueElement.textContent = predictedNumbers;
-
-                    liveResultElement.className = "text-sm font-bold mt-6 mb-4 text-green-400 text-center";
-                    liveResultElement.textContent = "✅ FULL ACCURACY ACHIEVED! LIVE DATA READY.";
-                    
-                    // Start countdown timer
-                    startCountdown();
-                } else {
-                    liveResultElement.className = "text-sm font-bold mt-6 mb-4 text-red-500 text-center";
-                    liveResultElement.textContent = "⚠️ ERROR! CANNOT FETCH GAME ISSUE DATA.";
-                }
-            })
-            .catch(error => {
-                console.error("API Fetch Error:", error);
-                const liveResultElement = document.getElementById("live-result");
-                liveResultElement.className = "text-sm font-bold mt-6 mb-4 text-red-500 text-center";
-                liveResultElement.textContent = "❌ CONNECTION ERROR! CHECK NETWORK.";
-            });
-        }
-        
-        // Fixed timer function
-        function updatePeriodAndTimer() {
+        function get_current_period() {
+            // Function to simulate the period generation format: YYYYMMDD10001XXXXX
+            // NOTE: Since the real game's period ID comes from an API, this is simulated 
+            // for the purposes of a purely client-side deterministic script, though
+            // the actual period from the API is used in fetchCurrentGameIssue. 
+            // This function is for calculating the NEXT period's properties, based on time.
+            
             const now = new Date();
-            const currentTime = now.getTime();
-            
-            // Prevent too frequent updates
-            if (currentTime - lastTimerUpdate < 1000) return;
-            lastTimerUpdate = currentTime;
-            
-            // Get UTC components
             const year = now.getUTCFullYear();
             const month = String(now.getUTCMonth() + 1).padStart(2, '0');
             const day = String(now.getUTCDate()).padStart(2, '0');
+            
+            // 1-minute period logic simulation:
             const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+            const periodBase = 10001; 
+            const periodCount = totalMinutes;
             
-            // Generate period number
-            const periodNumber = `${year}${month}${day}1000${10001 + totalMinutes}`;
+            // A pseudo-period for deterministic calculation: YYYYMMDD + PeriodCount
+            const deterministicPeriod = `${year}${month}${day}${periodBase}${String(periodCount).padStart(5, '0')}`;
+            return deterministicPeriod;
+        }
+
+        function extract_digits(periodNumberString) {
+            const str = String(periodNumberString);
+            const last_six_digits = str.slice(-6);
+            const last_five_digits = str.slice(-5);
+            const digits = last_five_digits.split('').map(Number);
             
-            // Calculate remaining seconds in the current minute
-            const remainingSeconds = 60 - now.getUTCSeconds();
+            const sum = digits.reduce((a, b) => a + b, 0);
             
-            // Update countdown display
-            const countdownElement = document.getElementById("countdown");
-            countdownElement.textContent = `00:${String(remainingSeconds).padStart(2, '0')}`;
+            let alt_sum_pos = 0;
+            let alt_sum_neg = 0;
+            digits.forEach((d, i) => {
+                if (i % 2 === 0) alt_sum_pos += d;
+                else alt_sum_neg += d;
+            });
+            const alt_sum = Math.abs(alt_sum_pos - alt_sum_neg);
             
-            // Add pulse animation when time is running out
-            if (remainingSeconds <= 10) {
-                countdownElement.classList.add('pulse-animation');
+            const product = digits.filter(d => d !== 0).reduce((a, b) => a * b, 1);
+            
+            return {
+                last_six_digits: parseInt(last_six_digits, 10),
+                last_five_digits: digits,
+                D_sum: sum,
+                D_alt_sum: alt_sum,
+                D_product: product
+            };
+        }
+
+        function get_prime_factors(n) {
+            let factors_sum = 0;
+            for (const p of PRIME_FACTORS) {
+                if (n % p === 0) {
+                    factors_sum += p;
+                }
+            }
+            return factors_sum;
+        }
+
+        function get_fibonacci(n) {
+            if (n <= 1) return n;
+            let a = 0, b = 1;
+            for (let i = 2; i <= n; i++) {
+                [a, b] = [b, (a + b) % 1000]; // Modulo to keep numbers small for stability
+            }
+            return b;
+        }
+
+        // B. Advanced Mathematical Weighting
+        function apply_advanced_math(period_num) {
+            const period_float = parseFloat(period_num);
+            
+            // Base Multipliers
+            let result_pi_e = (period_float * PI) / E;
+            
+            // Trigonometry
+            let result_sin = Math.sin(period_float * DEG_TO_RAD);
+            let result_cos = Math.cos(period_float * DEG_TO_RAD);
+            let result_tanh = Math.tanh(period_float / 1000000); // Scale down for tanh
+            
+            // Golden Ratio Exponent
+            let result_phi_exp = Math.pow(Math.abs(period_float) % 100, PHI); // Use smaller number for base of power
+            
+            // Logarithm
+            let result_ln = Math.log(period_float);
+            
+            // Prime Factor Influence
+            let result_prime = get_prime_factors(period_num);
+            
+            // Weighted Sum (Modulo 1000 for V_weighted)
+            let V_weighted = (
+                (result_pi_e * 0.3) +
+                (result_sin * 0.15) +
+                (result_cos * 0.15) +
+                (result_tanh * 0.05) +
+                (result_phi_exp * 0.1) +
+                (result_ln * 0.15) +
+                (result_prime * 0.1)
+            ) % 1000;
+            
+            return V_weighted;
+        }
+
+        // C. Master Pattern Calculation
+        function calculate_winning_pattern(periodNumStr) {
+            const extracted = extract_digits(periodNumStr);
+            const V_weighted = apply_advanced_math(extracted.last_six_digits);
+            
+            const D_sum = extracted.D_sum;
+            const D_alt_sum = extracted.D_alt_sum;
+            const D_product = extracted.D_product;
+            
+            const F_weight = get_fibonacci(D_sum % 10);
+            
+            const now = new Date();
+            const T_factor = Math.floor(now.getUTCSeconds()) % 100;
+            
+            // Master Pattern Calculation
+            const Master_Pattern = (D_sum * 1.5) + (D_alt_sum * 1.2) + V_weighted + (F_weight * 0.8) + (D_product * 0.5) + (T_factor * 0.9);
+            
+            // Digital Root (pattern_root)
+            let pattern_root = Math.round(Master_Pattern) % 100;
+            let root_sum = pattern_root;
+            while (root_sum > 9) {
+                root_sum = String(root_sum).split('').map(Number).reduce((a, b) => a + b, 0);
+            }
+            pattern_root = root_sum;
+            
+            return {
+                D_sum, D_alt_sum, D_product, V_weighted, F_weight, T_factor,
+                pattern_root,
+                Master_Pattern: Master_Pattern
+            };
+        }
+
+        // 3. Confidence Level Calculation
+        function calculate_confidence(last_five_digits) {
+            const digits = last_five_digits.split('').map(Number);
+            const sum_of_five = digits.reduce((a, b) => a + b, 0);
+            const last_two = parseInt(last_five_digits.slice(-2), 10);
+            
+            const pattern_strength = ((sum_of_five * 7) + last_two) % 100;
+            
+            const confidence = Math.max(75, Math.min(99, pattern_strength));
+            return confidence;
+        }
+
+        /**
+         * The combined deterministic prediction function.
+         */
+        function deterministicPredict(periodId) {
+            const { D_sum, D_alt_sum, D_product, V_weighted, F_weight, T_factor, pattern_root } = calculate_winning_pattern(periodId);
+            
+            // --- A. Color Prediction ---
+            const Color_base = (D_sum + D_alt_sum + T_factor) % 7;
+            const Color_adv = (V_weighted + F_weight + D_product) % 11;
+            const Color_final = (Color_base * 3 + Color_adv * 2 + pattern_root) % 13;
+            
+            const color_prediction = COLOR_RED_SET.includes(Math.round(Color_final)) ? "RED" : "GREEN";
+            
+            // --- B. Big/Small Prediction ---
+            const BS_base = (D_sum * 2 + D_alt_sum) % 9;
+            const BS_adv = (V_weighted + D_product + T_factor) % 12;
+            const BS_final = (BS_base * 2 + BS_adv * 3 + pattern_root * 4) % 17;
+            
+            const bs_prediction = BS_BIG_SET.includes(Math.round(BS_final)) ? "BIG" : "SMALL";
+            
+            // --- C. Confidence ---
+            const last_five_digits_str = String(periodId).slice(-5);
+            const confidence = calculate_confidence(last_five_digits_str);
+            
+            // For the UI display, combine the Big/Small and Color
+            const prediction_text = `${bs_prediction} | ${color_prediction}`;
+            
+            return {
+                prediction: prediction_text,
+                confidence: confidence,
+                logic: `Color_F:${Math.round(Color_final)} | BS_F:${Math.round(BS_final)} | PR:${pattern_root}`
+            };
+        }
+
+        // Replacement for the old ultraAIPredict
+        function ultraAIPredict(periodId) {
+            // Use the deterministic logic based on the period ID
+            return deterministicPredict(periodId);
+        }
+
+        function updatePredictionStatus(actualNumber) {
+            // Find the most recent PENDING item (at the beginning of the array)
+            const lastPendingIndex = historyData.findIndex(item => item.resultStatus === "Pending");
+
+            if (lastPendingIndex === -1) return; // Nothing pending to update
+
+            const item = historyData[lastPendingIndex];
+            // The deterministic logic predicts Big/Small and Color. We only check Big/Small here.
+            const actualResultType = getBigSmallOutcome(actualNumber);
+            const predictionMadeType = item.prediction.split(' | ')[0]; // Take only BIG or SMALL
+
+            const isWin = actualResultType === predictionMadeType;
+
+            item.result = actualNumber;
+            item.resultStatus = isWin ? 'WIN' : 'LOSS';
+            item.resultType = actualResultType;
+            // Retain full logic string but add outcome
+            item.calculation = `Result: ${actualNumber} (${actualResultType}) | Conf: ${item.confidence}% | Logic: ${item.logic}`;
+            
+            if (isWin) {
+                // Win level logic for the UI stats, kept for structure
+                winLevel = Math.min(winLevel + 1, MAX_WIN_LEVEL);
+                consecutiveLosses = 0;
             } else {
-                countdownElement.classList.remove('pulse-animation');
+                winLevel = 0;
+                consecutiveLosses++;
             }
             
-            // Update period display
-            document.getElementById("period").textContent = periodNumber;
-            
-            // Auto-refresh when countdown reaches zero
-            if (remainingSeconds === 0) {
-                fetchPrediction();
-            }
+            updateHistory();
+            updateStats();
+            saveToLocalStorage();
         }
         
-        // Countdown timer function
-        function startCountdown() {
-            // Clear any existing interval
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
+        // Fetch data 
+        async function fetchPreviousResults() {
+            try {
+                // Using the more reliable endpoint for historical data
+                const timestamp = Date.now();
+                const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                if (data && data.data && data.data.list && data.data.list.length > 0) {
+                    previousResults = data.data.list.map(item => ({
+                        number: parseInt(item.premium || item.result || item.number || 0, 10),
+                        issueNumber: item.issueNumber || item.period
+                    }));
+                }
+            } catch (error) {
+                console.error('Error fetching previous results:', error);
             }
-            
-            // Start the timer
-            countdownInterval = setInterval(updatePeriodAndTimer, 1000);
-            updatePeriodAndTimer(); // Initial call
-        }
-        
-        // Loading overlay function
-        function showLoading() {
-            const overlay = document.getElementById("loadingOverlay");
-            overlay.style.display = "flex";
-            
-            // Simulate loading process
-            setTimeout(() => {
-                overlay.style.display = "none";
-                fetchPrediction();
-            }, 2000);
         }
 
-        // Auto-run the prediction logic on load and start the interval
-        window.onload = function() {
-            fetchPrediction();
-            // Set up interval for continuous updates every 30 seconds (30000 ms)
-            setInterval(fetchPrediction, 30000); 
-        };
+        async function fetchCurrentGameIssue() {
+            // NOTE: The deterministic logic relies on the full period ID.
+            // The API used here returns a simpler period number (e.g., 2025101610001XXXXX).
+            // We use the issueNumber from the API response as the PERIOD ID for the deterministic logic.
+            
+            const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
+            // Placeholder request data (actual signature/random may vary, but the structure is important)
+            const requestData = {
+                typeId: 1, 
+                language: 0,
+                random: "40079dcba93a48769c6ee9d4d4fae23f",
+                signature: "D12108C4F57C549D82B23A91E0FA20AE",
+                timestamp: Math.floor(Date.now() / 1000)
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.code === 0) {
+                        const newPeriod = String(data.data.issueNumber);
+
+                        if (newPeriod !== latestPeriod) {
+                            // 1. Fetch historical data BEFORE checking for the previous result
+                            await fetchPreviousResults();
+
+                            // 2. Update status of the LAST pending prediction (if any)
+                            if (latestPeriod && historyData.length > 0) {
+                                // Find the result for the period that was just completed (latestPeriod)
+                                const lastActualItem = previousResults.find(item => String(item.issueNumber) === String(latestPeriod));
+                                
+                                if (lastActualItem) {
+                                    updatePredictionStatus(lastActualItem.number);
+                                }
+                            }
+                            
+                            // 3. Generate NEW prediction using the deterministic logic based on the *next* period.
+                            // The API provides the issue number for the CURRENT game cycle (next to be decided).
+                            const aiDecision = deterministicPredict(newPeriod);
+                            const globalPrediction = aiDecision.prediction;
+                            
+                            lastPrediction = globalPrediction; 
+                            latestPeriod = newPeriod;
+
+                            // Display last 4 digits for cleanliness
+                            const periodDisplay = newPeriod.slice(-4); 
+                            const currentPeriodEl = document.getElementById("currentPeriod");
+                            const currentPredictionEl = document.getElementById("currentPrediction");
+                            
+                            if (currentPeriodEl) currentPeriodEl.textContent = periodDisplay;
+                            if (currentPredictionEl) currentPredictionEl.textContent = `${globalPrediction} (${aiDecision.confidence}%)`;
+                            
+                            // Extract only BIG/SMALL for opposite calculation
+                            const bs_prediction = globalPrediction.split(' | ')[0];
+                            
+                            historyData.unshift({
+                                period: newPeriod,
+                                prediction: globalPrediction,
+                                confidence: aiDecision.confidence,
+                                logic: aiDecision.logic,
+                                oppositeNumber: getOppositeNumber(bs_prediction),
+                                result: "-",
+                                resultStatus: "Pending",
+                                resultType: "-",
+                                calculation: "-"
+                            });
+                            
+                            updateHistory();
+                            saveToLocalStorage();
+                        }
+                    } else {
+                        console.error("API response code not 0:", data);
+                    }
+                } else {
+                    throw new Error(`Current Issue API HTTP error! status: ${response.status}`);
+                }
+            } catch (e) {
+                console.error("API Error in fetchCurrentGameIssue", e);
+            }
+        }
+
+        function showToast(message) {
+          const toast = document.createElement("div");
+          toast.className = "toast";
+          toast.innerText = message;
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 3000); 
+        }
+
+        function updateHistory() {
+          const container = document.getElementById("historyContainer");
+          
+          if (!container) return; // Safety check
+
+          if (historyData.length === 0) {
+            container.innerHTML = `
+              <div class="glass-card rounded-xl p-6 text-center">
+                <i class="fas fa-history text-4xl opacity-30 mb-4"></i>
+                <p class="text-lg opacity-70">No prediction history yet</p>
+                <p class="text-sm opacity-50">Predictions will appear here as they are generated</p>
+              </div>
+            `;
+            return;
+          }
+          
+          container.innerHTML = historyData.map((item, index) => {
+            const periodDisplay = String(item.period).slice(-5) || '-';
+            // Determine primary prediction type (BIG/SMALL) for color logic
+            const primaryPrediction = item.prediction.split(' | ')[0];
+            const predictionColor = primaryPrediction === 'BIG' ? 'text-[var(--tertiary-color)]' : 'text-[var(--primary-color)]';
+            let statusClasses = 'pending-status';
+            let statusIcon = 'fa-clock text-yellow-500 animate-spin';
+
+            if (item.resultStatus === 'WIN') {
+                statusClasses = 'win-status';
+                statusIcon = 'fa-check text-green-500';
+            } else if (item.resultStatus === 'LOSS') {
+                statusClasses = 'loss-status';
+                statusIcon = 'fa-times text-red-500';
+            }
+            
+            return `
+            <div class="history-item p-4 rounded-lg">
+              <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3 w-1/3">
+                  <div class="w-8 h-8 rounded-full bg-[var(--primary-color)]/10 flex items-center justify-center">
+                    <i class="fas fa-hashtag text-[var(--primary-color)] text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs opacity-80"></p>
+                    <p class="font-semibold">${periodDisplay}</p>
+                  </div>
+                </div>
+                <div class="text-center w-1/3">
+                    <p class="text-xs opacity-80"></p>
+                    <p class="font-semibold ${predictionColor}">${item.prediction || '-'} (${item.confidence || '--'}%)</p>
+                </div>
+                <div class="flex items-center space-x-3 justify-end w-1/3">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center ${statusClasses}">
+                    <i class="fas ${statusIcon} text-sm"></i>
+                  </div>
+                  <button class="delete-btn text-sm opacity-70 hover:opacity-100" data-index="${index}" title="Delete entry">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;}).join("");
+
+          document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+              const index = parseInt(e.currentTarget.getAttribute('data-index'));
+              historyData.splice(index, 1);
+              showToast("Deleted successfully");
+              updateHistory();
+              updateStats();
+              saveToLocalStorage();
+            });
+          });
+        }
+
+        function updateStats() {
+          const winsEl = document.getElementById("wins");
+          const lossesEl = document.getElementById("losses");
+          const winRateEl = document.getElementById("winRate");
+          const totalPredictionsEl = document.getElementById("totalPredictions");
+
+          if (!winsEl || !lossesEl || !winRateEl || !totalPredictionsEl) return; // Safety check
+          
+          const wins = historyData.filter(item => item.resultStatus === "WIN").length;
+          const losses = historyData.filter(item => item.resultStatus === "LOSS").length;
+          const total = wins + losses;
+          const winRate = total > 0 ? Math.round((wins / total) * 100) : 0;
+          
+          winsEl.textContent = wins;
+          lossesEl.textContent = losses;
+          winRateEl.textContent = `${winRate}%`;
+          totalPredictionsEl.textContent = historyData.length;
+        }
+
+        function clearHistory() {
+          historyData = [];
+          consecutiveLosses = 0;
+          winLevel = 0;
+          lastPrediction = null;
+          latestPeriod = null;
+          previousResults = [];
+          updateHistory();
+          updateStats();
+          saveToLocalStorage();
+        }
+
+        // Local Storage Functions (Improved)
+        function saveToLocalStorage() {
+          const dataToSave = {
+            historyData,
+            consecutiveLosses,
+            winLevel,
+            lastPrediction,
+            latestPeriod
+          };
+          localStorage.setItem('lotteryPredictorData', JSON.stringify(dataToSave));
+        }
+
+        function loadFromLocalStorage() {
+          const savedTheme = localStorage.getItem('selectedTheme');
+          if (savedTheme && themes[savedTheme]) {
+            applyTheme(savedTheme);
+          } else {
+             // Apply default theme if none saved or theme is invalid
+             applyTheme('default');
+          }
+
+          const savedData = localStorage.getItem('lotteryPredictorData');
+          if (savedData) {
+            try {
+              const data = JSON.parse(savedData);
+              historyData = data.historyData || [];
+              consecutiveLosses = data.consecutiveLosses || 0;
+              winLevel = data.winLevel || 0;
+              lastPrediction = data.lastPrediction || null;
+              latestPeriod = data.latestPeriod || null;
+            } catch (e) {
+              console.error("Error parsing local storage data:", e);
+              // Clear corrupted data
+              localStorage.removeItem('lotteryPredictorData'); 
+            }
+          }
+          
+          // Ensure DOM is ready before manipulating
+          if (document.readyState !== 'loading') {
+              updateHistory();
+              updateStats();
+          }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+          loadFromLocalStorage();
+          
+          const activeTab = document.querySelector('.tab.active');
+          if (activeTab) {
+            activateTab(activeTab);
+          } else {
+            const defaultTab = document.querySelector('.tab[data-tab="home"]');
+            if (defaultTab) activateTab(defaultTab);
+          }
+          
+          // Re-run updates after initial load
+          updateHistory();
+          updateStats();
+          
+          // Set up polling for new game issues
+          setInterval(fetchCurrentGameIssue, 10000); 
+          fetchCurrentGameIssue(); // Initial fetch
+        });
     </script>
-
 </body>
 </html>
