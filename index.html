@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
   <title>ZENITH MAXX</title>
   <style>
-    /* CSS is unchanged as per your request */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html,body { height: 100%; }
     body {
       width: 100vw;
       height: 100vh;
@@ -29,23 +24,25 @@
     .period-box {
       border: 2px solid orange;
       border-radius: 10px;
-      padding: 15px 25px;
+      padding: 12px 20px;
       font-size: 6vw;
       margin: 1vh 0;
       text-align: center;
       min-width: 80vw;
+      background: rgba(0,0,0,0.2);
     }
 
     .btn {
       background: pink;
       border: 2px solid orange;
       border-radius: 40px;
-      padding: 15px 40px;
+      padding: 12px 36px;
       font-weight: bold;
       color: black;
       font-size: 5vw;
       cursor: pointer;
       margin: 2vh 0;
+      user-select: none;
     }
 
     .prediction {
@@ -53,6 +50,7 @@
       font-weight: bold;
       margin: 2vh 0;
       min-height: 10vh;
+      text-align: center;
     }
 
     canvas {
@@ -75,154 +73,261 @@
       z-index: 100;
       display: none;
     }
-    
+
     .instruction {
       font-size: 3vw;
       color: orange;
       margin-top: -1vh;
       margin-bottom: 1vh;
     }
+
+    /* small screens adjustments */
+    @media (max-width:480px) {
+      .period-box { font-size: 7vw; }
+      .btn { font-size: 6vw; padding: 10px 26px; }
+      .prediction { font-size: 10vw; }
+      .instruction { font-size: 3.5vw; }
+    }
   </style>
 </head>
 <body>
-  <div class="period-box" id="period">2025XXXX-XXXXX</div>
+  <div class="period-box" id="period">Loading...</div>
   <div class="period-box" id="countdown">00:00</div>
   <div class="prediction" id="prediction">- - -</div>
-  <button class="btn" onclick="requestPrediction()">CHANGE</button>
+  <button class="btn" id="btnChange">CHANGE</button>
   <div class="instruction">CLICK ON CHANGE AT 20-40 SEC TIMER</div>
 
   <div class="blur-overlay" id="blurOverlay"></div>
-
   <canvas id="bg"></canvas>
 
   <script>
-    // Global variables
-    let currentPeriodID = '';
+    /************************************************************************
+     * CONFIG - adjust these values if needed
+     ************************************************************************/
+    const API_URL = 'https://api.bdg88zf.com/api/webapi/GetGameIssue'; // your API
+    const REQUEST_DATA = {
+      typeId: 1,
+      language: 0,
+      random: "e7fe6c090da2495ab8290dac551ef1ed",
+      signature: "1F390E2B2D8A55D693E57FD905AE73A7",
+      timestamp: 1723726679
+    };
+    const POLL_INTERVAL_MS = 200; // how often updateTime runs (keeps countdown smooth)
+    const API_CALL_AT_SECOND = 59; // call API at second 59 to pick up the new period right before minute flips
+    /************************************************************************/
+
+    let currentPeriodID = null;
     let currentPrediction = '- - -';
-    let predictionReady = false; // Flag to track if the prediction for the current period has been generated
+    let predictionReady = false;
+    let lastApiSuccessAt = 0; // timestamp of last successful API call (ms)
+    let fallbackPeriodSeed = null; // used if API never responds
 
-    // --- Prediction Logic (MUST BE REPLACED WITH A REAL ALGORITHM/API) ---
-    /**
-     * NOTE: To make this "full accurate powerful full winning," 
-     * this function MUST be replaced with logic that fetches a prediction 
-     * from a server running a proprietary, high-accuracy algorithm.
-     * The current implementation is PURELY RANDOM and for demonstration only.
-     */
-    function generatePrediction() {
-      // **THIS IS THE PART YOU NEED TO REPLACE WITH YOUR WINNING ALGORITHM**
-      const predictions = ['SMALL', 'BIG', 'RED', 'GREEN', 'SKIP'];
-      const predictionIndex = Math.floor(Math.random() * predictions.length);
-      const newPrediction = predictions[predictionIndex];
-      //
-      
-      currentPrediction = newPrediction;
-      document.getElementById('prediction').textContent = currentPrediction;
-      predictionReady = true; // Mark as generated for this period
+    // Utility: robustly extract period/issue from various API shapes
+    function extractIssueFromApiResponse(resp) {
+      // check common locations. Add more as you learn the exact API response.
+      if (!resp) return null;
+      if (typeof resp === 'string' || typeof resp === 'number') return String(resp);
+      // if top-level fields
+      if (resp.issue) return String(resp.issue);
+      if (resp.Issue) return String(resp.Issue);
+      if (resp.currentIssue) return String(resp.currentIssue);
+      if (resp.data) {
+        const d = resp.data;
+        if (d.issue) return String(d.issue);
+        if (d.Issue) return String(d.Issue);
+        if (d.currentIssue) return String(d.currentIssue);
+        // sometimes the API returns an array of issues - take first
+        if (Array.isArray(d) && d.length > 0 && (d[0].issue || d[0].Issue)) {
+          return String(d[0].issue || d[0].Issue);
+        }
+      }
+      // try other names
+      if (resp.issueNo) return String(resp.issueNo);
+      return null;
     }
-    // ------------------------------------------------------------------------
 
-    // Timer implementation
+    // Robust fetch with safe JSON parse and timeout
+    async function fetchJsonWithTimeout(url, options = {}, timeoutMs = 7000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { ...options, signal: controller.signal });
+        const text = await res.text();
+        try {
+          return JSON.parse(text);
+        } catch (err) {
+          // not JSON? return raw text
+          return text;
+        }
+      } finally {
+        clearTimeout(id);
+      }
+    }
+
+    async function getPeriodFromAPI() {
+      try {
+        const response = await fetchJsonWithTimeout(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(REQUEST_DATA)
+        }, 8000);
+
+        const extracted = extractIssueFromApiResponse(response);
+        if (extracted) {
+          lastApiSuccessAt = Date.now();
+          return String(extracted);
+        } else {
+          console.warn('API returned but no issue found. Response snapshot:', response);
+          return null;
+        }
+      } catch (err) {
+        console.error('Error fetching period from API (fetch failed):', err);
+        return null;
+      }
+    }
+
+    // Local fallback: generate a stable "period id" based on current minute timestamp.
+    // Format: YYYYMMDDHHMM
+    function generateFallbackPeriodId(date = new Date()) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      const hh = String(date.getHours()).padStart(2, '0');
+      const mm = String(date.getMinutes()).padStart(2, '0');
+      return `${y}${m}${d}${hh}${mm}`;
+    }
+
+    // Update period UI (and reset prediction when new period observed)
+    function updatePeriodDisplay(newPeriodID) {
+      const el = document.getElementById('period');
+      if (!newPeriodID) {
+        el.textContent = 'No Period';
+        return;
+      }
+      if (newPeriodID !== currentPeriodID) {
+        console.log('New period detected:', newPeriodID, 'old:', currentPeriodID);
+        currentPeriodID = newPeriodID;
+        el.textContent = newPeriodID;
+        // reset prediction state for the new period
+        document.getElementById('prediction').textContent = '- - -';
+        currentPrediction = '- - -';
+        predictionReady = false;
+        // optionally auto-trigger loading/animation
+        showLoading(true);
+      } else {
+        // same period — just ensure UI is updated
+        el.textContent = newPeriodID;
+      }
+    }
+
+    // Combined logic: attempt API, fallback to local if necessary
+    async function refreshPeriodIfNeeded(force = false) {
+      // Try API if we reasonably should:
+      const now = Date.now();
+      const apiIsFresh = (now - lastApiSuccessAt) < (90 * 1000); // treat success as fresh for 90s
+      let periodFromApi = null;
+
+      if (force || !apiIsFresh) {
+        periodFromApi = await getPeriodFromAPI();
+      }
+
+      if (periodFromApi) {
+        updatePeriodDisplay(periodFromApi);
+      } else {
+        // API failed or returned nothing — use fallback
+        if (!fallbackPeriodSeed) {
+          fallbackPeriodSeed = generateFallbackPeriodId();
+        }
+        const fallback = generateFallbackPeriodId();
+        // if fallback changed (minute changed) then it's a new period
+        updatePeriodDisplay(fallback);
+      }
+    }
+
+    // ---------- PREDICTION logic (temporary random) ----------
+    // Replace generatePrediction() with your real algorithm or server call.
+    function generatePrediction() {
+      const predictions = ['SMALL', 'BIG', 'RED', 'GREEN', 'SKIP'];
+      const idx = Math.floor(Math.random() * predictions.length);
+      currentPrediction = predictions[idx];
+      document.getElementById('prediction').textContent = currentPrediction;
+      predictionReady = true;
+      console.log('Generated prediction for period', currentPeriodID, currentPrediction);
+    }
+
+    // Loading/blur overlay behaviour
+    function showLoading(autoTrigger = false) {
+      const overlay = document.getElementById('blurOverlay');
+
+      // if auto triggered (new period), show shorter animation
+      const duration = autoTrigger ? 700 : 800;
+
+      // If user clicks and prediction is already ready, do a quick flash
+      if (!autoTrigger && predictionReady) {
+        overlay.style.display = 'block';
+        setTimeout(() => overlay.style.display = 'none', 350);
+        return;
+      }
+
+      overlay.style.display = 'block';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        if (!predictionReady) generatePrediction();
+      }, duration);
+    }
+
+    document.getElementById('btnChange').addEventListener('click', () => {
+      // guard: only allow clicking in the 20-40s window optionally — but user requested
+      // simply call showLoading; instruction text on page tells user when to click
+      showLoading(false);
+    });
+
+    // Countdown: show seconds left until next minute in format 00:SS
     function updateTime() {
       const now = new Date();
-      // Use local time for calculation, then convert to the required format
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      
-      // Calculate period number based on minutes since midnight
-      const totalMinutesToday = now.getHours() * 60 + now.getMinutes();
-      
-      // Custom Period Base Number (e.g., 10001) + Total Minutes Today
-      const periodBase = 10001; 
-      const periodNumber = periodBase + totalMinutesToday;
-      
-      // Final Period ID: YYYYMMDD + 1000 + Period Number
-      const newPeriodID = year + month + day + '1000' + periodNumber;
-      
       const seconds = now.getSeconds();
-      const remainingSeconds = 60 - seconds;
-      
-      // Update period display
-      document.getElementById('period').textContent = newPeriodID;
-      
-      // Countdown format: "00:00"
-      const formattedTime = `00:${String(remainingSeconds).padStart(2, '0')}`;
-      document.getElementById('countdown').textContent = formattedTime;
+      const secLeft = 59 - seconds; // 59 -> 0 (when seconds==59 shows 00:00)
+      const formatted = `00:${String(secLeft).padStart(2, '0')}`;
+      document.getElementById('countdown').textContent = formatted;
 
-      // Logic to handle new period and prediction
-      if (newPeriodID !== currentPeriodID) {
-        // A new period has started (a new minute)
-        currentPeriodID = newPeriodID;
-        // Clear old prediction
-        document.getElementById('prediction').textContent = '- - -';
-        predictionReady = false; // Reset the flag
-        
-        // **Automatically generate the new prediction immediately at the start of the period (second 00-01)**
-        // This makes the tool "powerful" by providing the prediction right when it's needed.
-        if (remainingSeconds === 60 || remainingSeconds === 59) { 
-           // Trigger loading/prediction sequence
-           showLoading(true); 
+      // Call API at the configured second to pick up the new period
+      // We call refreshPeriodIfNeeded() at second API_CALL_AT_SECOND (usually 59)
+      // and also once on page load (handled separately)
+      if (seconds === API_CALL_AT_SECOND) {
+        // force an API refresh right before minute flips
+        refreshPeriodIfNeeded(true);
+      }
+    }
+
+    // Initialize
+    (async function init() {
+      // initial attempt to get period
+      await refreshPeriodIfNeeded(true);
+
+      // start smooth countdown + periodic checks
+      updateTime();
+      setInterval(updateTime, POLL_INTERVAL_MS);
+
+      // As a safety: every 30s attempt refresh if API hasn't succeeded recently
+      setInterval(() => {
+        const now = Date.now();
+        if ((now - lastApiSuccessAt) > 30000) {
+          refreshPeriodIfNeeded(false);
         }
-      }
-    }
-    
-    // Blur overlay and prediction request handling
-    function showLoading(autoTrigger = false) {
-      const blurOverlay = document.getElementById('blurOverlay');
-      
-      if (!autoTrigger && predictionReady) {
-         // If a user clicks, but the prediction is already shown, just show the blur briefly
-         blurOverlay.style.display = 'block';
-         setTimeout(() => {
-           blurOverlay.style.display = 'none';
-         }, 400); // Shorter duration for quick flash
-         return;
-      }
-      
-      if (predictionReady && autoTrigger === false) {
-          // If the prediction is ready, clicking "GET PREDICTION" should do nothing 
-          // (The instruction says to click between 20-40, but the best time is at 00)
-          return;
-      }
+      }, 30000);
+    })();
 
-      // Show loading/blur
-      blurOverlay.style.display = 'block';
-      
-      setTimeout(() => {
-        blurOverlay.style.display = 'none';
-        
-        // Only generate prediction if it hasn't been done for this period
-        if (!predictionReady) {
-            generatePrediction();
-        }
-      }, 800);
-    }
-    
-    // Function bound to the button click
-    function requestPrediction() {
-        // The instruction says "CLICK ON CHANGE AT 20-40 SEC TIMER",
-        // but for a "winning" tool, the prediction should be ready at 00 seconds.
-        // We will call showLoading, which now handles the prediction logic.
-        showLoading(false);
-    }
+    // ---------- Particle background (unchanged mostly) ----------
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
 
-    // Run the timer every second
-    updateTime();
-    // Use a smaller interval for smoother countdown/period transition accuracy
-    setInterval(updateTime, 200); 
-
-    // --- Particle background (Unchanged) ---
-    const canvas = document.getElementById("bg");
-    const ctx = canvas.getContext("2d");
-    
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-    
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
-    
+
     const dots = [];
     for (let i = 0; i < 50; i++) {
       dots.push({
@@ -266,8 +371,10 @@
 
       requestAnimationFrame(draw);
     }
-
     draw();
+
+    // helpful console info
+    console.log('Page initialized. API_URL:', API_URL);
   </script>
 </body>
 </html>
