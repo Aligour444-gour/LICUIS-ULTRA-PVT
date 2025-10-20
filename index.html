@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LICUIS ULTRA V2 - NUMBER</title>
+    <title>LICUIS ULTRA V2 - Advanced AI Prediction Platform</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400;1,700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
@@ -889,29 +889,19 @@
             padding: 25px;
             overflow-y: auto;
             position: relative;
-            align-items: center; /* Center the prediction display */
-            justify-content: center; /* Center the prediction display */
         }
 
         .prediction-display {
             background: var(--glass-bg);
             border-radius: var(--radius);
             border: 1px solid var(--glass-border);
-            padding: 40px; /* Increased padding */
+            padding: 30px;
             margin-bottom: 25px;
             backdrop-filter: blur(10px);
             box-shadow: var(--shadow);
             text-align: center;
             position: relative;
             overflow: hidden;
-            width: 100%; /* Full width up to max-width */
-            max-width: 600px; /* Max width for better focus */
-            transition: all 0.5s ease;
-        }
-
-        .prediction-display:hover {
-            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.4);
-            transform: scale(1.02);
         }
 
         .prediction-display::before {
@@ -927,71 +917,44 @@
 
         .timer-display {
             font-family: 'Orbitron', sans-serif;
-            font-size: 4.5rem; /* Increased size */
+            font-size: 3.5rem;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
-            letter-spacing: 3px;
-            transition: all 0.3s ease;
-        }
-        
-        .timer-display:hover {
-            color: var(--accent);
-            text-shadow: 0 0 25px rgba(96, 165, 250, 0.7);
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+            letter-spacing: 2px;
         }
 
         .period-display {
-            font-size: 1.1rem; /* Adjusted size */
+            font-size: 1.2rem;
             color: var(--text-medium);
-            margin-bottom: 30px; /* Increased margin */
-            font-weight: 600;
-            letter-spacing: 1px;
+            margin-bottom: 25px;
+            font-weight: 500;
         }
 
         .prediction-result {
             font-family: 'El Messiri', sans-serif;
-            font-size: 5rem; /* Increased size */
+            font-size: 4rem;
             font-weight: 800;
-            color: white; /* Changed color to white for contrast */
-            background: var(--gradient); /* Used gradient as background */
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent; /* Makes text color transparent to show gradient */
-            margin: 30px 0; /* Increased margin */
+            color: var(--primary);
+            margin: 20px 0;
             text-transform: uppercase;
-            letter-spacing: 5px; /* Increased spacing */
-            text-shadow: 0 5px 20px rgba(37, 99, 235, 0.6); /* More prominent shadow */
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
             position: relative;
-            animation: pulse 1.5s infinite alternate;
-        }
-        
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                opacity: 0.9;
-            }
-            100% {
-                transform: scale(1.05);
-                opacity: 1;
-            }
         }
 
         .prediction-result::after {
             content: "";
             position: absolute;
-            bottom: -15px; /* Moved down */
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90%; /* Wider line */
-            height: 4px; /* Thicker line */
+            width: 80%;
+            height: 3px;
             background: var(--gradient);
-            border-radius: 4px;
-            opacity: 0.5;
+            border-radius: 3px;
         }
-
-        /* Removed: confidence-meter, prediction-stats, prediction-controls styles */
-
 
         .floating-bg {
             position: absolute;
@@ -1020,20 +983,6 @@
             text-align: center;
             margin: 12px 0;
             letter-spacing: 1px;
-        }
-
-        .confidence-display {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.8rem;
-            color: var(--text-light);
-            align-items: center;
-        }
-
-        .confidence-value {
-            color: var(--primary);
-            font-weight: 700;
         }
 
         /* Responsive Adjustments */
@@ -1097,10 +1046,6 @@
                 font-size: 12px;
             }
 
-            .prediction-value {
-                font-size: 2rem;
-            }
-
             .history-header,
             .history-item {
                 grid-template-columns: 1fr 1fr 1fr;
@@ -1130,15 +1075,11 @@
             }
 
             .prediction-result {
-                font-size: 4rem; /* Adjusted for mobile */
+                font-size: 3rem;
             }
 
             .timer-display {
-                font-size: 3.5rem; /* Adjusted for mobile */
-            }
-            
-            .prediction-display {
-                padding: 30px;
+                font-size: 2.5rem;
             }
         }
 
@@ -1165,10 +1106,6 @@
                 margin-right: 0;
                 width: 26px;
                 height: 26px;
-            }
-
-            .prediction-value {
-                font-size: 1.8rem;
             }
 
             .history-header,
@@ -1208,12 +1145,11 @@
             }
 
             .prediction-result {
-                font-size: 3rem;
-                letter-spacing: 3px;
+                font-size: 2.5rem;
             }
 
             .timer-display {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
         }
     </style>
@@ -1227,7 +1163,7 @@
                 <path d="M21 16.5c0 .83-.67 1.5-1.5 1.5H4.5c-.83 0-1.5-.67-1.5-1.5v-9c0-.83.67-1.5 1.5-1.5h15c.83 0 1.5.67 1.5 1.5v9zM4.5 20h15c.83 0 1.5-.67 1.5-1.5v-9c0-.83-.67-1.5-1.5-1.5h-15c-.83 0-1.5.67-1.5 1.5v9c0 .83.67 1.5 1.5 1.5zm2.5-6h2v2H7v-2zm4 0h2v2h-2v-2zm-4 4h2v2H7v-2zm4 0h2v2h-2v-2zm4-4h2v2h-2v-2zm-8-4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" />
             </svg>
         </div>
-        <div class="logo-text">LICUIS ULTRA V2</div>
+        <div class="logo-text">LICUIS ULTRA</div>
     </div>
 
     <div class="tab-system">
@@ -1322,7 +1258,7 @@
                     <span class="status-indicator online"></span>
                     <span id="connection-status">Connected to Server</span>
                     • <span id="current-time">00:00:00</span>
-                    • <span id="prediction-speed"></span>
+                    <span id="prediction-speed"></span>
                 </p>
             </div>
 
@@ -1331,8 +1267,7 @@
                     <div class="timer-display" id="timeRemaining">00:00</div>
                     <div class="period-display" id="issueNumber">2025XXXXXXXXXXXXX</div>
                     <div class="prediction-result" id="predictedNumber">XXX</div>
-                    
-                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1465,7 +1400,7 @@
                 let predictionHistory = JSON.parse(localStorage.getItem('predictionHistory') || '[]');
                 
                 // Define a prediction sequence for powerful, winning logic
-                const predictionSequence = ['2 SMALL', 'SKIP', '5 BIG', 'SKIP', '5 BIG', 'SKIP', '7 BIG', 'SKIP', '0 SMALL', 'SKIP', '3 SMALL', 'SKIP', '8 BIG', 'SKIP',  '1 SMALL', 'SKIP', '0 SMALL', 'SKIP', '0 SMALL', 'SKIP', '4 SMALL', 'SKIP', '9 BIG', 'SKIP', '6 BIG'];
+                const predictionSequence = ['2 SMALL 🔴', 'SKIP', '5 BIG 🟣', 'SKIP', '5 BIG 🟣', 'SKIP', '7 BIG 🟢', 'SKIP', '0 SMALL 🟣', 'SKIP', '3 SMALL 🟢', 'SKIP', '8 BIG 🔴', 'SKIP',  '1 SMALL 🟢', 'SKIP', '0 SMALL 🟣', 'SKIP', '0 SMALL 🟣', 'SKIP', '4 SMALL 🔴', 'SKIP', '9 BIG 🟢', 'SKIP', '6 BIG 🔴'];
                 
                 const fetchGameIssue = () => {
                     const requestData = {
@@ -1510,14 +1445,10 @@
                         const prediction = predictNextNumber(newIssueNumber); // Use the new powerful logic
                         predictedNumberElement.textContent = prediction;
                         
-                        // Generate a random confidence between 75% and 95%
-                        const confidence = Math.floor(Math.random() * 20) + 75;
-                        
                         // Add to prediction history
                         const predictionRecord = {
                             period: currentIssueNumber,
                             prediction: prediction,
-                            confidence: confidence,
                             timestamp: new Date().toISOString(),
                             status: 'pending'
                         };
@@ -1603,8 +1534,6 @@
                 });
 
                 timerInterval = setInterval(updateTimer, 1000);
-
-                // Removed refreshButton event listener
                 
                 // Update current time
                 function updateClock() {
