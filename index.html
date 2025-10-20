@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -315,11 +316,6 @@
         .action-card-game .action-card-icon {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
-        }
-
-        .action-card-premium .action-card-icon {
-            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
         }
 
         /* ========== HOT BADGE ========== */
@@ -642,49 +638,6 @@
             opacity: 0.1;
         }
 
-        /* ========== PREMIUM BUTTON ========== */
-        .premium-btn {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 100px;
-            font-weight: 700;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .premium-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.5s, height 0.5s;
-        }
-
-        .premium-btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .premium-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.6);
-        }
-
-        .premium-btn:active {
-            transform: translateY(0) scale(0.98);
-        }
-
         /* ========== BACK BUTTON ========== */
         .back-btn {
             width: 48px;
@@ -786,47 +739,6 @@
             transform: translateX(20%);
         }
 
-        /* ========== FEATURE CARDS ========== */
-        .feature-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .feature-card:hover {
-            transform: translateX(8px);
-            border-color: var(--primary);
-            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
-        }
-
-        .feature-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .feature-icon-vip {
-            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
-            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
-        }
-
-        .feature-icon-recovery {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-        }
-
         /* ========== RESPONSIVE ========== */
         @media (max-width: 640px) {
             .brand-title {
@@ -845,8 +757,61 @@
                 font-size: 5rem;
             }
         }
+        
+        /* ========== WIN CUP ANIMATION ========== */
+        .win-cup {
+            font-size: 7rem;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: cupShine 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.5));
+        }
+        
+        @keyframes cupShine {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg);
+                filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.5));
+            }
+            50% { 
+                transform: scale(1.1) rotate(5deg);
+                filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8));
+            }
+        }
+        
+        .win-celebration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            overflow: hidden;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            opacity: 0.8;
+            animation: confettiFall 5s linear forwards;
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
     </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.relative{position:relative}.mx-auto{margin-left:auto;margin-right:auto}.flex{display:flex}.min-h-screen{min-height:100vh}.w-full{width:100%}.max-w-md{max-width:28rem}.flex-grow{flex-grow:1}.flex-col{flex-direction:column}.gap-5{gap:1.25rem}.gap-0{gap:0px}.px-4{padding-left:1rem;padding-right:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pt-0{padding-top:0px}.text-5xl{font-size:3rem;line-height:1}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}</style></head>
+</head>
 <body>
     <!-- Mesh Background -->
     <div class="mesh-background"></div>
@@ -902,26 +867,10 @@
                     </div>
                 </div>
 
-                <!-- Premium Card -->
-                <div class="action-card action-card-premium fade-in" onclick="window.open('https://cosmofeed.com/ps/68e70f5d8b696700132605dd', '_blank')" style="animation-delay: 0.2s;">
-                    <div style="position: absolute; top: 0; right: 0; width: 150px; height: 150px; background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%); filter: blur(40px); pointer-events: none;"></div>
-                    <div class="action-card-icon">
-                        <i class="fa-solid fa-crown text-white"></i>
-                    </div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                        99% Accuracy Premium
-                    </h3>
-                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem;">Unlock exclusive advanced AI predictions & signals</p>
-                    <button class="premium-btn" style="width: 100%;">
-                        <i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>
-                        Get Premium Access
-                    </button>
-                </div>
-
                 <!-- Footer -->
                 <div class="fade-in" style="text-align: center; margin-top: 2rem; animation-delay: 0.3s;">
                     <p style="color: var(--text-secondary); font-size: 0.75rem; margin-bottom: 0.5rem;">
-                       
+                        
                     </p>
                     <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: var(--success);">
                         <i class="fa-solid fa-lock"></i>
@@ -1004,43 +953,6 @@
                 <!-- Prediction Area (Scrollable) -->
                 <div id="prediction-area" style="flex: 1; overflow-y: auto; padding: 1rem 0;">
                     <div id="prediction-content"></div>
-                </div>
-                
-                <!-- Feature Cards -->
-                <div style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem 0;">
-                    <!-- VIP Card -->
-                    <div class="feature-card fade-in" style="animation-delay: 0.2s;">
-                        <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
-                            <div class="feature-icon feature-icon-vip">
-                                <i class="fa-solid fa-crown text-white"></i>
-                            </div>
-                            <div>
-                                <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem;">VIP Prediction</h4>
-                                <p style="color: var(--text-secondary); font-size: 0.875rem;">Exclusive premium signals</p>
-                            </div>
-                        </div>
-                        <button class="premium-btn" style="padding: 0.75rem 1.5rem;">
-                            <i class="fa-solid fa-star" style="margin-right: 0.375rem;"></i>
-                            Unlock
-                        </button>
-                    </div>
-
-                    <!-- Recovery Card -->
-                    <div class="feature-card fade-in" style="animation-delay: 0.3s;">
-                        <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
-                            <div class="feature-icon feature-icon-recovery">
-                                <i class="fa-solid fa-shield-heart text-white"></i>
-                            </div>
-                            <div>
-                                <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem;">Loss Recovery</h4>
-                                <p style="color: var(--text-secondary); font-size: 0.875rem;">Smart recovery strategies</p>
-                            </div>
-                        </div>
-                        <button class="premium-btn" style="padding: 0.75rem 1.5rem;">
-                            <i class="fa-solid fa-rocket" style="margin-right: 0.375rem;"></i>
-                            Start
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1294,12 +1206,13 @@
         
         function getBigSmall(n) { return parseInt(n) >= 5 ? "BIG" : "SMALL"; }
 
-        // Advanced Prediction Logic (keeping original algorithms)
+        // Advanced Prediction Logic (always show opposite outcome)
         function getOppositeNumber(prediction) {
             const small = [0, 1, 2, 3, 4]; const big = [5, 6, 7, 8, 9];
             let arr = prediction === "BIG" ? small : big;
             return arr[Math.floor(Math.random() * arr.length)];
         }
+        
         function detailedTrendAnalysisModule(recentHistory, windowSize = 7) {
             const historySlice = recentHistory.slice(0, windowSize);
             if (historySlice.length < 2) return { prediction: null, confidence: 0.3, weight: 1.6, type: "Trend", logic: "Tr-Insuff" };
@@ -1313,39 +1226,42 @@
                 for (let i = 0; i < historySlice.length - 1; i++) { if (historySlice[i].resultType && historySlice[i+1].resultType && historySlice[i].resultType !== historySlice[i+1].resultType) alternations++; else break; }
             }
             let prediction = null; let confidence = 0.45; let logic = `Tr(S${currentStreak}${currentStreakType ? currentStreakType[0] : ''}A${alternations})`;
-            if (currentStreak >= 3) { prediction = currentStreakType; confidence = 0.72 + Math.min(0.23, (currentStreak - 3) * 0.08); } 
-            else if (currentStreak === 2) { prediction = currentStreakType; confidence = 0.65; } 
-            else if (alternations >= 3) { prediction = historySlice[0].resultType === "BIG" ? "SMALL" : "BIG"; confidence = 0.70 + Math.min(0.20, (alternations - 2) * 0.07); } 
-            else if (alternations === 2) { prediction = historySlice[0].resultType === "BIG" ? "SMALL" : "BIG"; confidence = 0.62; } 
-            else if (currentStreak === 1 && alternations === 0 && historySlice.length >= 2 && historySlice[0].resultType !== historySlice[1].resultType) { prediction = historySlice[0].resultType === "BIG" ? "SMALL" : "BIG"; confidence = 0.58; } 
-            else if (currentStreak === 1 && historySlice.length === 1) { prediction = historySlice[0].resultType === "BIG" ? "SMALL" : "BIG"; confidence = 0.52; }
+            if (currentStreak >= 3) { prediction = currentStreakType === "BIG" ? "SMALL" : "BIG"; confidence = 0.72 + Math.min(0.23, (currentStreak - 3) * 0.08); } 
+            else if (currentStreak === 2) { prediction = currentStreakType === "BIG" ? "SMALL" : "BIG"; confidence = 0.65; } 
+            else if (alternations >= 3) { prediction = historySlice[0].resultType === "BIG" ? "BIG" : "SMALL"; confidence = 0.70 + Math.min(0.20, (alternations - 2) * 0.07); } 
+            else if (alternations === 2) { prediction = historySlice[0].resultType === "BIG" ? "BIG" : "SMALL"; confidence = 0.62; } 
+            else if (currentStreak === 1 && alternations === 0 && historySlice.length >= 2 && historySlice[0].resultType !== historySlice[1].resultType) { prediction = historySlice[0].resultType === "BIG" ? "BIG" : "SMALL"; confidence = 0.58; } 
+            else if (currentStreak === 1 && historySlice.length === 1) { prediction = historySlice[0].resultType === "BIG" ? "BIG" : "SMALL"; confidence = 0.52; }
             return { prediction, confidence: parseFloat(confidence.toFixed(2)), weight: 1.6 * (moduleEffectiveness.Trend?.weightMultiplier || 1.0), type: "Trend", logic };
         }
+        
         function dominanceAnalysisModule(recentHistory, windowSize = 10, baseWeight = 1.0) {
             const historySlice = recentHistory.slice(0, windowSize);
             if (historySlice.length < windowSize / 2) return { prediction: null, confidence: 0.3, weight: baseWeight, type: "Dominance", logic: `Dom${windowSize}-Insuff` };
             const bigCount = historySlice.filter(h => h.resultType === "BIG").length; const smallCount = historySlice.filter(h => h.resultType === "SMALL").length; const total = bigCount + smallCount;
             if (total === 0) return { prediction: null, confidence: 0.3, weight: baseWeight, type: "Dominance", logic: `Dom${windowSize}-NoBS` };
             const dominanceFactor = total > 0 ? (Math.max(bigCount, smallCount) / total) : 0.5; let dominantType = null;
-            if (bigCount > smallCount) dominantType = "BIG"; else if (smallCount > bigCount) dominantType = "SMALL";
+            if (bigCount > smallCount) dominantType = "SMALL"; else if (smallCount > bigCount) dominantType = "BIG";
             let prediction = dominantType; let confidence = 0.42 + (dominanceFactor - 0.5) * 0.85; if (!dominantType) confidence = 0.3;
             return { prediction, confidence: parseFloat(confidence.toFixed(2)), weight: baseWeight * (moduleEffectiveness.Dominance?.weightMultiplier || 1.0), type: "Dominance", logic: `Dom${windowSize}(${dominantType ? dominantType[0] : 'E'}${dominanceFactor.toFixed(1)})` };
         }
+        
         function recencyBiasAnalysisModule(recentHistory) {
             if (recentHistory.length === 0 || !recentHistory[0].resultType) return { prediction: null, confidence: 0.3, weight: 1.4, type: "Recency", logic: "Rec-Empty" };
-            const last1 = recentHistory[0].resultType; let prediction = last1; let confidence = 0.60; let last2 = null;
+            const last1 = recentHistory[0].resultType; let prediction = last1 === "BIG" ? "SMALL" : "BIG"; let confidence = 0.60; let last2 = null;
             if (recentHistory.length >= 2 && recentHistory[1].resultType) {
                 last2 = recentHistory[1].resultType;
-                if (last1 === last2) { prediction = last1; confidence = 0.70; } else { prediction = last1; confidence = 0.65; }
+                if (last1 === last2) { prediction = last1 === "BIG" ? "SMALL" : "BIG"; confidence = 0.70; } else { prediction = last1 === "BIG" ? "SMALL" : "BIG"; confidence = 0.65; }
             }
             if (recentHistory.length >= 3 && recentHistory[2].resultType && last2 !== null) {
                 const last3 = recentHistory[2].resultType;
-                if (last1 === last2 && last1 === last3) { prediction = last1; confidence = 0.78; } 
-                else if (last1 !== last2 && last1 === last3) { prediction = last2; confidence = 0.72; }
+                if (last1 === last2 && last1 === last3) { prediction = last1 === "BIG" ? "SMALL" : "BIG"; confidence = 0.78; } 
+                else if (last1 !== last2 && last1 === last3) { prediction = last2 === "BIG" ? "SMALL" : "BIG"; confidence = 0.72; }
             }
             const l1Char = last1 ? last1[0] : 'N'; const l2Char = last2 ? last2[0] : ''; const l3Char = (recentHistory.length >= 3 && recentHistory[2].resultType) ? recentHistory[2].resultType[0] : '';
             return { prediction, confidence: parseFloat(confidence.toFixed(2)), weight: 1.4 * (moduleEffectiveness.Recency?.weightMultiplier || 1.0), type: "Recency", logic: `Rec(${l1Char}${l2Char}${l3Char})` };
         }
+        
         function volatilityAndConsistencyModule(recentHistory, windowSize = 8) {
             const historySlice = recentHistory.slice(0, windowSize);
             if (historySlice.length < 2) return { volatilityScore: 0.5, consistencyStreak: 0, type: "Volatility", logic: "Vol-Insuff" };
@@ -1358,28 +1274,30 @@
             }
             return { volatilityScore: parseFloat(volatilityScore.toFixed(2)), consistencyStreak, type: "Volatility", logic: `Vol(V${volatilityScore.toFixed(1)}C${consistencyStreak})` };
         }
+        
         function complexPatternDetectorModule(recentHistory, windowSize = 6) {
             const historySlice = recentHistory.slice(0, windowSize).map(h => h.resultType).filter(Boolean);
             if (historySlice.length < 3) return { prediction: null, confidence: 0.3, weight: 1.25, type: "CP", logic: "CP-Insuff" };
             const s = historySlice.join(''); let prediction = null; let confidence = 0; let logic = "CP-None";
-            if (s.startsWith("BBSS")) { prediction = "BIG"; confidence = 0.72; logic = "CP:BBSS>B"; }
-            else if (s.startsWith("SSBB")) { prediction = "SMALL"; confidence = 0.72; logic = "CP:SSBB>S"; }
-            else if (s.startsWith("BSSB")) { prediction = "SMALL"; confidence = 0.70; logic = "CP:BSSB>S"; }
-            else if (s.startsWith("SBBS")) { prediction = "BIG"; confidence = 0.70; logic = "CP:SBBS>B"; }
-            else if (s.startsWith("BBBS")) { prediction = "SMALL"; confidence = 0.75; logic = "CP:BBBS>S_Brk"; } 
-            else if (s.startsWith("SSSB")) { prediction = "BIG"; confidence = 0.75; logic = "CP:SSSB>B_Brk"; }  
-            else if (s.startsWith("BSBS")) { prediction = "BIG"; confidence = 0.68; logic = "CP:BSBS>B_Alt"; } 
-            else if (s.startsWith("SBSB")) { prediction = "SMALL"; confidence = 0.68; logic = "CP:SBSB>S_Alt"; }
-            else if (s.startsWith("BBSB")) { prediction = "BIG"; confidence = 0.65; logic = "CP:BBSB>B"; } 
-            else if (s.startsWith("SSBS")) { prediction = "SMALL"; confidence = 0.65; logic = "CP:SSBS>S"; }
-            else if (s.startsWith("BSB")) { prediction = "SMALL"; confidence = 0.60; logic = "CP:BSB>S_Alt3"; } 
-            else if (s.startsWith("SBS")) { prediction = "BIG"; confidence = 0.60; logic = "CP:SBS>B_Alt3"; }
-            else if (s.startsWith("BBB") && historySlice.length >= 3) { prediction = "SMALL"; confidence = 0.62; logic = "CP:BBB>S_Brk3"; } 
-            else if (s.startsWith("SSS") && historySlice.length >= 3) { prediction = "BIG"; confidence = 0.62; logic = "CP:SSS>B_Brk3"; }
-            else if (s.startsWith("BB") && historySlice.length === 2) { prediction = "BIG"; confidence = 0.55; logic = "CP:BB>B_Cont2";}
-            else if (s.startsWith("SS") && historySlice.length === 2) { prediction = "SMALL"; confidence = 0.55; logic = "CP:SS>S_Cont2";}
+            if (s.startsWith("BBSS")) { prediction = "SMALL"; confidence = 0.72; logic = "CP:BBSS>S"; }
+            else if (s.startsWith("SSBB")) { prediction = "BIG"; confidence = 0.72; logic = "CP:SSBB>B"; }
+            else if (s.startsWith("BSSB")) { prediction = "BIG"; confidence = 0.70; logic = "CP:BSSB>B"; }
+            else if (s.startsWith("SBBS")) { prediction = "SMALL"; confidence = 0.70; logic = "CP:SBBS>S"; }
+            else if (s.startsWith("BBBS")) { prediction = "BIG"; confidence = 0.75; logic = "CP:BBBS>B_Brk"; } 
+            else if (s.startsWith("SSSB")) { prediction = "SMALL"; confidence = 0.75; logic = "CP:SSSB>S_Brk"; }  
+            else if (s.startsWith("BSBS")) { prediction = "SMALL"; confidence = 0.68; logic = "CP:BSBS>S_Alt"; } 
+            else if (s.startsWith("SBSB")) { prediction = "BIG"; confidence = 0.68; logic = "CP:SBSB>B_Alt"; }
+            else if (s.startsWith("BBSB")) { prediction = "SMALL"; confidence = 0.65; logic = "CP:BBSB>S"; } 
+            else if (s.startsWith("SSBS")) { prediction = "BIG"; confidence = 0.65; logic = "CP:SSBS>B"; }
+            else if (s.startsWith("BSB")) { prediction = "BIG"; confidence = 0.60; logic = "CP:BSB>B_Alt3"; } 
+            else if (s.startsWith("SBS")) { prediction = "SMALL"; confidence = 0.60; logic = "CP:SBS>S_Alt3"; }
+            else if (s.startsWith("BBB") && historySlice.length >= 3) { prediction = "BIG"; confidence = 0.62; logic = "CP:BBB>B_Brk3"; } 
+            else if (s.startsWith("SSS") && historySlice.length >= 3) { prediction = "SMALL"; confidence = 0.62; logic = "CP:SSS>S_Brk3"; }
+            else if (s.startsWith("BB") && historySlice.length === 2) { prediction = "SMALL"; confidence = 0.55; logic = "CP:BB>S_Cont2";}
+            else if (s.startsWith("SS") && historySlice.length === 2) { prediction = "BIG"; confidence = 0.55; logic = "CP:SS>B_Cont2";}
             return { prediction, confidence: parseFloat(confidence.toFixed(2)), weight: 1.25 * (moduleEffectiveness.CP?.weightMultiplier || 1.0), type: "CP", logic };
         }
+        
         function rhythmAndCycleAnalysisModule(recentHistory, windowSize = 15) {
             const historySlice = recentHistory.slice(0, windowSize);
             if (historySlice.length < 5) return { phase: "UNCLEAR", confidence: 0.4, weight: 0.7, type: "Rhythm", logic: "Rhy-Insuff" };
@@ -1396,9 +1314,10 @@
             else if (streaksOfTwo > streaksOfThreePlus && streaksOfTwo > alternations / 2) { phase = "SHORT_STREAKS"; confidence = 0.60; }
             return { phase, confidence: parseFloat(confidence.toFixed(2)), weight: 0.7 * (moduleEffectiveness.Rhythm?.weightMultiplier || 1.0), type: "Rhythm", logic: `Rhy(${phase})` };
         }
+        
         function getWeightedEnsemblePrediction(signals, volatilityContext, rhythmContext, isExtremeLevelReached, streakTypeToBreak) {
             let bigScore = 0; let smallScore = 0; let logicParts = [];
-            if (!signals || signals.length === 0) return { prediction: (Date.now() % 2 === 0) ? "BIG" : "SMALL", confidence: 0.35, logic: "EnsV6-NoSignals" };
+            if (!signals || signals.length === 0) return { prediction: (Date.now() % 2 === 0) ? "SMALL" : "BIG", confidence: 0.35, logic: "EnsV6-NoSignals" };
             signals.forEach(signal => {
                 if (!signal || signal.prediction === null || typeof signal.confidence !== 'number' || typeof signal.weight !== 'number') { if (signal && signal.type === "Rhythm" && typeof signal.confidence === 'number' && typeof signal.weight === 'number') {} else { return; } }
                 let currentWeight = signal.weight;
@@ -1419,7 +1338,7 @@
                 if (signal.prediction === "BIG") { bigScore += scoreContribution; } else if (signal.prediction === "SMALL") { smallScore += scoreContribution; }
                 logicParts.push(`${signal.type.substring(0,3)}:${signal.prediction ? signal.prediction[0]:'N'}(${signal.confidence.toFixed(1)}*${currentWeight.toFixed(1)})`);
             });
-            if (bigScore === 0 && smallScore === 0) { const breakPrediction = isExtremeLevelReached && streakTypeToBreak ? (streakTypeToBreak === "BIG" ? "SMALL" : "BIG") : (Date.now() % 2 === 0 ? "BIG" : "SMALL"); return { prediction: breakPrediction, confidence: 0.35, logic: `EnsV6-ZeroScores${isExtremeLevelReached ? 'ExtBrk' : ''}` }; }
+            if (bigScore === 0 && smallScore === 0) { const breakPrediction = isExtremeLevelReached && streakTypeToBreak ? (streakTypeToBreak === "BIG" ? "BIG" : "SMALL") : (Date.now() % 2 === 0 ? "SMALL" : "BIG"); return { prediction: breakPrediction, confidence: 0.35, logic: `EnsV6-ZeroScores${isExtremeLevelReached ? 'ExtBrk' : ''}` }; }
             const finalPrediction = bigScore >= smallScore ? "BIG" : "SMALL";
             const totalScore = bigScore + smallScore; let finalConfidence = totalScore > 0 ? (Math.abs(bigScore - smallScore) / totalScore) : 0;
             finalConfidence = 0.38 + (finalConfidence * 0.57);
@@ -1432,25 +1351,30 @@
             if (isExtremeLevelReached) { finalConfidence = Math.min(finalConfidence, 0.40); logicParts.push("EXTREME_FORCE_ADJ"); }
             return { prediction: finalPrediction, confidence: parseFloat(Math.max(0.35, Math.min(0.95, finalConfidence)).toFixed(2)), logic: `Ens(${logicParts.join('|').substring(0,35)})` };
         }
+        
         function advancedPredictionAlgorithm(periodShortToPredict, historyForLogic, currentAlgoWinLevel, isExtremeLevel) {
             const resolvedHistory = historyForLogic.filter(h => typeof h.result === 'number' && h.resultType).slice(0, 25);
             let signals = [];
             if (resolvedHistory.length >= 1) {
-                signals.push(detailedTrendAnalysisModule(resolvedHistory, 7)); signals.push(dominanceAnalysisModule(resolvedHistory, 5, 1.1)); signals.push(dominanceAnalysisModule(resolvedHistory, 12, 0.9)); signals.push(recencyBiasAnalysisModule(resolvedHistory)); signals.push(complexPatternDetectorModule(resolvedHistory, 6));
+                signals.push(detailedTrendAnalysisModule(resolvedHistory, 7)); 
+                signals.push(dominanceAnalysisModule(resolvedHistory, 5, 1.1)); 
+                signals.push(dominanceAnalysisModule(resolvedHistory, 12, 0.9)); 
+                signals.push(recencyBiasAnalysisModule(resolvedHistory)); 
+                signals.push(complexPatternDetectorModule(resolvedHistory, 6));
             }
             const volatilityContext = volatilityAndConsistencyModule(resolvedHistory, 8);
             const rhythmContext = rhythmAndCycleAnalysisModule(resolvedHistory, 15);
             signals.push({ prediction: null, confidence: rhythmContext.confidence, weight: rhythmContext.weight, type: "Rhythm", logic: rhythmContext.logic });
             let streakTypeToBreak = null; let predictionToBreakStreak = null;
             if (isExtremeLevel && currentAIPrediction && currentAIPrediction.prediction) {
-                streakTypeToBreak = currentAlgoWinLevel > 0 ? currentAIPrediction.prediction : (currentAIPrediction.prediction === "BIG" ? "SMALL" : "BIG");
-                predictionToBreakStreak = streakTypeToBreak === "BIG" ? "SMALL" : "BIG";
+                streakTypeToBreak = currentAlgoWinLevel > 0 ? currentAIPrediction.prediction : (currentAIPrediction.prediction === "BIG" ? "BIG" : "SMALL");
+                predictionToBreakStreak = streakTypeToBreak === "BIG" ? "BIG" : "SMALL";
             }
             let combinedPredictionObj;
             if (signals.filter(s => s.prediction !== null || s.type === "Rhythm").length > 0) {
                 combinedPredictionObj = getWeightedEnsemblePrediction(signals, volatilityContext, rhythmContext, isExtremeLevel, streakTypeToBreak);
             } else {
-                const breakPrediction = isExtremeLevel && predictionToBreakStreak ? predictionToBreakStreak : (Date.now() % 2 === 0 ? "BIG" : "SMALL");
+                const breakPrediction = isExtremeLevel && predictionToBreakStreak ? predictionToBreakStreak : (Date.now() % 2 === 0 ? "SMALL" : "BIG");
                 combinedPredictionObj = { prediction: breakPrediction, confidence: 0.38, logic: `FallbackNoSig${isExtremeLevel ? 'ExtBrk':''}` };
             }
             let finalPrediction = combinedPredictionObj.prediction; let finalConfidence = combinedPredictionObj.confidence; let finalLogic = combinedPredictionObj.logic;
@@ -1458,9 +1382,9 @@
                 finalPrediction = predictionToBreakStreak; finalConfidence = 0.37; finalLogic = `ExtLvlOVER(${currentAlgoWinLevel})!${predictionToBreakStreak[0]}`;
             }
             if (isExtremeLevel) {
-                const typeThatCausedExtreme = currentAlgoWinLevel > 0 ? (currentAIPrediction?.prediction) : (currentAIPrediction?.prediction === "BIG" ? "SMALL" : "BIG");
+                const typeThatCausedExtreme = currentAlgoWinLevel > 0 ? (currentAIPrediction?.prediction) : (currentAIPrediction?.prediction === "BIG" ? "BIG" : "SMALL");
                 if (typeThatCausedExtreme && finalPrediction === typeThatCausedExtreme) {
-                    finalPrediction = finalPrediction === "BIG" ? "SMALL" : "BIG"; finalConfidence = 0.35; finalLogic = `FORCE_FLIP!!(${currentAlgoWinLevel})`;
+                    finalPrediction = finalPrediction === "BIG" ? "BIG" : "SMALL"; finalConfidence = 0.35; finalLogic = `FORCE_FLIP!!(${currentAlgoWinLevel})`;
                 }
             }
             return { prediction: finalPrediction, confidence: finalConfidence, logic: finalLogic, number: getOppositeNumber(finalPrediction) };
@@ -1493,6 +1417,27 @@
             predictionContentEl.innerHTML = `<div class="${animateClass} w-full">${html}</div>`;
         }
 
+        function createConfetti() {
+            const celebration = document.createElement('div');
+            celebration.className = 'win-celebration';
+            document.body.appendChild(celebration);
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = ['#10b981', '#f59e0b', '#ef4444', '#6366f1', '#ec4899'][Math.floor(Math.random() * 5)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                celebration.appendChild(confetti);
+            }
+            
+            setTimeout(() => {
+                document.body.removeChild(celebration);
+            }, 5000);
+        }
+
         function renderResultCard(item, status, isAnnouncement = false) {
             const isWin = status === 'WIN';
             const statusClass = isWin ? 'win' : (status === 'LOSS' ? 'loss' : 'skip');
@@ -1501,6 +1446,11 @@
             
             const headerHtml = isAnnouncement ? '' : `<div class="result-header">${title}</div>`;
             const cardClass = isAnnouncement && isWin ? 'result-card win-animation' : 'result-card';
+
+            // Create confetti for win
+            if (isAnnouncement && isWin) {
+                createConfetti();
+            }
 
             return `
                 <div class="${cardClass}">
@@ -1521,7 +1471,10 @@
                             </div>
                         </div>
                         <div>
-                             <i class="fa-solid fa-trophy result-trophy"></i>
+                            ${isAnnouncement && isWin ? 
+                                '<i class="fa-solid fa-trophy win-cup"></i>' : 
+                                '<i class="fa-solid fa-trophy result-trophy"></i>'
+                            }
                         </div>
                     </div>
                 </div>`;
@@ -1727,5 +1680,5 @@
         gameSelectionPage.classList.add('page-enter-active');
         gameSelectionPage.style.display = 'flex';
     </script>
-
-<style>.qc-cmp-showing { visibility: hidden !important; } body.didomi-popup-open { overflow: auto !important; } #didomi-host { visibility: hidden !important; }</style></body></html>
+</body>
+</html>
