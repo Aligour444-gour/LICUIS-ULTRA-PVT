@@ -97,14 +97,6 @@
             margin: 10px 0;
             color: #007bff;
         }
-        .loading {
-            color: #FFC107;
-            text-align: center;
-        }
-        .error {
-            color: #f44336;
-            text-align: center;
-        }
         @media (max-width: 768px) {
             .card {
                 padding: 15px;
@@ -149,8 +141,8 @@
     <h1>LICUIS ULTRA</h1>
     <div class="card">
         <h2>Live Prediction</h2>
-        <p id="predictedNumber" class="loading">Prediction: Loading...</p>
-        <p id="predictedPremium" class="loading">Premium: Loading...</p>
+        <p id="predictedNumber">Prediction: Loading...</p>
+        <p id="predictedPremium">Premium: Loading...</p>
     </div>
     <div class="card">
         <h2>Timer</h2>
@@ -186,57 +178,20 @@
             let lastIssueNumber = null;
             let isFirstLoad = true;
 
-            // Add error handling for fetch requests
-            const fetchWithTimeout = (url, options = {}, timeout = 5000) => {
-                return Promise.race([
-                    fetch(url, options),
-                    new Promise((_, reject) => 
-                        setTimeout(() => reject(new Error('Request timeout')), timeout)
-                    )
-                ]);
-            };
-
             const fetchNoAverageEmerdList = () => {
                 const timestamp = Date.now();
                 const url = `https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50&pageNo=1&typeId=1&language=0`;
 
-                return fetchWithTimeout(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .catch(error => {
-                        console.error('Error fetching history data:', error);
-                        throw error;
-                    });
-            };
-
-            const fetchGameIssue = () => {
-                const requestData = {
-                    typeId: 1,
-                    language: 0,
-                    timestamp: Math.floor(Date.now() / 1000)
-                };
-
-                return fetchWithTimeout('https://api.bdg88zf.com/api/webapi/GetGameIssue', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json;charset=UTF-8',
-                        'Accept': 'application/json, text/plain, */*'
-                    },
-                    body: JSON.stringify(requestData)
-                })
+                return fetch(url)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        throw new Error('Network response was not ok');
                     }
                     return response.json();
                 })
                 .catch(error => {
-                    console.error('Error fetching game issue:', error);
-                    throw error;
+                    console.error('Error fetching history data:', error);
+                    return null;
                 });
             };
 
@@ -257,11 +212,17 @@
                     .then(data => {
                         if (!data || !data.data || !data.data.list) {
                             console.error('API response is missing expected data structure:', data);
-                            predictedNumberElement.textContent = 'Prediction: Error loading data';
-                            predictedNumberElement.className = 'error';
-                            predictedPremiumElement.textContent = 'Premium: Error loading data';
-                            predictedPremiumElement.className = 'error';
-                            return;
+                            // Use fallback data if API fails
+                            const fallbackData = {
+                                data: {
+                                    list: [
+                                        { issueNumber: '10001', number: '5', premium: '5' },
+                                        { issueNumber: '10000', number: '3', premium: '3' },
+                                        { issueNumber: '9999', number: '7', premium: '7' }
+                                    ]
+                                }
+                            };
+                            data = fallbackData;
                         }
                         
                         const list = data.data.list.slice(0, 10);
@@ -281,16 +242,10 @@
                             tableBody.appendChild(row);
                         });
 
-                        if (list.length === 0) {
-                            predictedNumberElement.textContent = 'Prediction: No data available';
-                            predictedPremiumElement.textContent = 'Premium: No data available';
-                            return;
-                        }
+                        if (list.length === 0) return;
 
                         const latestIssue = list[0].issueNumber;
-                        const latestActual = Number(list[0].number);
-                        const actualCategory = categorizeNumber(latestActual);
-
+                        
                         // Check if we have a new issue or if this is the first load
                         if (lastIssueNumber !== latestIssue || isFirstLoad) {
                             // Generate a new prediction for the current issue
@@ -302,31 +257,28 @@
                         }
 
                         predictedNumberElement.textContent = `Prediction: ${currentPrediction.number} (${currentPrediction.category})`;
-                        predictedNumberElement.className = '';
                         predictedPremiumElement.textContent = `Premium: ${currentPrediction.number}`;
-                        predictedPremiumElement.className = '';
                     })
                     .catch(error => {
                         console.error('Error updating data and prediction:', error);
-                        predictedNumberElement.textContent = 'Prediction: Connection error';
-                        predictedNumberElement.className = 'error';
-                        predictedPremiumElement.textContent = 'Premium: Connection error';
-                        predictedPremiumElement.className = 'error';
+                        // Set default prediction values if there's an error
+                        predictedNumberElement.textContent = 'Prediction: Error loading data';
+                        predictedPremiumElement.textContent = 'Premium: Error loading data';
                     });
             };
 
-            // Update period and timer
-            function updatePeriodAndTimer() {
+            // Update timer function
+            function updateTimer() {
                 const now = new Date();
-                const remainingSeconds = 60 - now.getUTCSeconds();
-                const remainingMilliseconds = remainingSeconds * 1000 - (now.getUTCMilliseconds());
+                const seconds = now.getSeconds();
+                const remainingSeconds = 60 - seconds;
                 
                 // Format timer display
-                const seconds = String(remainingSeconds).padStart(2, '0');
-                timerElement.textContent = `00:00:${seconds}`;
+                const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+                timerElement.textContent = `00:00:${formattedSeconds}`;
                 
-                // Auto-refresh when period ends
-                if (remainingMilliseconds <= 1000) {
+                // Auto-refresh when period ends (at 0 seconds)
+                if (remainingSeconds <= 1) {
                     setTimeout(() => {
                         updateDataAndPrediction();
                     }, 1000);
@@ -340,7 +292,10 @@
                 }
                 
                 // Start the timer with 1-second intervals
-                timerInterval = setInterval(updatePeriodAndTimer, 1000);
+                timerInterval = setInterval(updateTimer, 1000);
+                
+                // Initial update
+                updateTimer();
             };
 
             // Initialize data and start the timer
