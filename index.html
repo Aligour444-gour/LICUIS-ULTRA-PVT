@@ -97,6 +97,14 @@
             margin: 10px 0;
             color: #007bff;
         }
+        .loading {
+            color: #FFC107;
+            text-align: center;
+        }
+        .error {
+            color: #f44336;
+            text-align: center;
+        }
         @media (max-width: 768px) {
             .card {
                 padding: 15px;
@@ -141,8 +149,8 @@
     <h1>LICUIS ULTRA</h1>
     <div class="card">
         <h2>Live Prediction</h2>
-        <p id="predictedNumber">Prediction: Loading...</p>
-        <p id="predictedPremium">Premium: Loading...</p>
+        <p id="predictedNumber" class="loading">Prediction: Loading...</p>
+        <p id="predictedPremium" class="loading">Premium: Loading...</p>
     </div>
     <div class="card">
         <h2>Timer</h2>
@@ -175,17 +183,34 @@
             
             let currentPrediction = null;
             let timerInterval;
-            let lastTimerUpdate = 0;
             let lastIssueNumber = null;
             let isFirstLoad = true;
+
+            // Add error handling for fetch requests
+            const fetchWithTimeout = (url, options = {}, timeout = 5000) => {
+                return Promise.race([
+                    fetch(url, options),
+                    new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Request timeout')), timeout)
+                    )
+                ]);
+            };
 
             const fetchNoAverageEmerdList = () => {
                 const timestamp = Date.now();
                 const url = `https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50&pageNo=1&typeId=1&language=0`;
 
-                return fetch(url)
-                .then(response => response.json())
-                .catch(error => console.error('Error fetching history data:', error));
+                return fetchWithTimeout(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching history data:', error);
+                        throw error;
+                    });
             };
 
             const fetchGameIssue = () => {
@@ -195,7 +220,7 @@
                     timestamp: Math.floor(Date.now() / 1000)
                 };
 
-                return fetch('https://api.bdg88zf.com/api/webapi/GetGameIssue', {
+                return fetchWithTimeout('https://api.bdg88zf.com/api/webapi/GetGameIssue', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json;charset=UTF-8',
@@ -203,8 +228,16 @@
                     },
                     body: JSON.stringify(requestData)
                 })
-                .then(response => response.json())
-                .catch(error => console.error('Error fetching game issue:', error));
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    console.error('Error fetching game issue:', error);
+                    throw error;
+                });
             };
 
             const categorizeNumber = (number) => {
@@ -224,6 +257,10 @@
                     .then(data => {
                         if (!data || !data.data || !data.data.list) {
                             console.error('API response is missing expected data structure:', data);
+                            predictedNumberElement.textContent = 'Prediction: Error loading data';
+                            predictedNumberElement.className = 'error';
+                            predictedPremiumElement.textContent = 'Premium: Error loading data';
+                            predictedPremiumElement.className = 'error';
                             return;
                         }
                         
@@ -244,7 +281,11 @@
                             tableBody.appendChild(row);
                         });
 
-                        if (list.length === 0) return;
+                        if (list.length === 0) {
+                            predictedNumberElement.textContent = 'Prediction: No data available';
+                            predictedPremiumElement.textContent = 'Premium: No data available';
+                            return;
+                        }
 
                         const latestIssue = list[0].issueNumber;
                         const latestActual = Number(list[0].number);
@@ -261,18 +302,22 @@
                         }
 
                         predictedNumberElement.textContent = `Prediction: ${currentPrediction.number} (${currentPrediction.category})`;
+                        predictedNumberElement.className = '';
                         predictedPremiumElement.textContent = `Premium: ${currentPrediction.number}`;
+                        predictedPremiumElement.className = '';
                     })
-                    .catch(error => console.error('Error updating data and prediction:', error));
+                    .catch(error => {
+                        console.error('Error updating data and prediction:', error);
+                        predictedNumberElement.textContent = 'Prediction: Connection error';
+                        predictedNumberElement.className = 'error';
+                        predictedPremiumElement.textContent = 'Premium: Connection error';
+                        predictedPremiumElement.className = 'error';
+                    });
             };
 
             // Update period and timer
             function updatePeriodAndTimer() {
                 const now = new Date();
-                const currentTime = now.getTime();
-                if (currentTime - lastTimerUpdate < 1000) return;
-                lastTimerUpdate = currentTime;
-                
                 const remainingSeconds = 60 - now.getUTCSeconds();
                 const remainingMilliseconds = remainingSeconds * 1000 - (now.getUTCMilliseconds());
                 
@@ -295,7 +340,7 @@
                 }
                 
                 // Start the timer with 1-second intervals
-                timerInterval = setInterval(updatePeriodAndTimer, 100);
+                timerInterval = setInterval(updatePeriodAndTimer, 1000);
             };
 
             // Initialize data and start the timer
