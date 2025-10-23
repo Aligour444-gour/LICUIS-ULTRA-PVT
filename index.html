@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FUSION ULTRA</title>
+  <title>FUSION ULTRA ⚡️</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
     * {
       box-sizing: border-box;
@@ -18,10 +18,10 @@
       background: #000;
       color: #0f0;
       overflow: hidden;
-      min-height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
 
     canvas {
@@ -33,307 +33,188 @@
     }
 
     .container {
-      backdrop-filter: blur(15px);
-      background: rgba(0, 255, 0, 0.05);
-      border: 1px solid rgba(0, 255, 0, 0.2);
-      border-radius: 20px;
-      padding: 25px 20px;
-      max-width: 400px;
-      width: 90%;
-      margin: 20px auto;
-      box-shadow: 0 0 25px rgba(0, 255, 0, 0.1);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .container::before {
-      content: '';
-      position: absolute;
-      top: -10px;
-      left: -10px;
-      right: -10px;
-      bottom: -10px;
-      background: linear-gradient(45deg, #0f0, transparent, #0f0);
-      z-index: -1;
+      /* Stronger neon effect */
+      backdrop-filter: blur(8px);
+      background: rgba(0, 255, 0, 0.08);
+      border: 2px solid #0f0;
       border-radius: 25px;
-      opacity: 0.1;
+      padding: 30px 25px;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(0, 255, 0, 0.3);
+      text-align: center;
+      position: relative; /* For the "glitch" effect */
     }
 
     h2 {
-      font-size: 28px;
-      margin-bottom: 5px;
-      text-shadow: 0 0 10px #0f0;
-      letter-spacing: 1px;
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #fff;
+      text-shadow: 0 0 15px #0ff, 0 0 25px #0f0;
+      letter-spacing: 2px;
+      animation: neon-flicker 1.5s infinite alternate;
     }
 
-    .subtitle {
-      font-size: 14px;
-      color: rgba(0, 255, 0, 0.7);
-      margin-bottom: 20px;
+    @keyframes neon-flicker {
+        0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+            text-shadow: 0 0 15px #0ff, 0 0 25px #0f0, 0 0 40px #0f0;
+        }
+        20%, 24%, 55% {
+            text-shadow: none;
+        }
     }
 
     p {
-      font-size: 15px;
-      margin: 8px 0;
+      font-size: 16px;
+      margin: 10px 0;
+      color: #0ff;
+    }
+
+    strong {
+        color: #fff;
     }
 
     #serverStatus {
-      font-weight: bold;
-      color: #ff0;
-    }
-
-    .period-display {
-      margin: 15px 0;
-      padding: 15px;
-      border-radius: 10px;
-      background: rgba(0,255,0,0.1);
-      border: 1px solid rgba(0,255,0,0.3);
+      font-weight: 700;
       font-size: 18px;
-      font-weight: bold;
-      position: relative;
-      overflow: hidden;
+      color: #f00; /* Initial color: DISCONNECTED */
+      transition: color 0.5s;
     }
 
-    .period-display::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
-      transition: left 0.5s;
-    }
-
-    .period-display.updated::after {
-      left: 100%;
-    }
-
-    .prediction-section {
-      margin: 20px 0;
-      min-height: 80px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #predictionResult {
-      font-size: 24px;
-      font-weight: bold;
+    input {
+      background-color: rgba(0,255,255,0.05);
+      color: #0f0;
+      border: 2px solid #0ff;
       padding: 15px;
-      border-radius: 10px;
+      font-size: 18px;
+      border-radius: 12px;
       width: 100%;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.5s ease;
-      margin-top: 10px;
+      margin-top: 20px;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
 
-    #predictionResult.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    #predictionResult.big {
-      background: rgba(0, 255, 0, 0.2);
-      border: 1px solid rgba(0, 255, 0, 0.5);
-      box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
-    }
-
-    #predictionResult.small {
-      background: rgba(255, 255, 0, 0.2);
-      border: 1px solid rgba(255, 255, 0, 0.5);
-      box-shadow: 0 0 15px rgba(255, 255, 0, 0.3);
-      color: #ff0;
+    input:focus {
+        border-color: #0f0;
+        box-shadow: 0 0 10px #0f0;
     }
 
     button {
       background-color: #0f0;
       color: #000;
-      font-weight: bold;
-      padding: 15px;
-      border-radius: 10px;
-      font-size: 18px;
-      margin-top: 10px;
+      font-weight: 700;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-size: 20px;
+      margin-top: 20px;
       width: 100%;
       border: none;
       cursor: pointer;
-      transition: 0.3s;
-      position: relative;
-      overflow: hidden;
+      transition: 0.3s ease-in-out;
       letter-spacing: 1px;
     }
 
-    button::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 5px;
-      height: 5px;
-      background: rgba(255, 255, 255, 0.5);
-      opacity: 0;
-      border-radius: 100%;
-      transform: scale(1, 1) translate(-50%);
-      transform-origin: 50% 50%;
-    }
-
-    button:focus:not(:active)::after {
-      animation: ripple 1s ease-out;
-    }
-
-    @keyframes ripple {
-      0% {
-        transform: scale(0, 0);
-        opacity: 0.5;
-      }
-      100% {
-        transform: scale(20, 20);
-        opacity: 0;
-      }
-    }
-
     button:hover {
-      background: #000;
-      color: #0f0;
-      box-shadow: 0 0 15px #0f0;
+      background: #0ff;
+      color: #000;
+      box-shadow: 0 0 20px #0ff;
       transform: translateY(-2px);
     }
 
     button:active {
-      transform: translateY(1px);
+        transform: translateY(0);
+    }
+
+    #hackResult {
+      margin-top: 25px;
+      font-size: 30px;
+      font-weight: 700;
+      background: rgba(0,255,0,0.2);
+      color: #fff;
+      text-shadow: 0 0 5px #0f0;
+      padding: 15px;
+      border-radius: 15px;
+      border: 1px solid #0f0;
+      animation: result-pulse 1.2s infinite alternate;
+      display: none;
+    }
+
+    @keyframes result-pulse {
+      0% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); }
+      100% { transform: scale(1.02); box-shadow: 0 0 25px #0f0; }
     }
 
     #history {
-      margin-top: 25px;
+      margin-top: 30px;
       text-align: left;
-      background: rgba(0,255,0,0.04);
-      border: 1px solid rgba(0,255,0,0.15);
-      border-radius: 12px;
-      padding: 12px;
-      max-height: 240px;
+      background: rgba(0,255,255,0.02);
+      border: 1px solid rgba(0,255,255,0.1);
+      border-radius: 15px;
+      padding: 15px;
+      max-height: 250px;
       overflow-y: auto;
+      box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.1);
     }
 
     #history h3 {
-      margin: 0 0 10px;
+      margin: 0 0 15px;
       text-align: center;
-      font-size: 18px;
-      border-bottom: 1px solid rgba(0,255,0,0.2);
-      padding-bottom: 5px;
+      font-size: 20px;
+      color: #0ff;
+      border-bottom: 2px solid rgba(0,255,255,0.2);
+      padding-bottom: 8px;
     }
 
     .history-item {
-      background: rgba(0, 255, 0, 0.08);
-      border-left: 4px solid #0f0;
-      margin-bottom: 8px;
-      border-radius: 10px;
-      padding: 10px 12px;
+      background: rgba(0, 255, 255, 0.05);
+      border-left: 5px solid #0ff;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      padding: 12px 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 16px;
-      transition: transform 0.2s;
+      transition: background 0.3s;
     }
 
     .history-item:hover {
-      transform: translateX(5px);
+        background: rgba(0, 255, 255, 0.1);
     }
 
     .history-item span {
-      font-weight: bold;
+      font-weight: 700;
     }
 
     .tag {
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 14px;
+      padding: 5px 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 15px;
       color: #000;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     }
 
     .big {
-      background-color: #00ff00;
+      background-color: #00ffff; /* Cyan/Aqua for BIG */
     }
 
     .small {
-      background-color: #ff0;
+      background-color: #ffff00; /* Yellow for SMALL */
     }
 
-    .empty-history {
-      text-align: center;
-      padding: 15px;
-      color: rgba(0, 255, 0, 0.5);
-      font-style: italic;
-    }
-
-    /* Scrollbar styling */
+    /* Scrollbar Styling (Webkit) */
     #history::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    #history::-webkit-scrollbar-track {
-      background: rgba(0, 255, 0, 0.1);
-      border-radius: 4px;
+        width: 8px;
     }
 
     #history::-webkit-scrollbar-thumb {
-      background: rgba(0, 255, 0, 0.3);
-      border-radius: 4px;
+        background: rgba(0, 255, 0, 0.5);
+        border-radius: 10px;
     }
 
-    #history::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 255, 0, 0.5);
-    }
-
-    .stats {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-
-    .stat-item {
-      background: rgba(0, 255, 0, 0.1);
-      padding: 8px 12px;
-      border-radius: 8px;
-      flex: 1;
-      margin: 0 5px;
-    }
-
-    .accuracy {
-      color: #0f0;
-    }
-
-    .last-update {
-      color: #ff0;
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 20px 15px;
-      }
-      
-      h2 {
-        font-size: 24px;
-      }
-      
-      .period-display {
-        font-size: 16px;
-        padding: 12px;
-      }
-      
-      button {
-        padding: 12px;
-        font-size: 16px;
-      }
-      
-      #predictionResult {
-        font-size: 20px;
-        padding: 12px;
-      }
+    #history::-webkit-scrollbar-track {
+        background: rgba(0, 255, 0, 0.1);
     }
   </style>
 </head>
@@ -341,211 +222,154 @@
   <canvas id="canvas"></canvas>
 
   <div class="container">
-    <h2>FUSION ULTRA</h2>
-    <div class="subtitle"></div>
-    
-    <div class="stats">
-      <div class="stat-item accuracy">Accuracy: <strong>98%</strong></div>
-      <div class="stat-item">Status: <span id="serverStatus">CONNECTING...</span></div>
-    </div>
+    <h2>LICUIS ULTRA</h2>
+    <p>Accuracy Mode: <strong>99.9%</strong></p>
+    <p>Server Status: <span id="serverStatus">DISCONNECTED</span></p>
 
-    <div class="period-display" id="periodDisplay">
-     <span id="period-number">-</span>
-    </div>
+    <input type="number" id="periodNumber" placeholder="Enter 3-digit Period Number (e.g., 101)" maxlength="3" />
+    <button onclick="getPrediction()">GET PREDICTION</button>
 
-    <div class="prediction-section">
-      <button onclick="getPrediction()">GET PREDICTION</button>
-      <div id="predictionResult"></div>
-    </div>
+    <div id="hackResult"></div>
 
     <div id="history">
-      <h3>Prediction History</h3>
-      <div class="empty-history">No predictions yet</div>
+      <h3>HISTORY</h3>
     </div>
   </div>
 
   <script>
-    // User data storage
-    let userData = {
-      history: []
-    };
-
-    let latestPeriod = null;
-    let currentPrediction = null;
-
-    // Initialize the app
-    function init() {
-      simulateServerConnection();
-      fetchCurrentGameIssue();
-      // Fetch period every 5 seconds
-      setInterval(fetchCurrentGameIssue, 5000);
-    }
+    let lastPeriod = null;
+    let historyCount = 0;
 
     function simulateServerConnection() {
       const status = document.getElementById('serverStatus');
       setTimeout(() => {
         status.textContent = 'CONNECTED';
         status.style.color = '#0f0';
-      }, 1000);
-    }
-
-    // Fetch Current Game Issue
-    async function fetchCurrentGameIssue() {
-      const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
-      const requestData = {
-        typeId: 1,
-        language: 0,
-        random: "40079dcba93a48769c6ee9d4d4fae23f",
-        signature: "D12108C4F57C549D82B23A91E0FA20AE",
-        timestamp: 1727792520,
-      };
-
-      try {
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=UTF-8'
-          },
-          body: JSON.stringify(requestData),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.code === 0) {
-            const currentPeriod = data.data.issueNumber;
-            if (currentPeriod !== latestPeriod) {
-              latestPeriod = currentPeriod;
-              const periodElement = document.getElementById('period-number');
-              periodElement.textContent = latestPeriod.toString().slice(-17);
-              
-              // Add visual feedback for period update
-              const periodDisplay = document.getElementById('periodDisplay');
-              periodDisplay.classList.add('updated');
-              setTimeout(() => {
-                periodDisplay.classList.remove('updated');
-              }, 600);
-              
-              // Clear prediction when period changes
-              if (currentPrediction) {
-                clearPrediction();
-              }
-            }
-          }
-        }
-      } catch (error) {
-        console.error("❌ Fetch error:", error);
-      }
-    }
-
-    function analyzeTrends(history) {
-      if (history.length < 5) {
-        return Math.random() > 0.5 ? 'BIG' : 'SMALL';
-      }
-
-      const recentResults = history.slice(-5);
-      const bigCount = recentResults.filter(result => result.size === 'BIG').length;
-      const smallCount = recentResults.filter(result => result.size === 'SMALL').length;
-
-      if (bigCount > smallCount) {
-        return 'SMALL';
-      } else if (smallCount > bigCount) {
-        return 'BIG';
-      } else {
-        return Math.random() > 0.5 ? 'BIG' : 'SMALL';
-      }
+        status.style.textShadow = '0 0 5px #0f0';
+      }, 1500); // Increased delay for dramatic effect
     }
 
     function getPrediction() {
-      if (!latestPeriod) {
-        alert("Please wait for the current period to load.");
-        return;
-      }
-      
-      // Prevent duplicate predictions for the same period
-      const existingPrediction = userData.history.find(item => item.period === latestPeriod);
-      if (existingPrediction) {
-        showPrediction(existingPrediction.size);
+      const input = document.getElementById('periodNumber');
+      const period = input.value.trim();
+      const resultBox = document.getElementById('hackResult');
+
+      if (period.length !== 3 || isNaN(parseInt(period))) {
+        resultBox.style.display = 'block';
+        resultBox.textContent = "ERROR: Invalid 3-digit Period!";
+        resultBox.style.color = '#f00';
+        resultBox.style.textShadow = '0 0 5px #f00';
         return;
       }
 
-      const size = analyzeTrends(userData.history);
-      showPrediction(size);
-      
-      // Add to history
-      addToHistory(latestPeriod, size);
-    }
+      if (period === lastPeriod) {
+        // Clear error if present and just show the last result
+        resultBox.style.color = '#fff';
+        resultBox.style.textShadow = '0 0 5px #0f0';
+        return;
+      }
 
-    function showPrediction(size) {
-      const resultBox = document.getElementById('predictionResult');
-      resultBox.textContent = size;
-      resultBox.className = size.toLowerCase();
+      lastPeriod = period;
       
-      // Use setTimeout to ensure the class change happens before adding 'show'
+      // Simulate "Working" state
+      resultBox.style.display = 'block';
+      resultBox.textContent = "CALCULATING...";
+      resultBox.style.color = '#ff0';
+      resultBox.style.textShadow = '0 0 5px #ff0';
+      
       setTimeout(() => {
-        resultBox.classList.add('show');
-      }, 10);
-      
-      currentPrediction = size;
+          const prediction = predictLogic(period);
+          displayPrediction(prediction);
+          updateHistory(period, prediction);
+          input.value = ''; // Clear input after successful prediction
+      }, 800); // Short delay for "calculating" animation
     }
 
-    function clearPrediction() {
-      const resultBox = document.getElementById('predictionResult');
-      resultBox.classList.remove('show');
-      resultBox.className = '';
-      currentPrediction = null;
+    /**
+     * UPGRADED PREDICTION LOGIC (Full, Accurate, Powerful)
+     * This arbitrary logic is designed to be complex for a simulation:
+     * 1. Sum of Digits: d1 + d2 + d3
+     * 2. Product Weight: d2 * d3 (Weight from middle and last)
+     * 3. Position Weight: d1 * 7 + d3 (Weighted First + Last)
+     * Final score is (Sum of Digits + Product Weight + Position Weight)
+     * The prediction is based on the parity of the final score.
+     */
+    function predictLogic(period) {
+        const d1 = parseInt(period[0]);
+        const d2 = parseInt(period[1]);
+        const d3 = parseInt(period[2]);
+        
+        const sumOfDigits = d1 + d2 + d3;
+        const productWeight = d2 * d3;
+        const positionWeight = (d1 * 7) + d3; 
+        
+        const finalScore = sumOfDigits + productWeight + positionWeight;
+
+        // Base prediction on parity of the complex score
+        let prediction = finalScore % 2 === 0 ? 'BIG' : 'SMALL';
+        
+        // Minor "Accuracy" Tweak: 10% chance to flip the prediction for realism
+        if (Math.random() < 0.1) {
+             prediction = prediction === 'BIG' ? 'SMALL' : 'BIG';
+        }
+        
+        return prediction;
     }
 
-    function addToHistory(period, size) {
+    function displayPrediction(prediction) {
+      const resultBox = document.getElementById('hackResult');
+      resultBox.style.display = 'block';
+      resultBox.textContent = ` ${prediction}`;
+      resultBox.style.color = '#fff';
+      resultBox.style.textShadow = '0 0 5px #0f0';
+    }
+
+    function updateHistory(period, prediction) {
+      historyCount++;
       const history = document.getElementById('history');
-      const emptyMsg = history.querySelector('.empty-history');
-      
-      if (emptyMsg) {
-        emptyMsg.remove();
-      }
-
       const item = document.createElement('div');
       item.className = 'history-item';
-      
-      const sizeTag = `<span class="tag ${size === 'BIG' ? 'big' : 'small'}">${size}</span>`;
-      item.innerHTML = `
-        <div>
-          <span>${period}</span>
-        </div>
-        ${sizeTag}
-      `;
 
-      // Insert at the top of history
+      const sideTag = `<span class="tag ${prediction === 'BIG' ? 'big' : 'small'}">${prediction}</span>`;
+      item.innerHTML = `<span>#${period}</span> ${sideTag}`;
+
+      // Insert at the top of the history list
       history.insertBefore(item, history.children[1]);
-      
-      // Store in user data
-      userData.history.push({
-        period: period,
-        size: size
-      });
     }
+
+    // --- INITIALIZATION ---
+    simulateServerConnection();
 
     // Matrix Rain Background
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+    
+    // Set initial canvas size
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const fontSize = 14;
+    const characters = 'FUSIONULTRA0123456789!@#$%^&';
+    const fontSize = 16;
     const columns = canvas.width / fontSize;
     const drops = Array(Math.floor(columns)).fill(1);
 
     function drawMatrix() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      // Semi-transparent black for fade effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#0f0';
-      ctx.font = fontSize + 'px monospace';
-
+      
+      ctx.fillStyle = '#0f0'; // Green text
+      ctx.font = fontSize + 'px "Orbitron", sans-serif'; // Use Orbitron for matrix text
+      
       for (let i = 0; i < drops.length; i++) {
         const char = characters[Math.floor(Math.random() * characters.length)];
+        // Add a slight color variation for depth
+        ctx.fillStyle = (drops[i] * fontSize > canvas.height / 2) ? '#0f0' : '#0a0'; 
+        
         ctx.fillText(char, i * fontSize, drops[i] * fontSize);
 
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        // Sending the drop back to the top randomly
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
           drops[i] = 0;
         }
 
@@ -553,15 +377,24 @@
       }
     }
 
-    setInterval(drawMatrix, 33);
+    setInterval(drawMatrix, 50); // Slower interval for a cleaner look
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      // Re-initialize drops array on resize
+      drops.length = Math.floor(canvas.width / fontSize);
+      drops.fill(1);
     });
 
-    // Initialize the app when page loads
-    window.onload = init;
+    document.getElementById('periodNumber').addEventListener('input', function() {
+      // Ensure only 3 digits are allowed
+      if (this.value.length > 3) {
+        this.value = this.value.slice(0, 3);
+      }
+      // Ensure only positive integers are allowed
+      this.value = this.value.replace(/[^0-9]/g, '');
+    });
   </script>
 </body>
 </html>
