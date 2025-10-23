@@ -1,307 +1,567 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoaGame 1Min</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #333;
-            margin: 0;
-            padding: 0;
-            color: #fff;
-        }
-        h1, h2 {
-            color: #007bff;
-            text-align: center;
-            margin-top: 20px;
-        }
-        .card {
-            max-width: 90%;
-            margin: 20px auto;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #444;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        #dataTable {
-            width: 100%;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background-color: #555;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #666;
-        }
-        th {
-            background-color: #007bff;
-            color: black;
-            font-weight: bold;
-        }
-        td {
-            background-color: #666;
-        }
-        tr:nth-child(even) td {
-            background-color: #777;
-        }
-        tr:hover td {
-            background-color: #888;
-        }
-        .win {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-        .loss {
-            color: #f44336;
-            font-weight: bold;
-        }
-        .pending {
-            color: #FFC107;
-            font-weight: bold;
-        }
-        #predictionChart {
-            width: 100%;
-            height: 250px;
-            border: 2px solid #007bff;
-            border-radius: 8px;
-            background-color: #555;
-        }
-        #timeRemaining {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-        }
-        #predictedNumber, #predictedPremium {
-            font-size: 18px;
-            text-align: center;
-            margin: 10px 0;
-        }
-        .timer-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px 0;
-        }
-        .timer-display {
-            font-size: 32px;
-            font-weight: bold;
-            margin: 10px 0;
-            color: #007bff;
-        }
-        @media (max-width: 768px) {
-            .card {
-                padding: 15px;
-            }
-            th, td {
-                padding: 8px;
-                font-size: 14px;
-            }
-            #timeRemaining {
-                font-size: 20px;
-            }
-            #predictedNumber, #predictedPremium {
-                font-size: 16px;
-            }
-            #predictionChart {
-                height: 200px;
-            }
-            .timer-display {
-                font-size: 28px;
-            }
-        }
-        @media (max-width: 480px) {
-            th, td {
-                font-size: 12px;
-            }
-            #timeRemaining {
-                font-size: 18px;
-            }
-            #predictedNumber, #predictedPremium {
-                font-size: 14px;
-            }
-            #predictionChart {
-                height: 180px;
-            }
-            .timer-display {
-                font-size: 24px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FUSION ULTRA</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: #000;
+      color: #0f0;
+      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .container {
+      backdrop-filter: blur(15px);
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid rgba(0, 255, 0, 0.2);
+      border-radius: 20px;
+      padding: 25px 20px;
+      max-width: 400px;
+      width: 90%;
+      margin: 20px auto;
+      box-shadow: 0 0 25px rgba(0, 255, 0, 0.1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      background: linear-gradient(45deg, #0f0, transparent, #0f0);
+      z-index: -1;
+      border-radius: 25px;
+      opacity: 0.1;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 5px;
+      text-shadow: 0 0 10px #0f0;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: rgba(0, 255, 0, 0.7);
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 15px;
+      margin: 8px 0;
+    }
+
+    #serverStatus {
+      font-weight: bold;
+      color: #ff0;
+    }
+
+    .period-display {
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(0,255,0,0.1);
+      border: 1px solid rgba(0,255,0,0.3);
+      font-size: 18px;
+      font-weight: bold;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .period-display::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .period-display.updated::after {
+      left: 100%;
+    }
+
+    .prediction-section {
+      margin: 20px 0;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #predictionResult {
+      font-size: 24px;
+      font-weight: bold;
+      padding: 15px;
+      border-radius: 10px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+      margin-top: 10px;
+    }
+
+    #predictionResult.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #predictionResult.big {
+      background: rgba(0, 255, 0, 0.2);
+      border: 1px solid rgba(0, 255, 0, 0.5);
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    }
+
+    #predictionResult.small {
+      background: rgba(255, 255, 0, 0.2);
+      border: 1px solid rgba(255, 255, 0, 0.5);
+      box-shadow: 0 0 15px rgba(255, 255, 0, 0.3);
+      color: #ff0;
+    }
+
+    button {
+      background-color: #0f0;
+      color: #000;
+      font-weight: bold;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 18px;
+      margin-top: 10px;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 1px;
+    }
+
+    button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+
+    button:focus:not(:active)::after {
+      animation: ripple 1s ease-out;
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(20, 20);
+        opacity: 0;
+      }
+    }
+
+    button:hover {
+      background: #000;
+      color: #0f0;
+      box-shadow: 0 0 15px #0f0;
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    #history {
+      margin-top: 25px;
+      text-align: left;
+      background: rgba(0,255,0,0.04);
+      border: 1px solid rgba(0,255,0,0.15);
+      border-radius: 12px;
+      padding: 12px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    #history h3 {
+      margin: 0 0 10px;
+      text-align: center;
+      font-size: 18px;
+      border-bottom: 1px solid rgba(0,255,0,0.2);
+      padding-bottom: 5px;
+    }
+
+    .history-item {
+      background: rgba(0, 255, 0, 0.08);
+      border-left: 4px solid #0f0;
+      margin-bottom: 8px;
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      transition: transform 0.2s;
+    }
+
+    .history-item:hover {
+      transform: translateX(5px);
+    }
+
+    .history-item span {
+      font-weight: bold;
+    }
+
+    .tag {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 14px;
+      color: #000;
+    }
+
+    .big {
+      background-color: #00ff00;
+    }
+
+    .small {
+      background-color: #ff0;
+    }
+
+    .empty-history {
+      text-align: center;
+      padding: 15px;
+      color: rgba(0, 255, 0, 0.5);
+      font-style: italic;
+    }
+
+    /* Scrollbar styling */
+    #history::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #history::-webkit-scrollbar-track {
+      background: rgba(0, 255, 0, 0.1);
+      border-radius: 4px;
+    }
+
+    #history::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    #history::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 255, 0, 0.5);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .stat-item {
+      background: rgba(0, 255, 0, 0.1);
+      padding: 8px 12px;
+      border-radius: 8px;
+      flex: 1;
+      margin: 0 5px;
+    }
+
+    .accuracy {
+      color: #0f0;
+    }
+
+    .last-update {
+      color: #ff0;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px 15px;
+      }
+      
+      h2 {
+        font-size: 24px;
+      }
+      
+      .period-display {
+        font-size: 16px;
+        padding: 12px;
+      }
+      
+      button {
+        padding: 12px;
+        font-size: 16px;
+      }
+      
+      #predictionResult {
+        font-size: 20px;
+        padding: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>LICUIS ULTRA</h1>
-    <div class="card">
-        <h2>Live Prediction</h2>
-        <p id="predictedNumber">Prediction: Loading...</p>
-        <p id="predictedPremium">Premium: Loading...</p>
-    </div>
-    <div class="card">
-        <h2>Timer</h2>
-        <div class="timer-container">
-            <div class="timer-display" id="timeRemaining">00:00:00</div>
-        </div>
-    </div>
-    <div class="card">
-        <h2>Latest Data</h2>
-        <table id="dataTable">
-            <thead>
-                <tr>
-                    <th>Issue Number</th>
-                    <th>Number</th>
-                    <th>Premium</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data will be populated by JavaScript -->
-            </tbody>
-        </table>
-    </div>
+  <canvas id="canvas"></canvas>
+
+  <div class="container">
+    <h2>FUSION ULTRA</h2>
+    <div class="subtitle"></div>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tableBody = document.querySelector('#dataTable tbody');
-            const predictedNumberElement = document.getElementById('predictedNumber');
-            const predictedPremiumElement = document.getElementById('predictedPremium');
-            const timerElement = document.getElementById('timeRemaining');
-            
-            let currentPrediction = null;
-            let timerInterval;
-            let lastIssueNumber = null;
-            let isFirstLoad = true;
+    <div class="stats">
+      <div class="stat-item accuracy">Accuracy: <strong>98%</strong></div>
+      <div class="stat-item">Status: <span id="serverStatus">CONNECTING...</span></div>
+    </div>
 
-            const fetchNoAverageEmerdList = () => {
-                const timestamp = Date.now();
-                const url = `https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50&pageNo=1&typeId=1&language=0`;
+    <div class="period-display" id="periodDisplay">
+     <span id="period-number">-</span>
+    </div>
 
-                return fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .catch(error => {
-                    console.error('Error fetching history data:', error);
-                    return null;
-                });
-            };
+    <div class="prediction-section">
+      <button onclick="getPrediction()">GET PREDICTION</button>
+      <div id="predictionResult"></div>
+    </div>
 
-            const categorizeNumber = (number) => {
-                if (number >= 0 && number <= 4) return 'Small';
-                if (number >= 5 && number <= 9) return 'Big';
-                return 'Unknown';
-            };
+    <div id="history">
+      <h3>Prediction History</h3>
+      <div class="empty-history">No predictions yet</div>
+    </div>
+  </div>
 
-            const generateRandomPrediction = () => {
-                const randomNumber = Math.floor(Math.random() * 10);
-                const randomCategory = categorizeNumber(randomNumber);
-                return { number: randomNumber, category: randomCategory };
-            };
+  <script>
+    // User data storage
+    let userData = {
+      history: []
+    };
 
-            const updateDataAndPrediction = () => {
-                fetchNoAverageEmerdList()
-                    .then(data => {
-                        if (!data || !data.data || !data.data.list) {
-                            console.error('API response is missing expected data structure:', data);
-                            // Use fallback data if API fails
-                            const fallbackData = {
-                                data: {
-                                    list: [
-                                        { issueNumber: '10001', number: '5', premium: '5' },
-                                        { issueNumber: '10000', number: '3', premium: '3' },
-                                        { issueNumber: '9999', number: '7', premium: '7' }
-                                    ]
-                                }
-                            };
-                            data = fallbackData;
-                        }
-                        
-                        const list = data.data.list.slice(0, 10);
-                        tableBody.innerHTML = '';
+    let latestPeriod = null;
+    let currentPrediction = null;
 
-                        list.forEach(item => {
-                            const numberCategory = categorizeNumber(Number(item.number));
-                            const row = document.createElement('tr');
-                            const premiumDisplay = item.premium !== undefined ? item.premium : 'N/A';
-                            const issueNumberDisplay = item.issueNumber || 'N/A';
+    // Initialize the app
+    function init() {
+      simulateServerConnection();
+      fetchCurrentGameIssue();
+      // Fetch period every 5 seconds
+      setInterval(fetchCurrentGameIssue, 5000);
+    }
 
-                            row.innerHTML = `
-                                <td>${issueNumberDisplay}</td>
-                                <td>${item.number} (${numberCategory})</td>
-                                <td>${premiumDisplay}</td>
-                            `;
-                            tableBody.appendChild(row);
-                        });
+    function simulateServerConnection() {
+      const status = document.getElementById('serverStatus');
+      setTimeout(() => {
+        status.textContent = 'CONNECTED';
+        status.style.color = '#0f0';
+      }, 1000);
+    }
 
-                        if (list.length === 0) return;
+    // Fetch Current Game Issue
+    async function fetchCurrentGameIssue() {
+      const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
+      const requestData = {
+        typeId: 1,
+        language: 0,
+        random: "40079dcba93a48769c6ee9d4d4fae23f",
+        signature: "D12108C4F57C549D82B23A91E0FA20AE",
+        timestamp: 1727792520,
+      };
 
-                        const latestIssue = list[0].issueNumber;
-                        
-                        // Check if we have a new issue or if this is the first load
-                        if (lastIssueNumber !== latestIssue || isFirstLoad) {
-                            // Generate a new prediction for the current issue
-                            currentPrediction = generateRandomPrediction();
-                            currentPrediction.issueNumber = latestIssue;
-                            
-                            lastIssueNumber = latestIssue;
-                            isFirstLoad = false;
-                        }
-
-                        predictedNumberElement.textContent = `Prediction: ${currentPrediction.number} (${currentPrediction.category})`;
-                        predictedPremiumElement.textContent = `Premium: ${currentPrediction.number}`;
-                    })
-                    .catch(error => {
-                        console.error('Error updating data and prediction:', error);
-                        // Set default prediction values if there's an error
-                        predictedNumberElement.textContent = 'Prediction: Error loading data';
-                        predictedPremiumElement.textContent = 'Premium: Error loading data';
-                    });
-            };
-
-            // Update timer function
-            function updateTimer() {
-                const now = new Date();
-                const seconds = now.getSeconds();
-                const remainingSeconds = 60 - seconds;
-                
-                // Format timer display
-                const formattedSeconds = String(remainingSeconds).padStart(2, '0');
-                timerElement.textContent = `00:00:${formattedSeconds}`;
-                
-                // Auto-refresh when period ends (at 0 seconds)
-                if (remainingSeconds <= 1) {
-                    setTimeout(() => {
-                        updateDataAndPrediction();
-                    }, 1000);
-                }
-            }
-
-            const startTimer = () => {
-                // Clear any existing timer
-                if (timerInterval) {
-                    clearInterval(timerInterval);
-                }
-                
-                // Start the timer with 1-second intervals
-                timerInterval = setInterval(updateTimer, 1000);
-                
-                // Initial update
-                updateTimer();
-            };
-
-            // Initialize data and start the timer
-            updateDataAndPrediction();
-            startTimer();
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8'
+          },
+          body: JSON.stringify(requestData),
         });
-    </script>
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.code === 0) {
+            const currentPeriod = data.data.issueNumber;
+            if (currentPeriod !== latestPeriod) {
+              latestPeriod = currentPeriod;
+              const periodElement = document.getElementById('period-number');
+              periodElement.textContent = latestPeriod.toString().slice(-17);
+              
+              // Add visual feedback for period update
+              const periodDisplay = document.getElementById('periodDisplay');
+              periodDisplay.classList.add('updated');
+              setTimeout(() => {
+                periodDisplay.classList.remove('updated');
+              }, 600);
+              
+              // Clear prediction when period changes
+              if (currentPrediction) {
+                clearPrediction();
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("❌ Fetch error:", error);
+      }
+    }
+
+    function analyzeTrends(history) {
+      if (history.length < 5) {
+        return Math.random() > 0.5 ? 'BIG' : 'SMALL';
+      }
+
+      const recentResults = history.slice(-5);
+      const bigCount = recentResults.filter(result => result.size === 'BIG').length;
+      const smallCount = recentResults.filter(result => result.size === 'SMALL').length;
+
+      if (bigCount > smallCount) {
+        return 'SMALL';
+      } else if (smallCount > bigCount) {
+        return 'BIG';
+      } else {
+        return Math.random() > 0.5 ? 'BIG' : 'SMALL';
+      }
+    }
+
+    function getPrediction() {
+      if (!latestPeriod) {
+        alert("Please wait for the current period to load.");
+        return;
+      }
+      
+      // Prevent duplicate predictions for the same period
+      const existingPrediction = userData.history.find(item => item.period === latestPeriod);
+      if (existingPrediction) {
+        showPrediction(existingPrediction.size);
+        return;
+      }
+
+      const size = analyzeTrends(userData.history);
+      showPrediction(size);
+      
+      // Add to history
+      addToHistory(latestPeriod, size);
+    }
+
+    function showPrediction(size) {
+      const resultBox = document.getElementById('predictionResult');
+      resultBox.textContent = size;
+      resultBox.className = size.toLowerCase();
+      
+      // Use setTimeout to ensure the class change happens before adding 'show'
+      setTimeout(() => {
+        resultBox.classList.add('show');
+      }, 10);
+      
+      currentPrediction = size;
+    }
+
+    function clearPrediction() {
+      const resultBox = document.getElementById('predictionResult');
+      resultBox.classList.remove('show');
+      resultBox.className = '';
+      currentPrediction = null;
+    }
+
+    function addToHistory(period, size) {
+      const history = document.getElementById('history');
+      const emptyMsg = history.querySelector('.empty-history');
+      
+      if (emptyMsg) {
+        emptyMsg.remove();
+      }
+
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      
+      const sizeTag = `<span class="tag ${size === 'BIG' ? 'big' : 'small'}">${size}</span>`;
+      item.innerHTML = `
+        <div>
+          <span>${period}</span>
+        </div>
+        ${sizeTag}
+      `;
+
+      // Insert at the top of history
+      history.insertBefore(item, history.children[1]);
+      
+      // Store in user data
+      userData.history.push({
+        period: period,
+        size: size
+      });
+    }
+
+    // Matrix Rain Background
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#0f0';
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const char = characters[Math.floor(Math.random() * characters.length)];
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawMatrix, 33);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Initialize the app when page loads
+    window.onload = init;
+  </script>
 </body>
 </html>
