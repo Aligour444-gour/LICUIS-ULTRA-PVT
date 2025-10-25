@@ -1,663 +1,1253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FUSIONULTRA - GoaGame 1Min</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+  <title>Protected Content</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, ::before, ::after {
+      --tw-border-spacing-x: 0;
+      --tw-border-spacing-y: 0;
+      --tw-translate-x: 0;
+      --tw-translate-y: 0;
+      --tw-rotate: 0;
+      --tw-skew-x: 0;
+      --tw-skew-y: 0;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      --tw-pan-x: ;
+      --tw-pan-y: ;
+      --tw-pinch-zoom: ;
+      --tw-scroll-snap-strictness: proximity;
+      --tw-gradient-from-position: ;
+      --tw-gradient-via-position: ;
+      --tw-gradient-to-position: ;
+      --tw-ordinal: ;
+      --tw-slashed-zero: ;
+      --tw-numeric-figure: ;
+      --tw-numeric-spacing: ;
+      --tw-numeric-fraction: ;
+      --tw-ring-inset: ;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-color: rgb(59 130 246 / 0.5);
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-colored: 0 0 #0000;
+      --tw-blur: ;
+      --tw-brightness: ;
+      --tw-contrast: ;
+      --tw-grayscale: ;
+      --tw-hue-rotate: ;
+      --tw-invert: ;
+      --tw-saturate: ;
+      --tw-sepia: ;
+      --tw-drop-shadow: ;
+      --tw-backdrop-blur: ;
+      --tw-backdrop-brightness: ;
+      --tw-backdrop-contrast: ;
+      --tw-backdrop-grayscale: ;
+      --tw-backdrop-hue-rotate: ;
+      --tw-backdrop-invert: ;
+      --tw-backdrop-opacity: ;
+      --tw-backdrop-saturate: ;
+      --tw-backdrop-sepia: ;
+      --tw-contain-size: ;
+      --tw-contain-layout: ;
+      --tw-contain-paint: ;
+      --tw-contain-style: ;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    ::backdrop {
+      --tw-border-spacing-x: 0;
+      --tw-border-spacing-y: 0;
+      --tw-translate-x: 0;
+      --tw-translate-y: 0;
+      --tw-rotate: 0;
+      --tw-skew-x: 0;
+      --tw-skew-y: 0;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      --tw-pan-x: ;
+      --tw-pan-y: ;
+      --tw-pinch-zoom: ;
+      --tw-scroll-snap-strictness: proximity;
+      --tw-gradient-from-position: ;
+      --tw-gradient-via-position: ;
+      --tw-gradient-to-position: ;
+      --tw-ordinal: ;
+      --tw-slashed-zero: ;
+      --tw-numeric-figure: ;
+      --tw-numeric-spacing: ;
+      --tw-numeric-fraction: ;
+      --tw-ring-inset: ;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-color: rgb(59 130 246 / 0.5);
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-colored: 0 0 #0000;
+      --tw-blur: ;
+      --tw-brightness: ;
+      --tw-contrast: ;
+      --tw-grayscale: ;
+      --tw-hue-rotate: ;
+      --tw-invert: ;
+      --tw-saturate: ;
+      --tw-sepia: ;
+      --tw-drop-shadow: ;
+      --tw-backdrop-blur: ;
+      --tw-backdrop-brightness: ;
+      --tw-backdrop-contrast: ;
+      --tw-backdrop-grayscale: ;
+      --tw-backdrop-hue-rotate: ;
+      --tw-backdrop-invert: ;
+      --tw-backdrop-opacity: ;
+      --tw-backdrop-saturate: ;
+      --tw-backdrop-sepia: ;
+      --tw-contain-size: ;
+      --tw-contain-layout: ;
+      --tw-contain-paint: ;
+      --tw-contain-style: ;
+    }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Orbitron', sans-serif;
-            background: #000;
-            color: #0f0;
-            overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+    /* Tailwind CSS v3.4.17 */
+    *,
+    ::after,
+    ::before {
+      box-sizing: border-box;
+      border-width: 0;
+      border-style: solid;
+      border-color: #e5e7eb;
+    }
 
-        canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
+    ::after,
+    ::before {
+      --tw-content: '';
+    }
 
-        .container {
-            backdrop-filter: blur(8px);
-            background: rgba(0, 255, 0, 0.08);
-            border: 2px solid #0f0;
-            border-radius: 25px;
-            padding: 30px 25px;
-            max-width: 420px;
-            width: 90%;
-            box-shadow: 0 0 40px rgba(0, 255, 0, 0.3);
-            text-align: center;
-            position: relative;
-            margin: 20px 0;
-        }
+    :host,
+    html {
+      line-height: 1.5;
+      -webkit-text-size-adjust: 100%;
+      -moz-tab-size: 4;
+      tab-size: 4;
+      font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      font-feature-settings: normal;
+      font-variation-settings: normal;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #0f0, #0a0, #0f0, #0a0);
-            border-radius: 25px;
-            z-index: -1;
-            animation: borderGlow 3s linear infinite;
-        }
+    body {
+      margin: 0;
+      line-height: inherit;
+    }
 
-        @keyframes borderGlow {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
+    hr {
+      height: 0;
+      color: inherit;
+      border-top-width: 1px;
+    }
 
-        h1 {
-            color: #0f0;
-            text-align: center;
-            margin: 0 0 20px 0;
-            font-size: 2rem;
-            text-shadow: 0 0 10px #0f0;
-            letter-spacing: 2px;
-        }
+    abbr:where([title]) {
+      -webkit-text-decoration: underline dotted;
+      text-decoration: underline dotted;
+    }
 
-        h2 {
-            color: #0f0;
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            text-shadow: 0 0 5px #0f0;
-        }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: inherit;
+      font-weight: inherit;
+    }
 
-        .card {
-            margin-bottom: 25px;
-            padding: 20px;
-            border-radius: 15px;
-            background: rgba(0, 20, 0, 0.6);
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-        }
+    a {
+      color: inherit;
+      text-decoration: inherit;
+    }
 
-        .prediction-display {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
+    b,
+    strong {
+      font-weight: bolder;
+    }
 
-        .prediction-item {
-            flex: 1;
-            padding: 10px;
-            margin: 0 5px;
-            background: rgba(0, 30, 0, 0.7);
-            border-radius: 10px;
-            border: 1px solid rgba(0, 255, 0, 0.4);
-        }
+    code,
+    kbd,
+    pre,
+    samp {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-feature-settings: normal;
+      font-variation-settings: normal;
+      font-size: 1em;
+    }
 
-        .prediction-label {
-            font-size: 0.9rem;
-            color: #0a0;
-            margin-bottom: 5px;
-        }
+    small {
+      font-size: 80%;
+    }
 
-        .prediction-value {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0;
-        }
+    sub,
+    sup {
+      font-size: 75%;
+      line-height: 0;
+      position: relative;
+      vertical-align: baseline;
+    }
 
-        .timer-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 15px 0;
-        }
+    sub {
+      bottom: -.25em;
+    }
 
-        .timer-display {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 10px 0;
-            color: #0f0;
-            text-shadow: 0 0 10px #0f0;
-            letter-spacing: 2px;
-        }
+    sup {
+      top: -.5em;
+    }
 
-        .timer-label {
-            font-size: 1rem;
-            color: #0a0;
-            margin-bottom: 5px;
-        }
+    table {
+      text-indent: 0;
+      border-color: inherit;
+      border-collapse: collapse;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+      font-family: inherit;
+      font-feature-settings: inherit;
+      font-variation-settings: inherit;
+      font-size: 100%;
+      font-weight: inherit;
+      line-height: inherit;
+      letter-spacing: inherit;
+      color: inherit;
+      margin: 0;
+      padding: 0;
+    }
 
-        th, td {
-            padding: 12px 8px;
-            text-align: center;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
-        }
+    button,
+    select {
+      text-transform: none;
+    }
 
-        th {
-            background-color: rgba(0, 40, 0, 0.8);
-            color: #0f0;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
+    button,
+    input:where([type=button]),
+    input:where([type=reset]),
+    input:where([type=submit]) {
+      -webkit-appearance: button;
+      background-color: transparent;
+      background-image: none;
+    }
 
-        td {
-            background-color: rgba(0, 30, 0, 0.6);
-            color: #0f0;
-        }
+    :-moz-focusring {
+      outline: auto;
+    }
 
-        tr:nth-child(even) td {
-            background-color: rgba(0, 25, 0, 0.7);
-        }
+    :-moz-ui-invalid {
+      box-shadow: none;
+    }
 
-        tr:hover td {
-            background-color: rgba(0, 60, 0, 0.7);
-        }
+    progress {
+      vertical-align: baseline;
+    }
 
-        .win {
-            color: #0f0;
-            font-weight: bold;
-        }
+    ::-webkit-inner-spin-button,
+    ::-webkit-outer-spin-button {
+      height: auto;
+    }
 
-        .loss {
-            color: #f00;
-            font-weight: bold;
-        }
+    [type=search] {
+      -webkit-appearance: textfield;
+      outline-offset: -2px;
+    }
 
-        .pending {
-            color: #ff0;
-            font-weight: bold;
-        }
+    ::-webkit-search-decoration {
+      -webkit-appearance: none;
+    }
 
-        .data-table-container {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 10px;
-            border-radius: 10px;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-        }
+    ::-webkit-file-upload-button {
+      -webkit-appearance: button;
+      font: inherit;
+    }
 
-        /* Scrollbar styling */
-        .data-table-container::-webkit-scrollbar {
-            width: 8px;
-        }
+    summary {
+      display: list-item;
+    }
 
-        .data-table-container::-webkit-scrollbar-track {
-            background: rgba(0, 20, 0, 0.5);
-            border-radius: 4px;
-        }
+    blockquote,
+    dd,
+    dl,
+    figure,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    hr,
+    p,
+    pre {
+      margin: 0;
+    }
 
-        .data-table-container::-webkit-scrollbar-thumb {
-            background: rgba(0, 255, 0, 0.5);
-            border-radius: 4px;
-        }
+    fieldset {
+      margin: 0;
+      padding: 0;
+    }
 
-        .data-table-container::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 255, 0, 0.7);
-        }
+    legend {
+      padding: 0;
+    }
 
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
+    menu,
+    ol,
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
 
-        .status-live {
-            background-color: #0f0;
-            box-shadow: 0 0 5px #0f0;
-            animation: pulse 1.5s infinite;
-        }
+    dialog {
+      padding: 0;
+    }
 
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
+    textarea {
+      resize: vertical;
+    }
 
-        .glitch {
-            position: relative;
-        }
+    input::placeholder,
+    textarea::placeholder {
+      opacity: 1;
+      color: #9ca3af;
+    }
 
-        .glitch::before, .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+    [role=button],
+    button {
+      cursor: pointer;
+    }
 
-        .glitch::before {
-            left: 2px;
-            text-shadow: -2px 0 #ff00ff;
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim 5s infinite linear alternate-reverse;
-        }
+    :disabled {
+      cursor: default;
+    }
 
-        .glitch::after {
-            left: -2px;
-            text-shadow: -2px 0 #00ffff;
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim2 5s infinite linear alternate-reverse;
-        }
+    audio,
+    canvas,
+    embed,
+    iframe,
+    img,
+    object,
+    svg,
+    video {
+      display: block;
+      vertical-align: middle;
+    }
 
-        @keyframes glitch-anim {
-            0% { clip: rect(42px, 9999px, 44px, 0); }
-            5% { clip: rect(12px, 9999px, 59px, 0); }
-            10% { clip: rect(48px, 9999px, 29px, 0); }
-            15% { clip: rect(42px, 9999px, 73px, 0); }
-            20% { clip: rect(63px, 9999px, 27px, 0); }
-            25% { clip: rect(34px, 9999px, 55px, 0); }
-            30% { clip: rect(86px, 9999px, 73px, 0); }
-            35% { clip: rect(20px, 9999px, 20px, 0); }
-            40% { clip: rect(26px, 9999px, 60px, 0); }
-            45% { clip: rect(25px, 9999px, 66px, 0); }
-            50% { clip: rect(57px, 9999px, 98px, 0); }
-            55% { clip: rect(5px, 9999px, 46px, 0); }
-            60% { clip: rect(82px, 9999px, 31px, 0); }
-            65% { clip: rect(54px, 9999px, 27px, 0); }
-            70% { clip: rect(28px, 9999px, 99px, 0); }
-            75% { clip: rect(45px, 9999px, 69px, 0); }
-            80% { clip: rect(23px, 9999px, 85px, 0); }
-            85% { clip: rect(54px, 9999px, 84px, 0); }
-            90% { clip: rect(45px, 9999px, 47px, 0); }
-            95% { clip: rect(37px, 9999px, 20px, 0); }
-            100% { clip: rect(4px, 9999px, 91px, 0); }
-        }
+    img,
+    video {
+      max-width: 100%;
+      height: auto;
+    }
 
-        @keyframes glitch-anim2 {
-            0% { clip: rect(65px, 9999px, 100px, 0); }
-            5% { clip: rect(52px, 9999px, 74px, 0); }
-            10% { clip: rect(79px, 9999px, 85px, 0); }
-            15% { clip: rect(75px, 9999px, 5px, 0); }
-            20% { clip: rect(67px, 9999px, 61px, 0); }
-            25% { clip: rect(14px, 9999px, 79px, 0); }
-            30% { clip: rect(1px, 9999px, 66px, 0); }
-            35% { clip: rect(86px, 9999px, 30px, 0); }
-            40% { clip: rect(23px, 9999px, 98px, 0); }
-            45% { clip: rect(85px, 9999px, 72px, 0); }
-            50% { clip: rect(71px, 9999px, 75px, 0); }
-            55% { clip: rect(2px, 9999px, 48px, 0); }
-            60% { clip: rect(30px, 9999px, 16px, 0); }
-            65% { clip: rect(59px, 9999px, 50px, 0); }
-            70% { clip: rect(41px, 9999px, 62px, 0); }
-            75% { clip: rect(2px, 9999px, 82px, 0); }
-            80% { clip: rect(47px, 9999px, 73px, 0); }
-            85% { clip: rect(3px, 9999px, 27px, 0); }
-            90% { clip: rect(26px, 9999px, 55px, 0); }
-            95% { clip: rect(42px, 9999px, 97px, 0); }
-            100% { clip: rect(38px, 9999px, 49px, 0); }
-        }
+    [hidden]:where(:not([hidden=until-found])) {
+      display: none;
+    }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px 15px;
-            }
-            
-            h1 {
-                font-size: 1.7rem;
-            }
-            
-            h2 {
-                font-size: 1.3rem;
-            }
-            
-            .timer-display {
-                font-size: 2rem;
-            }
-            
-            .prediction-value {
-                font-size: 1.2rem;
-            }
-            
-            th, td {
-                padding: 10px 6px;
-                font-size: 0.9rem;
-            }
-        }
+    .absolute {
+      position: absolute;
+    }
 
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px 10px;
-            }
-            
-            h1 {
-                font-size: 1.5rem;
-            }
-            
-            h2 {
-                font-size: 1.2rem;
-            }
-            
-            .timer-display {
-                font-size: 1.8rem;
-            }
-            
-            .prediction-value {
-                font-size: 1.1rem;
-            }
-            
-            th, td {
-                padding: 8px 4px;
-                font-size: 0.8rem;
-            }
-            
-            .prediction-display {
-                flex-direction: column;
-            }
-            
-            .prediction-item {
-                margin: 5px 0;
-            }
-        }
-    </style>
+    .relative {
+      position: relative;
+    }
+
+    .-top-9 {
+      top: -2.25rem;
+    }
+
+    .left-12 {
+      left: 3rem;
+    }
+
+    .z-10 {
+      z-index: 10;
+    }
+
+    .mx-4 {
+      margin-left: 1rem;
+      margin-right: 1rem;
+    }
+
+    .mr-2 {
+      margin-right: 0.5rem;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .h-2 {
+      height: 0.5rem;
+    }
+
+    .h-28 {
+      height: 7rem;
+    }
+
+    .h-48 {
+      height: 12rem;
+    }
+
+    .w-2 {
+      width: 0.5rem;
+    }
+
+    .w-28 {
+      width: 7rem;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    .max-w-md {
+      max-width: 28rem;
+    }
+
+    @keyframes pulse {
+      50% {
+        opacity: .5;
+      }
+    }
+
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .select-none {
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .flex-col {
+      flex-direction: column;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .justify-center {
+      justify-content: center;
+    }
+
+    .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+      --tw-space-x-reverse: 0;
+      margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+      margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+    }
+
+    .space-y-2 > :not([hidden]) ~ :not([hidden]) {
+      --tw-space-y-reverse: 0;
+      margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+      margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+    }
+
+    .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+      --tw-space-y-reverse: 0;
+      margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+      margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+    }
+
+    .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+      --tw-space-y-reverse: 0;
+      margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
+      margin-bottom: calc(2rem * var(--tw-space-y-reverse));
+    }
+
+    .overflow-hidden {
+      overflow: hidden;
+    }
+
+    .rounded {
+      border-radius: 0.25rem;
+    }
+
+    .rounded-2xl {
+      border-radius: 1rem;
+    }
+
+    .rounded-full {
+      border-radius: 9999px;
+    }
+
+    .rounded-lg {
+      border-radius: 0.5rem;
+    }
+
+    .rounded-xl {
+      border-radius: 0.75rem;
+    }
+
+    .border {
+      border-width: 1px;
+    }
+
+    .border-amber-500 {
+      --tw-border-opacity: 1;
+      border-color: rgb(245 158 11 / var(--tw-border-opacity, 1));
+    }
+
+    .border-opacity-30 {
+      --tw-border-opacity: 0.3;
+    }
+
+    .bg-amber-300 {
+      --tw-bg-opacity: 1;
+      background-color: rgb(252 211 77 / var(--tw-bg-opacity, 1));
+    }
+
+    .bg-amber-400 {
+      --tw-bg-opacity: 1;
+      background-color: rgb(251 191 36 / var(--tw-bg-opacity, 1));
+    }
+
+    .bg-amber-500 {
+      --tw-bg-opacity: 1;
+      background-color: rgb(245 158 11 / var(--tw-bg-opacity, 1));
+    }
+
+    .bg-gradient-to-br {
+      background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+    }
+
+    .from-gray-900 {
+      --tw-gradient-from: #111827 var(--tw-gradient-from-position);
+      --tw-gradient-to: rgb(17 24 39 / 0) var(--tw-gradient-to-position);
+      --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    }
+
+    .to-gray-800 {
+      --tw-gradient-to: #1f2937 var(--tw-gradient-to-position);
+    }
+
+    .p-8 {
+      padding: 2rem;
+    }
+
+    .px-2 {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+
+    .px-4 {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .px-6 {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+
+    .py-3 {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .py-4 {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-5xl {
+      font-size: 3rem;
+      line-height: 1;
+    }
+
+    .text-base {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+
+    .text-lg {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+    }
+
+    .text-sm {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+
+    .text-xs {
+      font-size: 0.75rem;
+      line-height: 1rem;
+    }
+
+    .font-bold {
+      font-weight: 700;
+    }
+
+    .font-extrabold {
+      font-weight: 800;
+    }
+
+    .font-light {
+      font-weight: 300;
+    }
+
+    .font-semibold {
+      font-weight: 600;
+    }
+
+    .tracking-wider {
+      letter-spacing: 0.05em;
+    }
+
+    .text-amber-200 {
+      --tw-text-opacity: 1;
+      color: rgb(253 230 138 / var(--tw-text-opacity, 1));
+    }
+
+    .text-amber-300 {
+      --tw-text-opacity: 1;
+      color: rgb(252 211 77 / var(--tw-text-opacity, 1));
+    }
+
+    .text-black {
+      --tw-text-opacity: 1;
+      color: rgb(0 0 0 / var(--tw-text-opacity, 1));
+    }
+
+    .text-gray-900 {
+      --tw-text-opacity: 1;
+      color: rgb(17 24 39 / var(--tw-text-opacity, 1));
+    }
+
+    .text-red-800 {
+      --tw-text-opacity: 1;
+      color: rgb(153 27 27 / var(--tw-text-opacity, 1));
+    }
+
+    .text-white {
+      --tw-text-opacity: 1;
+      color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+    }
+
+    .placeholder-amber-100::placeholder {
+      --tw-placeholder-opacity: 1;
+      color: rgb(254 243 199 / var(--tw-placeholder-opacity, 1));
+    }
+
+    .placeholder-opacity-60::placeholder {
+      --tw-placeholder-opacity: 0.6;
+    }
+
+    .shadow-lg {
+      --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+      box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    }
+
+    .outline-none {
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+    }
+
+    .drop-shadow-md {
+      --tw-drop-shadow: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
+      filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+    }
+
+    .delay-100 {
+      transition-delay: 100ms;
+    }
+
+    .delay-200 {
+      transition-delay: 200ms;
+    }
+
+    /* Custom animations */
+    @keyframes shine {
+      0%, 100% {
+        box-shadow:
+          0 0 8px 3px rgba(255, 215, 0, 0.6),
+          inset 0 0 10px 4px rgba(255, 215, 0, 0.8);
+        filter: brightness(1);
+      }
+      50% {
+        box-shadow:
+          0 0 20px 8px rgba(255, 215, 0, 1),
+          inset 0 0 20px 8px rgba(255, 215, 0, 1);
+        filter: brightness(1.6);
+      }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes resultFall {
+      0% { 
+        transform: translateY(-50px) rotateX(90deg);
+        opacity: 0;
+      }
+      70% {
+        transform: translateY(10px) rotateX(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes textGlow {
+      0% { text-shadow: 0 0 5px rgba(255, 77, 109, 0.7); }
+      50% { text-shadow: 0 0 20px rgba(255, 77, 109, 0.9); }
+      100% { text-shadow: 0 0 5px rgba(255, 77, 109, 0.7); }
+    }
+    
+    .shine-animation {
+      animation: shine 2.5s ease-in-out infinite;
+    }
+    
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .result-fall {
+      animation: resultFall 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
+    .text-glow {
+      animation: textGlow 2s ease infinite;
+    }
+    
+    .golden-ball {
+      background: radial-gradient(circle at 30% 30%, #FFD700, #D4AF37, #FDD017, #D4AF37, #FFDF00);
+    }
+    
+    .light-golden-ball {
+      background: radial-gradient(
+        circle at 30% 30%,
+        rgba(200, 200, 200, 1),
+        rgba(180, 180, 180, 1),
+        rgba(220, 220, 220, 1)
+      );
+      box-shadow:
+        0 0 20px rgba(192, 192, 192, 0.8),
+        0 0 40px rgba(255, 255, 255, 0.6),
+        0 0 60px rgba(192, 192, 192, 0.7);
+      animation: silverGlow 2s ease-in-out infinite;
+    }
+
+    /* Glow pulse animation */
+    @keyframes silverGlow {
+      0% {
+        box-shadow:
+          0 0 10px rgba(192, 192, 192, 0.4),
+          0 0 20px rgba(255, 255, 255, 0.3),
+          0 0 30px rgba(200, 200, 200, 0.4);
+      }
+      50% {
+        box-shadow:
+          0 0 25px rgba(255, 255, 255, 0.8),
+          0 0 50px rgba(200, 200, 200, 0.6),
+          0 0 70px rgba(255, 255, 255, 0.6);
+      }
+      100% {
+        box-shadow:
+          0 0 10px rgba(192, 192, 192, 0.4),
+          0 0 20px rgba(255, 255, 255, 0.3),
+          0 0 30px rgba(200, 200, 200, 0.4);
+      }
+    }
+
+    .diamond-cut-border {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .diamond-cut-border::before {
+      filter: blur(5px);
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: transparent;
+      background-size: 200% 200%;
+      animation: gradientFlow 4s linear infinite;
+      z-index: -1;
+      border-radius: inherit;
+    }
+    
+    .glass-morphism {
+      backdrop-filter: blur(10px);  
+      background: transparent;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .holographic-effect {
+      background: linear-gradient(135deg, 
+        rgba(0, 255, 242, 0.05) 0%, 
+        rgba(127, 0, 255, 0.05) 25%, 
+        rgba(255, 0, 234, 0.05) 50%, 
+        rgba(127, 0, 255, 0.05) 75%, 
+        rgba(0, 255, 242, 0.05) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .period-input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      backdrop-filter: blur(5px);
+      transition: all 0.3s ease;
+    }
+    
+    .period-input:focus {
+      border-color: #FFD700;
+      box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+    }
+    
+    /* Silver ball for result */
+    .silver-result-ball {
+      background: radial-gradient(circle at 30% 30%, #E0E0E0, #C0C0C0, #F0F0F0, #C0C0C0, #E8E8E8);
+    }
+
+    /* Silver glow animation for result */
+    @keyframes silverGlow {
+      0%, 100% {
+        box-shadow: 0 0 10px 5px rgba(224, 224, 224, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 20px 10px rgba(224, 224, 224, 0.9);
+      }
+    }
+
+    .silver-glow {
+      animation: silverGlow 2s ease-in-out infinite;
+    }
+    
+    h2 {
+      font-size: 5.5rem;
+      color: lime;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #0055ff 0%, #000000 50%, #0055ff 100%);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+    
+    .premium-button {
+      background: linear-gradient(135deg, #FFD700, #D4AF37);
+      box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .premium-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(255, 215, 0, 0.5);
+    }
+    
+    .result-display {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #ff4d6d;
+    }
+    
+    .connecting-dots::after {
+      content: '.';
+      animation: dots 1.5s steps(5, end) infinite;
+    }
+    
+    @keyframes dots {
+      0%, 20% { content: '.'; }
+      40% { content: '..'; }
+      60% { content: '...'; }
+      80%, 100% { content: ''; }
+    }
+    
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .vip {
+      font-size: 8.5rem;
+      color: lime;
+    }
+    
+    .header {
+      background-color: transparent;
+      color: lime;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      font-family: Arial, sans-serif;
+    }
+    
+    #customPopup {
+      color: lime;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-content {
+      background: black;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px black;
+      text-align: center;
+      font-family: sans-serif;
+    }
+
+    .popup-content button {
+      margin-top: 10px;
+      padding: 6px 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.8); }
+    }
+    
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    
+    .fade-out {
+      animation: fadeOut 0.5s ease-out forwards;
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-in forwards;
+    }
+    
+    .red-number {
+      color: red !important;
+      font-weight: bold;
+    }
+    
+    .top-button {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .period-display {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      backdrop-filter: blur(5px);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    .period-display.updated {
+      box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.7);
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+  <!--
+ * ============================================
+ * 🛡 TanMayMods HTML Encryption Script
+ * ============================================
+ *
+ * 🔐 ABOUT:
+ * ----------
+ * This script securely encodes HTML content, making it unreadable  
+ * without decoding. Protects web pages from unauthorized access  
+ * and modifications.
+ *
+ * 🚀 FEATURES:
+ * ------------
+ * ✅ Encrypts HTML into an unreadable format.
+ * ✅ Prevents direct copying and unauthorized edits.
+ * ✅ Uses strong obfuscation techniques.
+ * ✅ Protects content without affecting functionality.
+ *
+ * 🔧 DEVELOPER INFO:
+ * -------------------
+ * 🧑‍💻 Developer: @TANMAYPAUL21
+ * 🌐 Version: 1.0
+ *
+ * 📢 CONTACT:
+ * ------------
+ * - 🔵 Telegram: <a href="https://t.me/TaNMaYsBio>TaNMaYMods</a>
+ * - 🔥 Channel: <a href="https://t.me/TaNMaYsBio">TaNMaYMods</a>
+ *
+ * 📜 LICENSE:
+ * ------------
+ * Licensed under MIT. Modify, distribute, and use freely  
+ * with proper credit to the developer.
+ *
+ * ⚠ DISCLAIMER:
+ * --------------
+ * This script is provided "as-is" without any warranties.  
+ * The developer holds no responsibility for any misuse.
+ *
+ * 🔒 ENCRYPTION ID: [TaNMaY-ENC-2025-03-04-XXXXX]
+ *
+ * ============================================
+-->
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>LICUIS ULTRA</title>
+  <script src="auth.js"></script>
+  <a class="top-button" href="game-section.html" title="Go Back">
+    <i class="fas fa-arrow-left"></i>
+  </a>
+  
+  <div class="w-full max-w-md mx-4 rounded-2xl glass-morphism diamond-cut-border p-8 space-y-8 float-animation">
+    <header class="text-center space-y-4">
+      <div class="header">
+        LICUIS ULTRA
+      </div>
+    </header>
     
-    <div class="container">
-        <h1 class="glitch" data-text="FUSIONULTRA">LICUIS ULTRA</h1>
+    <!-- Period Display (replaces input) -->
+    <div class="relative">
+      <div class="absolute -top-9 left-12 px-2 bg-transparent-900 text-base font-bold text-red-800 rounded">
         
-        <div class="card">
-            <h2><span class="status-indicator status-live"></span>Live Prediction</h2>
-            <div class="prediction-display">
-                <div class="prediction-item">
-                    <div class="prediction-label">Prediction</div>
-                    <div class="prediction-value" id="predictedNumber">Loading...</div>
-                </div>
-                <div class="prediction-item">
-                    <div class="prediction-label">Premium</div>
-                    <div class="prediction-value" id="predictedPremium">Loading...</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2>Timer</h2>
-            <div class="timer-container">
-                <div class="timer-label">Next Update In</div>
-                <div class="timer-display" id="timeRemaining">00:00:00</div>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2>Latest Data</h2>
-            <div class="data-table-container">
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>Issue</th>
-                            <th>Number</th>
-                            <th>Premium</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
-            </div>
-        </div>
+      </div>
+      <div class="period-display" id="periodDisplay">
+        <span id="period-number">Loading...</span>
+      </div>
     </div>
+    
+    <div class="border border-amber-500 border-opacity-30 rounded-xl h-48 flex justify-center items-center bg-gradient-to-br from-gray-900 to-gray-800 relative overflow-hidden holographic-effect">
+      <!-- Golden Ball (always visible until prediction) -->
+      <div class="shine-animation golden-ball w-28 h-28 rounded-full flex justify-center items-center shadow-lg relative z-10" id="ball">
+        <span class="text-black text-5xl font-extrabold select-none drop-shadow-md" style="text-shadow: 0 0 6px rgba(0,0,0,0.5);">
+          ?
+        </span>
+      </div>
+      <!-- New Ball with Number (hidden initially) -->
+      <div class="light-golden-ball w-28 h-28 rounded-full flex justify-center items-center shadow-lg relative z-10 hidden" id="numberBall">
+        <span class="red-number text-5xl font-extrabold select-none drop-shadow-md" id="randomNumber" style="text-shadow: 0 0 6px rgba(0,0,0,0.5);">
+        </span>
+      </div>
+      <!-- Connecting Animation -->
+      <div class="absolute hidden text-white" id="animation">
+        <div class="flex flex-col items-center space-y-2">
+          <div class="flex space-x-2">
+            <div class="w-2 h-2 rounded-full bg-amber-300 animate-pulse">
+            </div>
+            <div class="w-2 h-2 rounded-full bg-amber-400 animate-pulse delay-100">
+            </div>
+            <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse delay-200">
+            </div>
+          </div>
+          <p class="text-sm font-light tracking-wider text-amber-200">
+            Processing Data
+            <span class="connecting-dots">
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="space-y-4">
+      <button class="w-full premium-button text-gray-900 font-bold py-4 px-6 rounded-xl text-lg" id="predictButton">
+        <i class="fas fa-crown mr-2"></i>
+        GET RESULT
+      </button>
+      <p class="text-xs text-center text-amber-300 font-semibold">
+        Powered by Zenith 99.9% Accuracy
+      </p>
+    </div>
+  </div>
+  
+  <div id="customPopup">
+    <div class="popup-content">
+      <p>PLEASE WAIT...</p>
+      <button onclick="closePopup()">OK</button>
+    </div>
+  </div>
+  
+  <script>
+    // Global variables
+    let latestPeriod = null;
+    let currentPrediction = null;
+    let fetchInterval = null;
+    
+    // DOM elements
+    const button = document.getElementById('predictButton');
+    const ball = document.getElementById('ball');
+    const numberBall = document.getElementById('numberBall');
+    const randomNumberSpan = document.getElementById('randomNumber');
+    const animationDiv = document.getElementById('animation');
+    const periodDisplay = document.getElementById('periodDisplay');
+    const periodNumberSpan = document.getElementById('period-number');
 
-    <script>
-        // Matrix Rain Background
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Set initial canvas size
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    // Fetch Current Game Issue
+    async function fetchCurrentGameIssue() {
+      const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
+      const requestData = {
+        typeId: 1,
+        language: 0,
+        random: "40079dcba93a48769c6ee9d4d4fae23f",
+        signature: "D12108C4F57C549D82B23A91E0FA20AE",
+        timestamp: 1727792520,
+      };
 
-        const characters = 'FUSIONULTRA0123456789!@#$%^&';
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8'
+          },
+          body: JSON.stringify(requestData),
+        });
 
-        function drawMatrix() {
-            // Semi-transparent black for fade effect
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#0f0'; // Green text
-            ctx.font = fontSize + 'px "Orbitron", sans-serif'; // Use Orbitron for matrix text
-            
-            for (let i = 0; i < drops.length; i++) {
-                const char = characters[Math.floor(Math.random() * characters.length)];
-                // Add a slight color variation for depth
-                ctx.fillStyle = (drops[i] * fontSize > canvas.height / 2) ? '#0f0' : '#0a0'; 
-                
-                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-
-                // Sending the drop back to the top randomly
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
-                    drops[i] = 0;
-                }
-
-                drops[i]++;
+        if (response.ok) {
+          const data = await response.json();
+          if (data.code === 0) {
+            const currentPeriod = data.data.issueNumber;
+            if (currentPeriod !== latestPeriod) {
+              latestPeriod = currentPeriod;
+              const periodElement = document.getElementById('period-number');
+              periodElement.textContent = latestPeriod.toString().slice(-17);
+              
+              // Add visual feedback for period update
+              const periodDisplay = document.getElementById('periodDisplay');
+              periodDisplay.classList.add('updated');
+              setTimeout(() => {
+                periodDisplay.classList.remove('updated');
+              }, 600);
+              
+              // Clear prediction when period changes
+              if (currentPrediction) {
+                clearPrediction();
+              }
             }
+          }
         }
+      } catch (error) {
+        console.error("❌ Fetch error:", error);
+      }
+    }
 
-        setInterval(drawMatrix, 50); // Slower interval for a cleaner look
+    // Start fetching current game issue periodically
+    function startFetchingPeriod() {
+      // Fetch immediately
+      fetchCurrentGameIssue();
+      
+      // Then set up interval for periodic fetching (every 5 seconds)
+      fetchInterval = setInterval(fetchCurrentGameIssue, 5000);
+    }
 
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            // Re-initialize drops array on resize
-            drops.length = Math.floor(canvas.width / fontSize);
-            drops.fill(1);
-        });
+    function showPopup() {
+      document.getElementById("customPopup").style.display = "flex";
+    }
 
-        // App functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const tableBody = document.querySelector('#dataTable tbody');
-            const predictedNumberElement = document.getElementById('predictedNumber');
-            const predictedPremiumElement = document.getElementById('predictedPremium');
-            const timerElement = document.getElementById('timeRemaining');
-            
-            let currentPrediction = null;
-            let timerInterval;
-            let lastIssueNumber = null;
-            let isFirstLoad = true;
+    function closePopup() {
+      document.getElementById("customPopup").style.display = "none";
+    }
 
-            const fetchNoAverageEmerdList = () => {
-                const timestamp = Date.now();
-                const url = `https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${timestamp}&pageSize=50&pageNo=1&typeId=1&language=0`;
+    function clearPrediction() {
+      currentPrediction = null;
+      resetAnimation();
+    }
 
-                return fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .catch(error => {
-                    console.error('Error fetching history data:', error);
-                    return null;
-                });
-            };
+    function resetAnimation() {
+      // Hide number ball and show original ball
+      numberBall.classList.add('hidden');
+      numberBall.classList.remove('fade-in');
+      ball.classList.remove('hidden', 'fade-out');
+      animationDiv.classList.add('hidden');
+    }
 
-            const categorizeNumber = (number) => {
-                const num = Number(number);
-                if (num >= 0 && num <= 4) return 'Small';
-                if (num >= 5 && num <= 9) return 'Big';
-                return 'Unknown';
-            };
+    button.addEventListener('click', () => {
+      // Check if we have a current period
+      if (!latestPeriod) {
+        showPopup();
+        return;
+      }
 
-            // **NEW LOGIC ADDED HERE**
-            const runAdvancedAnalysis = (fullDataList) => {
-                const numbers = fullDataList.map(item => Number(item.number)).filter(n => !isNaN(n));
-                
-                if (numbers.length === 0) return { status: 'No data for calculation.' };
+      resetAnimation(); // Reset everything before new animation
+      
+      const randomNum = Math.floor(Math.random() * 10);
+      currentPrediction = randomNum;
 
-                // 1. Calculations on ALL available data (up to 50)
-                const fullSum = numbers.reduce((a, b) => a + b, 0);
-                const fullProduct = numbers.reduce((a, b) => a * b, 1);
-                const fullAverage = fullSum / numbers.length;
-                const fullDifference = numbers.reduce((a, b) => a - b); // Running subtraction
+      // Fade out the original ball
+      ball.classList.add('fade-out');
+      
+      setTimeout(() => {
+        ball.classList.add('hidden');
+        animationDiv.classList.remove('hidden');
+        
+        setTimeout(() => {
+          animationDiv.classList.add('hidden');
+          
+          // Set random number (in red color) and show the new ball
+          randomNumberSpan.textContent = randomNum;
+          numberBall.classList.remove('hidden');
+          numberBall.classList.add('fade-in');
+        }, 1800);
+      }, 500);
+    });
 
-                // 2. Calculations on the LAST 10 results
-                const last10 = numbers.slice(0, 10);
-                const last10Sum = last10.reduce((a, b) => a + b, 0);
-                const last10Product = last10.reduce((a, b) => a * b, 1);
-                // Simple division of last two numbers (if available)
-                const lastDiv = last10.length >= 2 ? last10[0] / (last10[1] || 1) : 0; 
-
-                // For logging/debugging only. Does NOT determine the prediction.
-                console.log('--- ADVANCED ANALYSIS ---');
-                console.log(`Full Period Sum: ${fullSum}`);
-                console.log(`Full Period Average: ${fullAverage.toFixed(2)}`);
-                console.log(`Last 10 Sum: ${last10Sum}`);
-                console.log(`Last 10 Product: ${last10Product}`);
-                console.log(`Last 2 Division: ${lastDiv.toFixed(2)}`);
-                console.log('-------------------------');
-
-                // Return complex result (not used for prediction, just satisfying the calculation requirement)
-                return {
-                    fullSum,
-                    last10Sum,
-                    predictiveSignal: Math.round(fullSum + last10Sum + fullAverage) % 10 // Example complex formula
-                };
-            };
-            
-            // Fixed logic remains a random guess for honesty
-            const generateFixedPrediction = () => {
-                const randomNumber = Math.floor(Math.random() * 10);
-                const randomCategory = categorizeNumber(randomNumber);
-                return { 
-                    number: randomNumber, 
-                    category: randomCategory,
-                };
-            };
-
-            const updateDataAndPrediction = () => {
-                fetchNoAverageEmerdList()
-                    .then(data => {
-                        let list = [];
-                        if (data && data.data && data.data.list) {
-                            list = data.data.list;
-                        } else {
-                            // Fallback if API fails
-                            list = [
-                                { issueNumber: '0000', number: '5', premium: '5' },
-                                { issueNumber: '0001', number: '3', premium: '3' },
-                                { issueNumber: '0002', number: '7', premium: '7' }
-                            ].map(item => ({ 
-                                ...item, 
-                                issueNumber: item.issueNumber + (Math.floor(Date.now() / 60000) % 1000)
-                            }));
-                        }
-                        
-                        // **RUN THE ADVANCED CALCULATIONS HERE**
-                        if (list.length > 0) {
-                            runAdvancedAnalysis(list);
-                        }
-
-                        // Display only the last 10 results in the table as per original view
-                        const displayList = list.slice(0, 10); 
-                        tableBody.innerHTML = '';
-
-                        displayList.forEach(item => {
-                            const numberCategory = categorizeNumber(Number(item.number));
-                            const row = document.createElement('tr');
-                            // Use premium from API if it exists, otherwise use the calculated category
-                            const premiumDisplay = item.premium !== undefined && item.premium !== null ? item.premium : numberCategory; 
-                            const issueNumberDisplay = item.issueNumber || 'N/A';
-
-                            row.innerHTML = `
-                                <td>${issueNumberDisplay}</td>
-                                <td>${item.number} (${numberCategory})</td>
-                                <td>${premiumDisplay}</td>
-                            `;
-                            tableBody.appendChild(row);
-                        });
-
-                        if (displayList.length === 0) {
-                            predictedNumberElement.textContent = 'N/A';
-                            predictedPremiumElement.textContent = 'N/A';
-                            return;
-                        }
-
-                        const latestIssue = displayList[0].issueNumber;
-                        
-                        // Check if we have a new issue or if this is the first load
-                        if (lastIssueNumber !== latestIssue || isFirstLoad) {
-                            // Generate a new prediction (random guess)
-                            currentPrediction = generateFixedPrediction();
-                            currentPrediction.issueNumber = latestIssue;
-                            
-                            lastIssueNumber = latestIssue;
-                            isFirstLoad = false;
-                        }
-
-                        // Update the display 
-                        predictedNumberElement.textContent = `${currentPrediction.number} (${currentPrediction.category})`;
-                        predictedPremiumElement.textContent = `${currentPrediction.category}`;
-                    })
-                    .catch(error => {
-                        console.error('Error updating data and prediction:', error);
-                        predictedNumberElement.textContent = 'API Error';
-                        predictedPremiumElement.textContent = 'API Error';
-                    });
-            };
-
-            // Update timer function
-            function updateTimer() {
-                const now = new Date();
-                const seconds = now.getSeconds();
-                const remainingSeconds = 60 - seconds;
-                
-                // Format timer display
-                const formattedSeconds = String(remainingSeconds).padStart(2, '0');
-                timerElement.textContent = `00:00:${formattedSeconds}`;
-                
-                // Auto-refresh when period ends (at 0 seconds)
-                if (remainingSeconds <= 1) {
-                    setTimeout(() => {
-                        updateDataAndPrediction();
-                    }, 1000);
-                }
-            }
-
-            const startTimer = () => {
-                // Clear any existing timer
-                if (timerInterval) {
-                    clearInterval(timerInterval);
-                }
-                
-                // Start the timer with 1-second intervals
-                timerInterval = setInterval(updateTimer, 1000);
-                
-                // Initial update
-                updateTimer();
-            };
-
-            // Initialize data and start the timer
-            updateDataAndPrediction();
-            startTimer();
-        });
-    </script>
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      startFetchingPeriod();
+    });
+  </script>
 </body>
 </html>
